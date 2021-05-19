@@ -1,4 +1,4 @@
-package com.example.homework2
+package com.example.pangchat
 
 import org.junit.Assert
 import org.junit.Test

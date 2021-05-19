@@ -1,10 +1,11 @@
-package com.example.homework2
+package com.example.pangchat
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.pangchat.R
 
 /**
  * A simple [Fragment] subclass.

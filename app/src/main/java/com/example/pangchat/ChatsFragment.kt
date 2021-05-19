@@ -1,4 +1,4 @@
-package com.example.homework2
+package com.example.pangchat
 
 import android.content.Context
 import android.os.Bundle
@@ -7,8 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
 import androidx.fragment.app.Fragment
-import com.example.homework2.chat.Chat
-import com.example.homework2.chat.ChatAdapter
+import com.example.pangchat.R
+import com.example.pangchat.chat.Chat
+import com.example.pangchat.chat.ChatAdapter
 import java.util.*
 
 /**

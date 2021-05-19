@@ -1,4 +1,4 @@
-package com.example.homework2.contact
+package com.example.pangchat.contact
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.homework2.R
-import com.example.homework2.contact.ContactAdapter.ContactViewHolder
+import com.example.pangchat.R
+import com.example.pangchat.contact.ContactAdapter.ContactViewHolder
 import java.util.*
 
 class ContactAdapter(private val data: LinkedList<Contact?>?) : RecyclerView.Adapter<ContactViewHolder?>() {

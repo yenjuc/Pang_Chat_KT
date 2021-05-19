@@ -1,4 +1,4 @@
-package com.example.homework2.discover
+package com.example.pangchat.discover
 
 import java.util.*
 

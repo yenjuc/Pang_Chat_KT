@@ -1,4 +1,4 @@
-package com.example.homework2
+package com.example.pangchat
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,8 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.homework2.contact.Contact
-import com.example.homework2.contact.ContactAdapter
+import com.example.pangchat.R
+import com.example.pangchat.contact.Contact
+import com.example.pangchat.contact.ContactAdapter
 import java.util.*
 
 /**

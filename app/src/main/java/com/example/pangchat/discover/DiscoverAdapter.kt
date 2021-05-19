@@ -1,4 +1,4 @@
-package com.example.homework2.discover
+package com.example.pangchat.discover
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.homework2.R
+import com.example.pangchat.R
 import java.util.*
 
 class DiscoverAdapter(private val data: LinkedList<Discover?>?) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {

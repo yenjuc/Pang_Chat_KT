@@ -1,4 +1,4 @@
-package com.example.homework2.chat
+package com.example.pangchat.chat
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import com.example.homework2.R
+import com.example.pangchat.R
 import java.util.*
 
 class ChatAdapter(private val data: LinkedList<Chat?>?, private val context: Context?) : BaseAdapter() {

@@ -1,4 +1,4 @@
-package com.example.homework2.chat
+package com.example.pangchat.chat
 
 class Chat(// 昵称
         private val nickname: String?, // 头像
