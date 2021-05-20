@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">PangChat</string>
+    <string name="message">Message</string>
     <string name="chats">Chats</string>
     <string name="contacts">Contacts</string>
     <string name="discover">Discover</string>
@@ -7,7 +8,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Blank Settings Page</string>
 
-    <string name="BACKEND_URL">http://183.173.184.206:7000</string>
+    <string name="BACKEND_URL">http://183.172.182.59:7000</string>
 
 
     <!-- 可以使用的昵称信息 -->
@@ -27,7 +28,7 @@
 
     <!-- Mock生成的随机中文字符串 -->
 
-    <string name="sentence1"> 里表东两白美它林斯满六。 </string>
+    <string name="sentence1"> 里表东两白美它林斯满六。岁的法国上2挺温柔感受到法国人它特瑞官网色弱干涩让他人挺温柔果然威锋网3 </string>
     <string name="sentence2"> 收程究油有向金产文。 </string>
     <string name="sentence3"> 干严面里办及精响看方空际新事。 </string>
     <string name="sentence4"> 军八步么车式需存局米完。 </string>

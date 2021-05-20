@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.example.pangchat.fragment.*
 import com.github.kittinunf.fuel.core.FuelManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -28,6 +29,9 @@ class MainActivity : FragmentActivity() {
         val settingsFragment: Fragment = SettingsFragment()
         setCurrentFragment(chatsFragment) // 初始的Fragment为chatsFragment
 
+        // FIXME: 暂时用一个 bottom navigation bottom 测试
+        val messagesFragment: Fragment = MessagesFragment()
+
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView?.setOnNavigationItemSelectedListener(BottomNavigationView.OnNavigationItemSelectedListener setOnNavigationItemSelectedListener@{ item: MenuItem? ->
@@ -46,6 +50,10 @@ class MainActivity : FragmentActivity() {
                 }
                 R.id.settings -> {
                     setCurrentFragment(settingsFragment)
+                    return@setOnNavigationItemSelectedListener true
+                }
+                R.id.messages ->{
+                    setCurrentFragment(messagesFragment)
                     return@setOnNavigationItemSelectedListener true
                 }
             }
