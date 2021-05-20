@@ -7,9 +7,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.R
+import com.example.pangchat.message.data.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
-class MessageAdapter(private val data: LinkedList<Message?>?) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
+class MessageAdapter(private val data: LinkedList<String>?) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
     override fun getItemViewType(position: Int): Int {
         // TODO
         // return number of images in the post
@@ -28,27 +33,39 @@ class MessageAdapter(private val data: LinkedList<Message?>?) : RecyclerView.Ada
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         // TODO
-        val discover = data?.get(position)
-        val viewHolder = holder as MessageViewHolder
+        val messageId = data?.get(position)
+
         /*
-        if (discover != null) {
-            viewHolder.avatar?.setImageResource(discover.getAvatarIcon())
-            viewHolder.nickname?.text = discover.getNickname()
-            viewHolder.content?.text = discover.getText()
-            viewHolder.postTime?.text = discover.getPublishedTime()
-            /*
-            val viewType = getItemViewType(position)
-            for (i in 0 until viewType) {
-                val id = discover.getImages()!![i];
-                if(id !=null){
-                    viewHolder.imgs?.get(i)?.setImageResource(id)
+        MainScope().launch {
+
+            val result: Result<MessageInfo>
+            val messageRequest = MessageRequest()
+
+            withContext(Dispatchers.IO) {
+                if(messageId != null){
+                    result = messageRequest.getMessage(messageId)
+                    if (result is Result.Success) {
+                        //_loginResult.value = LoginResult(success = LoggedInUserView(displayName = result.data.username, userId = result.data.userId))
+                        val message = Message(result.data.messageId, result.data.senderId, result.data.nickname, result.data.avatarIcon, result.data.recalled, result.data.content, result.data.time)
+                        val viewHolder = holder as MessageViewHolder
+                        // viewHolder.avatar = message.getAvatarIcon()
+                        // FIXME:
+
+                        viewHolder.nickname.text = message.getNickname()
+                        viewHolder.content.text = message.getContent()
+                        viewHolder.time.text = message.getTime()
+                    } else {
+                        // _loginResult.value = LoginResult(error = R.string.login_failed)
+                    }
                 }
             }
-             */
+
+
         }
 
          */
     }
+
 
     override fun getItemCount(): Int {
         // TODO
@@ -58,20 +75,20 @@ class MessageAdapter(private val data: LinkedList<Message?>?) : RecyclerView.Ada
         return 0
     }
 
-    // TODO: 完成DiscoverViewHolder类
+    // TODO: 完成MessageViewHolder类
     class MessageViewHolder(itemView: View, var viewType: Int) : RecyclerView.ViewHolder(itemView) {
-        var avatar: ImageView?
-        var nickname: TextView?
-        var content: TextView?
-        var postTime: TextView?
+        var avatar: ImageView
+        var nickname: TextView
+        var content: TextView
+        var time: TextView
         // var imgs: Array<ImageView?>? = null
 
         // TODO: 添加其他包含的其他控件
         init {
             avatar = itemView.findViewById<ImageView?>(R.id.avatar_icon)
             nickname = itemView.findViewById<TextView?>(R.id.nickname_text)
-            content = itemView.findViewById<TextView?>(R.id.post_content)
-            postTime = itemView.findViewById<TextView?>(R.id.post_time)
+            content = itemView.findViewById<TextView?>(R.id.message_content)
+            time = itemView.findViewById<TextView?>(R.id.message_time)
             // TODO: 根据不同 view type 绑定更多不同部件
             /*
             if (imageCount != 0) {

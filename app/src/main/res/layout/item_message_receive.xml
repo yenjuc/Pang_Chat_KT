@@ -31,7 +31,7 @@
             android:layout_height="1dp" />
 
         <TextView
-            android:id="@+id/last_speak_text"
+            android:id="@+id/message_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="bottom"
@@ -39,7 +39,7 @@
             android:textSize="15sp" />
 
         <TextView
-            android:id="@+id/last_speak_time_text"
+            android:id="@+id/message_time"
             android:layout_width="fill_parent"
             android:layout_height="25dp"
             android:gravity="end"

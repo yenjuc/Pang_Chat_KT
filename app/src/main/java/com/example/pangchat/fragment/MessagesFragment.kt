@@ -12,6 +12,7 @@ import com.example.pangchat.R
 // FIXME: just for test, delete me afterward
 import com.example.pangchat.contact.Contact
 import com.example.pangchat.contact.ContactAdapter
+import com.example.pangchat.message.MessageAdapter
 
 import java.util.*
 
@@ -34,21 +35,11 @@ class MessagesFragment : Fragment() {
         // LinkedList<Contact> contacts = new LinkedList<>();
         // contacts.add(new Contact(getString(R.string.nickname1), R.drawable.avatar1));
         // contacts.add(new Contact(getString(R.string.nickname2), R.drawable.avatar2));
-        // TODO
-        val contacts = LinkedList<Contact?>()
-        contacts.add(Contact(getString(R.string.nickname1), R.drawable.avatar1))
-        contacts.add(Contact(getString(R.string.nickname2), R.drawable.avatar2))
-        contacts.add(Contact(getString(R.string.nickname3), R.drawable.avatar3))
-        contacts.add(Contact(getString(R.string.nickname4), R.drawable.avatar4))
-        contacts.add(Contact(getString(R.string.nickname5), R.drawable.avatar5))
-        contacts.add(Contact(getString(R.string.nickname6), R.drawable.avatar6))
-        contacts.add(Contact(getString(R.string.nickname7), R.drawable.avatar7))
-        contacts.add(Contact(getString(R.string.nickname8), R.drawable.avatar8))
-        contacts.add(Contact(getString(R.string.nickname9), R.drawable.avatar9))
-        contacts.add(Contact(getString(R.string.nickname10), R.drawable.avatar10))
-        contacts.add(Contact(getString(R.string.nickname11), R.drawable.avatar11))
-        contacts.add(Contact(getString(R.string.nickname12), R.drawable.avatar12))
-        recyclerView?.adapter = ContactAdapter(contacts)
+        // FIXME: 目前用来测试，应该根据 chat_id 去拉取此聊天室的所有信息
+        val chats = LinkedList<String>()
+        chats.add("0")
+        // chats.add("1")
+        recyclerView?.adapter = MessageAdapter(chats);
         val linearLayoutManager = LinearLayoutManager(this.activity)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView?.layoutManager = linearLayoutManager
