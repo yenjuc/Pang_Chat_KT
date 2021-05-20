@@ -12,12 +12,28 @@ import com.example.pangchat.fragment.data.LoggedInUser
 import kotlinx.coroutines.*
 
 /**
+ * User details post authentication that is exposed to the UI
+ */
+data class LoggedInUserView(
+        val displayName: String,
+        val userId: String
+        //... other data fields that may be accessible to the UI
+)
+
+/**
  * Authentication result : success (user details) or error message.
  */
 data class LoginResult(
         val success: LoggedInUserView? = null,
         val error: Int? = null
 )
+
+/**
+ * Data validation state of the login form.
+ */
+data class LoginFormState(val usernameError: Int? = null,
+                          val passwordError: Int? = null,
+                          val isDataValid: Boolean = false)
 
 class LoginViewModel(private val loginDataSource: LoginDataSource) : ViewModel() {
 

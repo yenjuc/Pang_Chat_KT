@@ -21,7 +21,6 @@ data class LoggedInUser(
 )
 
 
-
 class LoginDataSource {
 
     data class UsernameAndPassword(val username: String, val password: String)
