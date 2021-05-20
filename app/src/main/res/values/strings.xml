@@ -7,6 +7,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Blank Settings Page</string>
 
+    <string name="BACKEND_URL">http://183.173.184.206:7000</string>
+
 
     <!-- 可以使用的昵称信息 -->
 
@@ -52,4 +54,14 @@
     <string name="paragraph10"> 商称采形象资去书己适家前料者所。队则称向七社间可起必使知安布安农向。需增林日眼做到内目劳许志较边术长表。 </string>
     <string name="paragraph11"> 安情资好社王装信权后机感义后千土。管不就常科铁量不进交压新感。选两内平真存须维他带说七。 </string>
     <string name="paragraph12"> 斗变克道我温级率同八做想原切。运它别大把西到位收边许快连与称华。何维价见史特但流世少装油教面。 </string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome!"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="title_activity_login">LoginActivity</string>
 </resources>

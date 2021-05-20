@@ -2,19 +2,21 @@ package com.example.pangchat
 
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import butterknife.BindView
-import butterknife.ButterKnife
-import com.example.pangchat.R
+import androidx.fragment.app.FragmentActivity
+import com.github.kittinunf.fuel.core.FuelManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : FragmentActivity() {
     // @BindView(R.id.bottomNavigationView)
     var bottomNavigationView: BottomNavigationView? =  null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        FuelManager.instance.basePath = resources.getString(R.string.BACKEND_URL);
+
+
         setContentView(R.layout.activity_main)
         // ButterKnife.bind(this)
 
