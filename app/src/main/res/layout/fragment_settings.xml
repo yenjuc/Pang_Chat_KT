@@ -1,14 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.pangchat.SettingsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:orientation="vertical"
+        android:layout_margin="10dp">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="6dp">
+
+            <TextView
+                android:id="@+id/avatar_description"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="@string/avatar"
+                android:gravity="center_vertical" />
+
+            <ImageView
+                android:id="@+id/avatar_icon"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:contentDescription="@string/app_name"
+                android:scrollbarAlwaysDrawVerticalTrack="true"
+                android:src="@drawable/avatar1"
+                android:scaleType="fitEnd"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="6dp">
+
+            <TextView
+                android:id="@+id/username_description"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:text="@string/nickname"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/username_text"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical|right"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="6dp">
+
+            <Button
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+                android:text="修改密码"
+                android:padding="4dp"
+                android:layout_gravity="bottom"/>
+
+        </LinearLayout>
+    </LinearLayout>
 </FrameLayout>
