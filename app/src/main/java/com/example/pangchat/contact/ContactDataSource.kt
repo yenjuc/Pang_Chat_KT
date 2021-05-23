@@ -23,7 +23,6 @@ data class ContactInfo(
         val friendsName: ArrayList<String>
 )
 
-
 class ContactDataSource {
 
     data class UserId(val userId: String)

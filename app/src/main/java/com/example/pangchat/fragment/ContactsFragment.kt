@@ -27,17 +27,11 @@ import kotlin.collections.ArrayList
  * create an instance of this fragment.
  */
 
-data class ContactInfoResult(
-        val success: ArrayList<String>? = null,
-        val error: Int? = null
-)
-
 
 class ContactsFragment : Fragment() {
     private var recyclerView: RecyclerView? = null
 
-    private val _contactResult = MutableLiveData<ContactInfoResult>()
-    val contactResult: LiveData<ContactInfoResult> = _contactResult
+    private val _contactInfo = MutableLiveData<ContactInfo>()
 
     private lateinit var contacts:LinkedList<Contact?>
 
@@ -57,7 +51,7 @@ class ContactsFragment : Fragment() {
             // 从Mainactivity的Intent中获取userId，作为入参传入网络请求
             activity?.intent?.getStringExtra("userId")?.let { getContactInfo(userId = it) }
             contacts.clear()
-            contacts.addAll(_contactResult.value?.success?.map { Contact(it, R.drawable.avatar1) }!!)
+            contacts.addAll(_contactInfo.value?.friendsName?.map { Contact(it, R.drawable.avatar1) }!!)
             recyclerView?.adapter?.notifyDataSetChanged()
         }
 
@@ -73,20 +67,21 @@ class ContactsFragment : Fragment() {
         return inflater?.inflate(R.layout.fragment_contacts, container, false)
     }
 
+    // 调用网络请求函数
     suspend fun getContactInfo(userId: String) {
         val contactDataSource = ContactDataSource()
 
-            val result: Result<ContactInfo>
+        val result: Result<ContactInfo>
 
-            withContext(Dispatchers.IO) {
-                result = contactDataSource.getContactInfo(userId)
-            }
+        withContext(Dispatchers.IO) {
+            result = contactDataSource.getContactInfo(userId)
+        }
 
-            if (result is Result.Success) {
-                _contactResult.value = ContactInfoResult(success = result.data.friendsName)
-            } else {
-                _contactResult.value = ContactInfoResult(error = R.string.login_failed)
-            }
+        if (result is Result.Success) {
+            _contactInfo.value = result.data
+        } else {
+            // TODO：抛出并解析异常
+        }
     }
 
     companion object {
