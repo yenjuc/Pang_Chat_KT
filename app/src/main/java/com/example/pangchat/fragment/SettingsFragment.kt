@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.pangchat.R
 
@@ -13,9 +15,9 @@ import com.example.pangchat.R
  * create an instance of this fragment.
  */
 class SettingsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var mParam1: String? = null
-    private var mParam2: String? = null
+    private var textView: TextView? = null
+    private var imageView: ImageView? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {

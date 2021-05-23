@@ -44,9 +44,8 @@
 
             <TextView
                 android:id="@+id/username_description"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="80dp"
-                android:layout_weight="1"
                 android:text="@string/nickname"
                 android:gravity="center_vertical"/>
 
@@ -55,6 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:layout_weight="1"
+                android:text="pwf"
                 android:gravity="center_vertical|right"/>
         </LinearLayout>
 
