@@ -22,6 +22,7 @@ class ChatsFragment : Fragment() {
     private var data: LinkedList<Chat?>? = null
     private var listView: ListView? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
         listView = getView()?.findViewById<ListView?>(R.id.listview)
         val context: Context? = activity
 
@@ -44,6 +45,7 @@ class ChatsFragment : Fragment() {
         data?.add(Chat(getString(R.string.nickname10), R.drawable.avatar10, getString(R.string.sentence10), "1998/11/11"))
         data?.add(Chat(getString(R.string.nickname9), R.drawable.avatar9, getString(R.string.sentence9), "2000/04/16"))
         data?.add(Chat(getString(R.string.nickname10), R.drawable.avatar10, getString(R.string.sentence10), "1998/11/11"))
+
         listView?.adapter = ChatAdapter(data, context)
     }
 

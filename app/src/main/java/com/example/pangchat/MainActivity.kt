@@ -17,6 +17,8 @@ class MainActivity : FragmentActivity() {
 
         FuelManager.instance.basePath = resources.getString(R.string.BACKEND_URL);
 
+        val intent = intent
+        val userId = intent.getStringExtra("userId")
 
         setContentView(R.layout.activity_main)
         // ButterKnife.bind(this)
@@ -52,7 +54,7 @@ class MainActivity : FragmentActivity() {
                     setCurrentFragment(settingsFragment)
                     return@setOnNavigationItemSelectedListener true
                 }
-                R.id.messages ->{
+                R.id.messages -> {
                     setCurrentFragment(messagesFragment)
                     return@setOnNavigationItemSelectedListener true
                 }

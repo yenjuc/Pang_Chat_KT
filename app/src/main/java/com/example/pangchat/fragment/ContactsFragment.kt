@@ -5,20 +5,42 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pangchat.R
 import com.example.pangchat.contact.Contact
 import com.example.pangchat.contact.ContactAdapter
+import com.example.pangchat.contact.ContactDataSource
+import com.example.pangchat.contact.ContactInfo
+import com.example.pangchat.fragment.data.Result
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * A simple [Fragment] subclass.
  * Use the [ContactsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+
+data class ContactInfoResult(
+        val success: ArrayList<String>? = null,
+        val error: Int? = null
+)
+
+
 class ContactsFragment : Fragment() {
     private var recyclerView: RecyclerView? = null
+
+    private val _contactResult = MutableLiveData<ContactInfoResult>()
+    val contactResult: LiveData<ContactInfoResult> = _contactResult
+
+    private lateinit var contacts:LinkedList<Contact?>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -26,24 +48,20 @@ class ContactsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView = view.findViewById(R.id.contacts_recyclerview)
 
-        // 添加数据，为recyclerView绑定Adapter、LayoutManager
-        // 添加数据的样例代码如下:
-        // LinkedList<Contact> contacts = new LinkedList<>();
-        // contacts.add(new Contact(getString(R.string.nickname1), R.drawable.avatar1));
-        // contacts.add(new Contact(getString(R.string.nickname2), R.drawable.avatar2));
-        // TODO
-        val contacts = LinkedList<Contact?>()
-        contacts.add(Contact(getString(R.string.nickname1), R.drawable.avatar1))
-        contacts.add(Contact(getString(R.string.nickname2), R.drawable.avatar2))
-        contacts.add(Contact(getString(R.string.nickname3), R.drawable.avatar3))
-        contacts.add(Contact(getString(R.string.nickname4), R.drawable.avatar4))
-        contacts.add(Contact(getString(R.string.nickname5), R.drawable.avatar5))
-        contacts.add(Contact(getString(R.string.nickname6), R.drawable.avatar6))
-        contacts.add(Contact(getString(R.string.nickname7), R.drawable.avatar7))
-        contacts.add(Contact(getString(R.string.nickname8), R.drawable.avatar8))
-        contacts.add(Contact(getString(R.string.nickname9), R.drawable.avatar9))
-        contacts.add(Contact(getString(R.string.nickname10), R.drawable.avatar10))
+        contacts = LinkedList<Contact?>()
+
         recyclerView?.adapter = ContactAdapter(contacts)
+
+        lifecycleScope.launch {
+
+            // 从Mainactivity的Intent中获取userId，作为入参传入网络请求
+            activity?.intent?.getStringExtra("userId")?.let { getContactInfo(userId = it) }
+            contacts.clear()
+            contacts.addAll(_contactResult.value?.success?.map { Contact(it, R.drawable.avatar1) }!!)
+            recyclerView?.adapter?.notifyDataSetChanged()
+        }
+
+
         val linearLayoutManager = LinearLayoutManager(this.activity)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView?.layoutManager = linearLayoutManager
@@ -53,6 +71,22 @@ class ContactsFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater?.inflate(R.layout.fragment_contacts, container, false)
+    }
+
+    suspend fun getContactInfo(userId: String) {
+        val contactDataSource = ContactDataSource()
+
+            val result: Result<ContactInfo>
+
+            withContext(Dispatchers.IO) {
+                result = contactDataSource.getContactInfo(userId)
+            }
+
+            if (result is Result.Success) {
+                _contactResult.value = ContactInfoResult(success = result.data.friendsName)
+            } else {
+                _contactResult.value = ContactInfoResult(error = R.string.login_failed)
+            }
     }
 
     companion object {

@@ -39,6 +39,7 @@ class MessagesFragment : Fragment() {
         val chats = LinkedList<String>()
         chats.add("0")
         // chats.add("1")
+
         recyclerView?.adapter = MessageAdapter(chats);
         val linearLayoutManager = LinearLayoutManager(this.activity)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
