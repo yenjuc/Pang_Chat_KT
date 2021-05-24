@@ -1,6 +1,8 @@
 package com.example.pangchat
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -54,8 +56,18 @@ class MainActivity : FragmentActivity() {
                     setCurrentFragment(settingsFragment)
                     return@setOnNavigationItemSelectedListener true
                 }
+                //  FIXME: delete me
                 R.id.messages -> {
-                    setCurrentFragment(messagesFragment)
+                    // setCurrentFragment(messagesFragment)
+                    val intent = Intent(MainActivity@ this, ChatActivity::class.java)
+                    // FIXME: 应改成 chatId
+                    intent.putExtra("messageId", "0")
+                    // correct one
+                    try {
+                        startActivity(intent)
+                    } catch (ActivityNotFoundException: Exception) {
+                        Log.d("ImplicitIntents", "Can't handle this!")
+                    }
                     return@setOnNavigationItemSelectedListener true
                 }
             }

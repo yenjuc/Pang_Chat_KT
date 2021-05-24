@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
 
-class MessageAdapter(private val data: LinkedList<String>?) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
+class MessageAdapter(private val data: LinkedList<Message?>) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
     override fun getItemViewType(position: Int): Int {
         // TODO
         // return number of images in the post
@@ -33,37 +33,14 @@ class MessageAdapter(private val data: LinkedList<String>?) : RecyclerView.Adapt
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         // TODO
-        val messageId = data?.get(position)
+        val message = data?.get(position)
 
-        /*
-        MainScope().launch {
-
-            val result: Result<MessageInfo>
-            val messageRequest = MessageRequest()
-
-            withContext(Dispatchers.IO) {
-                if(messageId != null){
-                    result = messageRequest.getMessage(messageId)
-                    if (result is Result.Success) {
-                        //_loginResult.value = LoginResult(success = LoggedInUserView(displayName = result.data.username, userId = result.data.userId))
-                        val message = Message(result.data.messageId, result.data.senderId, result.data.nickname, result.data.avatarIcon, result.data.recalled, result.data.content, result.data.time)
-                        val viewHolder = holder as MessageViewHolder
-                        // viewHolder.avatar = message.getAvatarIcon()
-                        // FIXME:
-
-                        viewHolder.nickname.text = message.getNickname()
-                        viewHolder.content.text = message.getContent()
-                        viewHolder.time.text = message.getTime()
-                    } else {
-                        // _loginResult.value = LoginResult(error = R.string.login_failed)
-                    }
-                }
-            }
-
-
+        val viewHolder = holder as MessageViewHolder
+        if (message != null) {
+            viewHolder.nickname.text = message.getNickname()
+            viewHolder.content.text = message.getContent()
+            viewHolder.time.text = message.getTime()
         }
-
-         */
     }
 
 
