@@ -19,14 +19,19 @@ class MessageAdapter(private val data: LinkedList<Message?>) : RecyclerView.Adap
         // TODO
         // return number of images in the post
        //  return data?.get(position)!!.getMessageType()
-        // FIXME: 假设目前全部都是 text。之后应该要考虑 1. 是接收方还是发出方 2.
-        return 0
+        // FIXME: 假设目前全部都是 text。之后应该要考虑 1. 是接收方还是发出方 2. 哪种类型 3. 是否recalled
+        if(data?.get(position)?.getNickname()?.compareTo("pwf") == 0){
+            return 1
+        }else{
+            return 0
+        }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        // TODO
         val view: View?
-        val messageLayout = intArrayOf(R.layout.item_message_receive)
+        // TODO: 增加更多布局
+        val messageLayout = intArrayOf(R.layout.item_message_receive_0text, R.layout.item_message_send_0text)
         view = LayoutInflater.from(parent.context).inflate(messageLayout[viewType], parent, false)
         return MessageViewHolder(view, viewType)
     }
@@ -39,7 +44,7 @@ class MessageAdapter(private val data: LinkedList<Message?>) : RecyclerView.Adap
         if (message != null) {
             viewHolder.nickname.text = message.getNickname()
             viewHolder.content.text = message.getContent()
-            viewHolder.time.text = message.getTime()
+            // viewHolder.time.text = message.getTime()
         }
     }
 
@@ -57,7 +62,7 @@ class MessageAdapter(private val data: LinkedList<Message?>) : RecyclerView.Adap
         var avatar: ImageView
         var nickname: TextView
         var content: TextView
-        var time: TextView
+        // var time: TextView
         // var imgs: Array<ImageView?>? = null
 
         // TODO: 添加其他包含的其他控件
@@ -65,7 +70,7 @@ class MessageAdapter(private val data: LinkedList<Message?>) : RecyclerView.Adap
             avatar = itemView.findViewById<ImageView?>(R.id.avatar_icon)
             nickname = itemView.findViewById<TextView?>(R.id.nickname_text)
             content = itemView.findViewById<TextView?>(R.id.message_content)
-            time = itemView.findViewById<TextView?>(R.id.message_time)
+            // time = itemView.findViewById<TextView?>(R.id.message_time)
             // TODO: 根据不同 view type 绑定更多不同部件
             /*
             if (imageCount != 0) {

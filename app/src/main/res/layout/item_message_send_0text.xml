@@ -2,8 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="8dp"
+    android:layout_marginHorizontal="4dp"
     android:layout_marginVertical="4dp"
+    android:layoutDirection="rtl"
     android:orientation="horizontal"
     android:paddingHorizontal="6dp"
     android:paddingVertical="4dp">
@@ -12,14 +13,14 @@
         android:id="@+id/avatar_icon"
         android:layout_width="@dimen/message_minHeight"
         android:layout_height="@dimen/message_minHeight"
-        android:layout_gravity="clip_horizontal"
         android:contentDescription="@string/app_name"
         android:src="@drawable/avatar1" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="6dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="@dimen/message_bubble_end_margin"
         android:orientation="vertical">
 
         <TextView
@@ -32,13 +33,13 @@
             android:text="昵称"
             android:textSize="14sp"
             android:textStyle="normal"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/message_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/receive_msg_bg"
+            android:background="@drawable/send_msg_bg"
             android:clickable="true"
             android:gravity="center_vertical"
             android:longClickable="true"

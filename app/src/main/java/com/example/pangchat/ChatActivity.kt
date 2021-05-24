@@ -31,15 +31,19 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
+        // FIXME: 应改成 chatId
+        val messageId = intent.getStringExtra("messageId")
+
         // FIXME: 遍历某chat中的所有messageId
         val messageIds = LinkedList<String>()
         messageIds.add("0")
         messageIds.add("1")
         messageIds.add("2")
+        messageIds.add("3")
+        messageIds.add("4")
+        messageIds.add("5")
 
 
-        // FIXME: 应改成 chatId
-        val messageId = intent.getStringExtra("messageId")
 
         val recyclerView = findViewById<RecyclerView>(R.id.chatRecyclerView)
 
@@ -69,7 +73,7 @@ class ChatActivity : AppCompatActivity() {
         back.setOnClickListener { this.finish() }
 
         val chatname = findViewById<TextView>(R.id.chatName)
-        // TODO: 设置聊天室名称为聊天室名
+        // TODO: 设置聊天室名称为聊天室名(由intent取得)
         chatname.text = "学习的胖"
 
         val chatinfo = findViewById<ImageView>(R.id.chatInfo)
