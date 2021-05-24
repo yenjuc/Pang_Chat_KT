@@ -7,9 +7,12 @@ import androidx.fragment.app.FragmentActivity
 import com.example.pangchat.fragment.*
 import com.github.kittinunf.fuel.core.FuelManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
+
 
 class MainActivity : FragmentActivity() {
     // @BindView(R.id.bottomNavigationView)
+    var topNavigationView: NavigationView? = null
     var bottomNavigationView: BottomNavigationView? =  null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +36,11 @@ class MainActivity : FragmentActivity() {
 
         // FIXME: 暂时用一个 bottom navigation bottom 测试
         val messagesFragment: Fragment = MessagesFragment()
+
+
+
+
+        topNavigationView = findViewById(R.id.topNavigationView)
 
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
@@ -69,4 +77,7 @@ class MainActivity : FragmentActivity() {
             supportFragmentManager.beginTransaction().replace(R.id.flFragment, fragment).commit()
         }
     }
+
+
 }
+
