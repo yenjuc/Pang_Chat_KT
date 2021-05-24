@@ -42,6 +42,7 @@ class SettingsFragment : Fragment() {
             activity?.let { it1 -> intent.setClass(it1, ModifyInfoActivity::class.java) }
             intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
             intent.putExtra("username", activity?.intent?.getStringExtra("username"))
+            intent.putExtra("modifyKey", "username")
 
             startActivity(intent)
 

@@ -38,24 +38,26 @@ class ModifyInfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         editText = getView()?.findViewById<EditText>(R.id.newUsername)
-
         button = getView()?.findViewById<Button>(R.id.button_save)
-
-
-        val context: Context? = activity
+        val modifyKey : String ? = activity?.intent?.getStringExtra("modifyKey")
 
         button?.setOnClickListener(View.OnClickListener{
             Toast.makeText(activity, "提交修改", Toast.LENGTH_LONG).show()
 
             lifecycleScope.launch(){
-                val newUsername : String = editText?.getText().toString()
-                activity?.intent?.getStringExtra("userId")?.let { it1 -> modifyUsername(it1, newUsername) }
+                val content : String = editText?.getText().toString()
 
-                // TODO： 异常处理
+                if (modifyKey == "username") {
+                    activity?.intent?.getStringExtra("userId")?.let { it1 -> modifyUsername(it1, content) }
+                    // TODO： 异常处理
+                }
+                // 也可以用于修改其它信息
+
+
                 val intent = Intent()
                 activity?.let { it1 -> intent.setClass(it1, MainActivity::class.java) }
                 intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
-                intent.putExtra("username", newUsername)
+                intent.putExtra(modifyKey, content)
 
                 startActivity(intent)
 
