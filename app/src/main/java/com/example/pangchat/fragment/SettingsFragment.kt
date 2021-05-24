@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -20,7 +21,7 @@ import androidx.fragment.app.Fragment
 class SettingsFragment : Fragment() {
     private var textView: TextView? = null
     private var imageView: ImageView? = null
-
+    private var button: Button? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,12 +32,17 @@ class SettingsFragment : Fragment() {
 
         textView = getView()?.findViewById<TextView?>(R.id.username_text)
         textView?.setText(activity?.intent?.getStringExtra("username"))
+        imageView = getView()?.findViewById<ImageView>(R.id.avatar_icon)
         imageView?.setImageResource(R.drawable.avatar1)
+        button = getView()?.findViewById<Button>(R.id.button_modify)
 
-        val context: Context? = activity
 
-        textView?.setOnClickListener(View.OnClickListener{
+        textView?.setOnClickListener(View.OnClickListener {
             Toast.makeText(activity, "修改昵称", Toast.LENGTH_LONG).show()
+
+            // 进入修改昵称页面
+            // 想法：统一写一个修改信息的fragment  activity
+            // 根据修改内容的不同显示不同布局
 
             val intent = Intent()
             activity?.let { it1 -> intent.setClass(it1, ModifyInfoActivity::class.java) }
@@ -48,11 +54,21 @@ class SettingsFragment : Fragment() {
 
             activity?.finish()
 
-            // TODO: 进入修改昵称页面
-            // 想法：统一写一个修改信息的fragment  activity
-            // 根据修改内容的不同显示不同布局
         })
 
+        button?.setOnClickListener(View.OnClickListener {
+            Toast.makeText(activity, "修改密码", Toast.LENGTH_LONG).show()
+
+            val intent = Intent()
+            activity?.let { it1 -> intent.setClass(it1, ModifyInfoActivity::class.java) }
+            intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
+            intent.putExtra("username", activity?.intent?.getStringExtra("username"))
+            intent.putExtra("modifyKey", "password")
+
+            startActivity(intent)
+
+            activity?.finish()
+        })
     }
 
 

@@ -5,6 +5,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.pangchat.fragment.ModifyInfoFragment">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
     <EditText
         android:id="@+id/newUsername"
         android:layout_width="match_parent"
@@ -16,6 +22,33 @@
         android:selectAllOnFocus="true"
         android:autofillHints="" />
 
+        <EditText
+            android:id="@+id/newPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="24dp"
+            android:hint="new password"
+            android:selectAllOnFocus="true"
+            android:autofillHints=""
+            android:inputType="textPassword"
+            android:visibility="invisible"/>
+
+        <EditText
+            android:id="@+id/newPasswordAgain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="24dp"
+            android:hint="new password again"
+            android:selectAllOnFocus="true"
+            android:autofillHints=""
+            android:inputType="textPassword"
+            android:visibility="invisible"/>
+
+    </LinearLayout>
     <Button
         android:id="@+id/button_save"
         android:layout_width="wrap_content"
