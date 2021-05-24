@@ -12,6 +12,7 @@
         android:theme="@style/Theme.pangchat"
         android:usesCleartextTraffic="true">
         <activity android:name=".MainActivity" />
+        <activity android:name=".ModifyInfoActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

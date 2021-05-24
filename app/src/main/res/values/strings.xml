@@ -9,9 +9,10 @@
     <!-- Setting界面文字 -->
     <string name="avatar">Avatar</string>
     <string name="nickname">Nickname</string>
+    <string name="save">Save</string>
 
     <!-- 全局配置 -->
-    <string name="BACKEND_URL">http://183.172.199.33:7000</string>
+    <string name="BACKEND_URL">http://183.173.186.143:7000</string>
 
 
     <!-- 可以使用的昵称信息 -->
