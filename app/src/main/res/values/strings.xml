@@ -8,7 +8,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Blank Settings Page</string>
 
-    <string name="BACKEND_URL">http://183.172.182.59:7000</string>
+    <string name="BACKEND_URL">http://183.173.184.206:7000</string>
 
 
     <!-- 可以使用的昵称信息 -->
