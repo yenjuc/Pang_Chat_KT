@@ -1,10 +1,13 @@
 package com.example.pangchat
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
@@ -29,6 +32,7 @@ import kotlin.collections.ArrayList
 
 
 class ContactsFragment : Fragment() {
+    private lateinit var mContext: FragmentActivity
     private var recyclerView: RecyclerView? = null
 
     private val _contactInfo = MutableLiveData<ContactInfo>()
@@ -37,10 +41,19 @@ class ContactsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.mContext = requireActivity();
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView = view.findViewById(R.id.contacts_recyclerview)
+
+//        recyclerView?.setOnClickListener {
+//            Toast.makeText(
+//                    mContext.applicationContext,
+//                    "click!",
+//                    Toast.LENGTH_LONG
+//            ).show()
+//        }
 
         contacts = LinkedList<Contact?>()
 
