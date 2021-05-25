@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.R
 import com.example.pangchat.chat.Chat
 import com.example.pangchat.chat.ChatAdapter
@@ -20,11 +22,11 @@ import java.util.*
 class ChatsFragment : Fragment() {
     private val chatAdapter: ChatAdapter? = null
     private var data: LinkedList<Chat?>? = null
-    private var listView: ListView? = null
+    private var recyclerView: RecyclerView? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        listView = getView()?.findViewById<ListView?>(R.id.listview)
-        val context: Context? = activity
+        recyclerView = view.findViewById<RecyclerView?>(R.id.chat_recyclerview)
+        // val context: Context? = activity
 
         // 向ListView 添加数据，新建ChatAdapter，并向listView绑定该Adapter
         // 添加数据的样例代码如下:
@@ -33,8 +35,9 @@ class ChatsFragment : Fragment() {
         // data.add(new Chat(getString(R.string.nickname2), R.drawable.avatar2, getString(R.string.sentence2), "2021/01/01"));
         // TODO
         data = LinkedList()
-        data?.add(Chat(getString(R.string.nickname1), R.drawable.avatar1, getString(R.string.sentence1), "1995/12/30"))
-        data?.add(Chat(getString(R.string.nickname2), R.drawable.avatar2, getString(R.string.sentence2), "1990/01/13"))
+        data?.add(Chat("60ac6c49ebad580e2632520b",getString(R.string.nickname1), R.drawable.avatar1, getString(R.string.sentence1), "1995/12/30"))
+        data?.add(Chat("60ac70310652f28934da7960",getString(R.string.nickname2), R.drawable.avatar2, getString(R.string.sentence2), "1990/01/13"))
+        /*
         data?.add(Chat(getString(R.string.nickname3), R.drawable.avatar3, getString(R.string.sentence3), "2009/06/21"))
         data?.add(Chat(getString(R.string.nickname4), R.drawable.avatar4, getString(R.string.sentence4), "2001/04/26"))
         data?.add(Chat(getString(R.string.nickname5), R.drawable.avatar5, getString(R.string.sentence5), "1982/07/03"))
@@ -46,7 +49,12 @@ class ChatsFragment : Fragment() {
         data?.add(Chat(getString(R.string.nickname9), R.drawable.avatar9, getString(R.string.sentence9), "2000/04/16"))
         data?.add(Chat(getString(R.string.nickname10), R.drawable.avatar10, getString(R.string.sentence10), "1998/11/11"))
 
-        listView?.adapter = ChatAdapter(data, context)
+         */
+
+        recyclerView?.adapter = ChatAdapter(data)
+        val linearLayoutManager = LinearLayoutManager(this.activity)
+        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        recyclerView?.layoutManager = linearLayoutManager
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

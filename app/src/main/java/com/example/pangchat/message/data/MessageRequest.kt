@@ -13,7 +13,6 @@ data class MessageInfo(
         val messageId: String,
         val senderId: String,
         val nickname: String,
-        // TODO: chance Int into String(URL)
         val avatarIcon: String,
         val recalled: Boolean,
         val content: String,
@@ -21,7 +20,6 @@ data class MessageInfo(
 )
 
 class MessageRequest {
-    // data class (val username: String, val password: String)
 
     data class MessageId(val messageId: String)
 

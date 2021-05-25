@@ -8,49 +8,42 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.R
+import com.example.pangchat.chat.ChatAdapter.ChatViewHolder
 import java.util.*
 
-class ChatAdapter(private val data: LinkedList<Chat?>?, private val context: Context?) : BaseAdapter() {
-    override fun getCount(): Int {
+class ChatAdapter(private val data: LinkedList<Chat?>?) : RecyclerView.Adapter<ChatViewHolder?>() {
+
+    class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var avatar: ImageView? = itemView.findViewById<ImageView?>(R.id.avatar_icon)
+        var nickname: TextView? = itemView.findViewById<TextView?>(R.id.nickname_text)
+        val lastTime: TextView? = itemView.findViewById<TextView?>(R.id.last_speak_time_text)
+        val lastConx: TextView? = itemView.findViewById<TextView?>(R.id.last_speak_text)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
+        // TODO
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_list_chat, parent, false)
+        return ChatViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
+        // TODO
+        val chat = data?.get(position)
+        if (chat != null) {
+            holder.avatar?.setImageResource(chat.getAvatarIcon())
+            holder.nickname?.text = chat.getNickname()
+            holder.lastTime?.text = chat.getLastSpeakTime()
+            holder.lastConx?.text = chat.getLastSpeak()
+        }
+    }
+
+    override fun getItemCount(): Int {
         if (data != null) {
             return data.size
         }
         return 0
-    }
-
-    override fun getItem(position: Int): Any? {
-        if (data != null) {
-            return data[position]
-        }
-        return null
-    }
-
-    override fun getItemId(position: Int): Long {
-        return 0
-    }
-
-    @SuppressLint("ViewHolder")
-    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
-        var convertView = convertView
-        convertView = LayoutInflater.from(context).inflate(R.layout.item_list_chat, parent, false)
-        val chat = data?.get(position)
-        // 修改View中各个控件的属性，使之显示对应位置Chat的内容
-        // 使用convertView.findViewById()方法来寻找对应的控件
-        // 控件ID见 res/layout/item_list_chat.xml
-        // TODO
-        val avatar = convertView.findViewById<ImageView?>(R.id.avatar_icon)
-        if(chat != null){
-            avatar?.setImageResource(chat.getAvatarIcon())
-            val nickname = convertView.findViewById<TextView?>(R.id.nickname_text)
-            nickname?.text = chat.getNickname()
-            val lastTime = convertView.findViewById<TextView?>(R.id.last_speak_time_text)
-            lastTime?.text = chat.getLastSpeakTime()
-            val lastConx = convertView.findViewById<TextView?>(R.id.last_speak_text)
-            lastConx?.text = chat.getLastSpeak()
-            return convertView
-        }
-        return null
     }
 
 }

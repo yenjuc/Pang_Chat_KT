@@ -1,6 +1,6 @@
 package com.example.pangchat
 
-import android.media.Image
+
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -36,12 +36,20 @@ class ChatActivity : AppCompatActivity() {
 
         // FIXME: 遍历某chat中的所有messageId
         val messageIds = LinkedList<String>()
+        messageIds.add("60abcaee1695b922b065328c")
+        messageIds.add("60abcd4a1695b922b065328d")
+        messageIds.add("60a68b9085acff97802413c5")
+        messageIds.add("60a68b9085acff97802413c6")
+
+        /*
         messageIds.add("0")
         messageIds.add("1")
         messageIds.add("2")
         messageIds.add("3")
         messageIds.add("4")
         messageIds.add("5")
+
+         */
 
 
 
