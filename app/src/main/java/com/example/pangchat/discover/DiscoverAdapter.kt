@@ -1,5 +1,13 @@
 package com.example.pangchat.discover
 
+import android.graphics.Color
+import android.graphics.Typeface
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextUtils
+import android.text.style.BackgroundColorSpan
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +16,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.R
 import java.util.*
+
 
 class DiscoverAdapter(private val data: LinkedList<Discover?>?) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
     override fun getItemViewType(position: Int): Int {
@@ -33,6 +42,17 @@ class DiscoverAdapter(private val data: LinkedList<Discover?>?) : RecyclerView.A
             viewHolder.nickname?.text = discover.getNickname()
             viewHolder.content?.text = discover.getText()
             viewHolder.postTime?.text = discover.getPublishedTime()
+            if(discover.getLikes()==null){
+                viewHolder.Likes?.visibility = View.GONE
+
+            }
+            val comment:String = "秃头人士：天亮了"
+            val span = SpannableString(comment)
+            //设置字体前景色
+            span.setSpan( ForegroundColorSpan(Color.parseColor("#4d88ff")), 0, 4, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            span.setSpan(StyleSpan(Typeface.BOLD), 0, 4, Spanned.SPAN_INCLUSIVE_EXCLUSIVE); //正常
+            viewHolder.comment?.text = span
+            viewHolder.Likes?.text = discover.getLikes()?.let { TextUtils.join(",", it) }
             val viewType = getItemViewType(position)
 
             for (i in 0 until viewType) {
@@ -59,6 +79,8 @@ class DiscoverAdapter(private val data: LinkedList<Discover?>?) : RecyclerView.A
         var content: TextView?
         var postTime: TextView?
         var imgs: Array<ImageView?>? = null
+        var Likes: TextView?
+        var comment: TextView?
 
         // TODO: 添加其他包含的其他控件
         init {
@@ -66,6 +88,8 @@ class DiscoverAdapter(private val data: LinkedList<Discover?>?) : RecyclerView.A
             nickname = itemView.findViewById<TextView?>(R.id.nickname_text)
             content = itemView.findViewById<TextView?>(R.id.post_content)
             postTime = itemView.findViewById<TextView?>(R.id.post_time)
+            Likes = itemView.findViewById<TextView?>(R.id.post_like)
+            comment = itemView.findViewById<TextView?>(R.id.post_comment1)
             if (imageCount != 0) {
                 val imgView = intArrayOf(R.id.post_image_0, R.id.post_image_1, R.id.post_image_2, R.id.post_image_3)
                 imgs = arrayOfNulls<ImageView?>(imageCount)
