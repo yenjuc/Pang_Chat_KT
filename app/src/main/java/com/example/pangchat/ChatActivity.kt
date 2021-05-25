@@ -1,8 +1,10 @@
 package com.example.pangchat
 
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -11,6 +13,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pangchat.chat.data.ChatInfo
 import com.example.pangchat.message.data.Result
 import com.example.pangchat.message.Message
 import com.example.pangchat.message.MessageAdapter
@@ -86,7 +89,14 @@ class ChatActivity : AppCompatActivity() {
 
         val chatinfo = findViewById<ImageView>(R.id.chatInfo)
         // TODO: 进入聊天室详情页面 activity
-        // chatinfo.setOnClickListener {  }
+        chatinfo.setOnClickListener {
+            val intent = Intent(ChatActivity@ this, ChatInfoActivity::class.java)
+            try {
+                startActivity(intent)
+            } catch (ActivityNotFoundException: Exception) {
+                Log.d("ImplicitIntents", "Can't handle this!")
+            }
+        }
 
         // TODO: set 各种 listener
 

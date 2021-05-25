@@ -11,4 +11,5 @@
     <color name="grey">#FFCCCCCC</color>
     <color name="mid_grey">#FFBBBBBB</color>
     <color name="dark_grey">#FF333333</color>
+    <color name="notify_red">#FFC62828</color>
 </resources>

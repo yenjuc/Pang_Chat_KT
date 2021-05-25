@@ -8,11 +8,19 @@
 
 
     <string name="BACKEND_URL">http://183.172.182.59:7000</string>
+    <!--string name="BACKEND_URL">http://172.30.7.229:7000</string-->
 
     <string name="avatar">Avatar</string>
     <string name="nickname">Nickname</string>
     <string name="save">Save</string>
 
+    <!-- 聊天详情页面 -->
+    <string name="chatInfoTitle">聊天信息</string>
+    <string name="chatGroupName">群组名称</string>
+    <string name="chatSearch">查找聊天记录</string>
+    <string name="chatPin">置顶聊天</string>
+    <string name="chatMute">消息免打扰</string>
+    <string name="chatLeave">删除并退出群聊</string>
 
 
     <!-- 可以使用的昵称信息 -->

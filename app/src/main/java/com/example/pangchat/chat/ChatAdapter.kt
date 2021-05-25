@@ -1,13 +1,12 @@
 package com.example.pangchat.chat
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.R
 import com.example.pangchat.chat.ChatAdapter.ChatViewHolder
@@ -45,5 +44,14 @@ class ChatAdapter(private val data: LinkedList<Chat?>?) : RecyclerView.Adapter<C
         }
         return 0
     }
+
+    /*
+    inner class onTouch: View.OnTouchListener{
+        override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+            var position: Int = v!!.getTag() as Int
+        }
+    }
+
+     */
 
 }
