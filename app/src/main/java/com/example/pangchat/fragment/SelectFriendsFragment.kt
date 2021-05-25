@@ -26,14 +26,8 @@ import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.collections.ArrayList
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ContactsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 
-
-class ContactsFragment : Fragment() {
+class SelectFriendsFragment : Fragment() {
     private lateinit var mContext: FragmentActivity
     private var recyclerView: RecyclerView? = null
 
@@ -71,7 +65,7 @@ class ContactsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater?.inflate(R.layout.fragment_contacts, container, false)
+        return inflater?.inflate(R.layout.fragment_select_friends, container, false)
     }
 
     // 调用网络请求函数
@@ -99,8 +93,8 @@ class ContactsFragment : Fragment() {
          * @return A new instance of fragment ContactsFragment.
          */
         // TODO: Rename and change types and number of parameters
-        fun newInstance(): ContactsFragment? {
-            return ContactsFragment()
+        fun newInstance(): SelectFriendsFragment? {
+            return SelectFriendsFragment()
         }
     }
 }

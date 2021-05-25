@@ -3,7 +3,9 @@ package com.example.pangchat.contact
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.RadioButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.R
@@ -18,7 +20,6 @@ class ContactAdapter(private val data: LinkedList<Contact?>?) : RecyclerView.Ada
     class ContactViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var avatar: ImageView? = itemView.findViewById<ImageView?>(R.id.avatar_icon)
         var nickname: TextView? = itemView.findViewById<TextView?>(R.id.nickname_text)
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ContactViewHolder {
