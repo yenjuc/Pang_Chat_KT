@@ -1,7 +1,11 @@
 package com.example.pangchat
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.example.pangchat.fragment.*
@@ -14,6 +18,8 @@ class MainActivity : FragmentActivity() {
     // @BindView(R.id.bottomNavigationView)
     var topNavigationView: NavigationView? = null
     var bottomNavigationView: BottomNavigationView? =  null
+    var searchView: ImageView? = null
+    var menuView: ImageView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,11 +43,19 @@ class MainActivity : FragmentActivity() {
         // FIXME: 暂时用一个 bottom navigation bottom 测试
         val messagesFragment: Fragment = MessagesFragment()
 
+        topNavigationView = findViewById<NavigationView>(R.id.topNavigationView)
 
+        val headerView : View? = topNavigationView?.getHeaderView(0)
+        searchView = headerView?.findViewById<ImageView>(R.id.search)
 
+        searchView?.setOnClickListener(View.OnClickListener {
+            Toast.makeText(this, "进入搜索", Toast.LENGTH_LONG).show()
 
-        topNavigationView = findViewById(R.id.topNavigationView)
+            val intent = Intent()
+            intent.setClass(this@MainActivity, SearchActivity::class.java)
 
+            startActivity(intent)
+        })
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView?.setOnNavigationItemSelectedListener(BottomNavigationView.OnNavigationItemSelectedListener setOnNavigationItemSelectedListener@{ item: MenuItem? ->

@@ -12,7 +12,7 @@
     <string name="save">Save</string>
 
     <!-- 全局配置 -->
-    <string name="BACKEND_URL">http://183.172.197.77:7000</string>
+    <string name="BACKEND_URL">http://183.173.188.141:7000</string>
 
 
     <!-- 可以使用的昵称信息 -->
@@ -69,4 +69,12 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="title_activity_login">LoginActivity</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_search">SearchActivity</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World!</string>
 </resources>

@@ -47,14 +47,6 @@ class ContactsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView = view.findViewById(R.id.contacts_recyclerview)
 
-//        recyclerView?.setOnClickListener {
-//            Toast.makeText(
-//                    mContext.applicationContext,
-//                    "click!",
-//                    Toast.LENGTH_LONG
-//            ).show()
-//        }
-
         contacts = LinkedList<Contact?>()
 
         recyclerView?.adapter = ContactAdapter(contacts)

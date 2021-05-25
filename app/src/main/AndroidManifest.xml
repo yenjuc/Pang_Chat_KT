@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.pangchat">
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -11,6 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.pangchat"
         android:usesCleartextTraffic="true">
+
+        <activity android:name=".SearchActivity"/>
         <activity android:name=".MainActivity" />
         <activity android:name=".ModifyInfoActivity" />
         <activity android:name=".LoginActivity">
@@ -20,7 +25,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
     </application>
 
 </manifest>

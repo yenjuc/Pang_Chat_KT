@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.SearchFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="10dp">
+
+            <ImageView
+                android:id="@+id/search"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:scaleType="centerInside"
+                android:src="@drawable/baseline_search_black_24dp"
+                android:contentDescription="TODO" />
+
+            <EditText
+                android:id="@+id/search_content"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:singleLine="true"/>
+
+            <Button
+                android:id="@+id/search_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="取消"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</FrameLayout>
