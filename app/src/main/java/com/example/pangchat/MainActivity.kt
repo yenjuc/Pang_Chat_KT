@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -46,6 +47,7 @@ class MainActivity : FragmentActivity() {
         topNavigationView = findViewById<NavigationView>(R.id.topNavigationView)
 
         val headerView : View? = topNavigationView?.getHeaderView(0)
+
         searchView = headerView?.findViewById<ImageView>(R.id.search)
 
         searchView?.setOnClickListener(View.OnClickListener {
@@ -56,6 +58,15 @@ class MainActivity : FragmentActivity() {
 
             startActivity(intent)
         })
+
+        menuView = headerView?.findViewById<ImageView>(R.id.menu)
+
+        menuView?.setOnClickListener(View.OnClickListener {
+            Toast.makeText(this, "显示菜单", Toast.LENGTH_LONG).show()
+
+            showPopupMenu(menuView!!)
+        })
+
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
         bottomNavigationView?.setOnNavigationItemSelectedListener(BottomNavigationView.OnNavigationItemSelectedListener setOnNavigationItemSelectedListener@{ item: MenuItem? ->
@@ -92,6 +103,30 @@ class MainActivity : FragmentActivity() {
         }
     }
 
+    private fun showPopupMenu(view: View) {
+        val popupMenu = PopupMenu(this, view)
+        popupMenu.menuInflater.inflate(R.menu.add_nav_menu, popupMenu.menu)
+
+        popupMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item: MenuItem? ->
+            when (item?.itemId) {
+                R.id.newgroup -> {
+                    Toast.makeText(this, "显示group", Toast.LENGTH_LONG).show()
+
+
+                    return@OnMenuItemClickListener true
+                }
+                R.id.newfriend -> {
+                    Toast.makeText(this, "显示friend", Toast.LENGTH_LONG).show()
+
+
+                    return@OnMenuItemClickListener true
+                }
+            }
+            false
+        })
+
+        popupMenu.show()
+    }
 
 }
 
