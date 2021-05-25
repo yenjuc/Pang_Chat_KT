@@ -25,6 +25,7 @@ class MainActivity : FragmentActivity() {
     var bottomNavigationView: BottomNavigationView? =  null
     var searchView: ImageView? = null
     var menuView: ImageView? = null
+    var userId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +33,7 @@ class MainActivity : FragmentActivity() {
         FuelManager.instance.basePath = resources.getString(R.string.BACKEND_URL);
 
         val intent = intent
-        val userId = intent.getStringExtra("userId")
+        userId = intent.getStringExtra("userId")
 
         setContentView(R.layout.activity_main)
         // ButterKnife.bind(this)
@@ -59,7 +60,8 @@ class MainActivity : FragmentActivity() {
 
             val intent = Intent()
             // 表示这个页面是搜索现有的联系人
-            intent.putExtra("search", "friend");
+            intent.putExtra("search", "friend")
+            intent.putExtra("userId", userId)
             intent.setClass(this@MainActivity, SearchActivity::class.java)
 
             startActivity(intent)
@@ -122,7 +124,11 @@ class MainActivity : FragmentActivity() {
                 R.id.newgroup -> {
                     Toast.makeText(this, "发起群聊", Toast.LENGTH_LONG).show()
 
-
+                    val intent = Intent()
+                    intent.setClass(this@MainActivity, SelectFriendsActivity::class.java)
+                    intent.putExtra("userId", userId)
+                    startActivity(intent)
+                    this.finish()
                     return@OnMenuItemClickListener true
                 }
                 R.id.newfriend -> {
@@ -130,11 +136,12 @@ class MainActivity : FragmentActivity() {
 
                     val intent = Intent()
                     // 表示这个页面是搜索所有的用户
-                    intent.putExtra("search", "user");
+                    intent.putExtra("search", "user")
+                    intent.putExtra("userId", userId)
                     intent.setClass(this@MainActivity, SearchActivity::class.java)
 
                     startActivity(intent)
-
+                    this.finish()
                     return@OnMenuItemClickListener true
                 }
             }
