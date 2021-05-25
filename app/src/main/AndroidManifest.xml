@@ -3,6 +3,7 @@
     package="com.example.pangchat">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -16,6 +17,12 @@
         <activity android:name=".SelectFriendsActivity"></activity>
         <activity android:name=".SearchActivity" />
         <activity android:name=".MainActivity" />
+        <activity android:name=".ChatActivity"
+                  android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
+        <activity android:name=".ChatInfoActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
         <activity android:name=".ModifyInfoActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>

@@ -36,11 +36,10 @@ class MessagesFragment : Fragment() {
         // contacts.add(new Contact(getString(R.string.nickname1), R.drawable.avatar1));
         // contacts.add(new Contact(getString(R.string.nickname2), R.drawable.avatar2));
         // FIXME: 目前用来测试，应该根据 chat_id 去拉取此聊天室的所有信息
-        val chats = LinkedList<String>()
-        chats.add("0")
+        //val chats = LinkedList<String>()
+        //chats.add("0")
         // chats.add("1")
-
-        recyclerView?.adapter = MessageAdapter(chats);
+        //recyclerView?.adapter = MessageAdapter(chats);
         val linearLayoutManager = LinearLayoutManager(this.activity)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView?.layoutManager = linearLayoutManager

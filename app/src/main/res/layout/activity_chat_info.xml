@@ -1,0 +1,666 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chat_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ChatActivity">
+
+    <LinearLayout
+        android:id="@+id/chatToolbarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dark_grey"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/chatInfoBackward"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:contentDescription="backward icon"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/round_arrow_back_ios_new_white_24dp" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingVertical="10dp"
+            android:text="@string/chatInfoTitle"
+            android:textColor="@color/grey"
+            android:textSize="18sp" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:scaleType="centerInside"
+            android:visibility="invisible"
+            app:srcCompat="@drawable/outline_info_white_24dp" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chatToolbarLayout">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginVertical="6dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/chatinfo_avatar_padding_horizontal">
+
+                        <ImageView
+                            android:id="@+id/chatInfoAvatar1"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_weight="6"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/avatar11" />
+
+                        <TextView
+                            android:id="@+id/chatInfoName1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="李泽言" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/chatinfo_avatar_padding_horizontal">
+
+                        <ImageView
+                            android:id="@+id/chatInfoAvatar2"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_weight="6"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/avatar11" />
+
+                        <TextView
+                            android:id="@+id/chatInfoName2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="凌肖" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/chatinfo_avatar_padding_horizontal">
+
+                        <ImageView
+                            android:id="@+id/chatInfoAvatar3"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_weight="6"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/avatar11" />
+
+                        <TextView
+                            android:id="@+id/chatInfoName3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="许墨" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/chatinfo_avatar_padding_horizontal">
+
+                        <ImageView
+                            android:id="@+id/chatInfoAvatar4"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_weight="6"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/avatar11" />
+
+                        <TextView
+                            android:id="@+id/chatInfoName4"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="白起" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/chatinfo_avatar_padding_horizontal">
+
+                        <ImageView
+                            android:id="@+id/chatInfoAvatar5"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_weight="6"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/avatar11" />
+
+                        <TextView
+                            android:id="@+id/chatInfoName5"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="周棋洛" />
+                    </LinearLayout>
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginVertical="6dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/chatinfo_avatar_padding_horizontal">
+
+                        <ImageView
+                            android:id="@+id/chatInfoAvatar6"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_weight="6"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/avatar11" />
+
+                        <TextView
+                            android:id="@+id/chatInfoName6"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="夏彦" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/chatinfo_avatar_padding_horizontal">
+
+                        <ImageView
+                            android:id="@+id/chatInfoAvatar7"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_weight="6"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/avatar11" />
+
+                        <TextView
+                            android:id="@+id/chatInfoName7"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="左然" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/chatinfo_avatar_padding_horizontal">
+
+                        <ImageView
+                            android:id="@+id/chatInfoAvatar8"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_weight="6"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/avatar11" />
+
+                        <TextView
+                            android:id="@+id/chatInfoName8"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="莫弈" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/chatinfo_avatar_padding_horizontal">
+
+                        <ImageView
+                            android:id="@+id/chatInfoAvatar9"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_weight="6"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/avatar11" />
+
+                        <TextView
+                            android:id="@+id/chatInfoName9"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="陆景和" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/chatinfo_avatar_padding_horizontal">
+
+                        <ImageView
+                            android:id="@+id/chatInfoAvatar10"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_weight="6"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/avatar11" />
+
+                        <TextView
+                            android:id="@+id/chatInfoName10"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="周彦如" />
+                    </LinearLayout>
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="6dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/chatinfo_avatar_padding_horizontal">
+
+                        <ImageView
+                            android:id="@+id/chatInfoAvatar11"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_weight="6"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/avatar11" />
+
+                        <TextView
+                            android:id="@+id/chatInfoName11"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="余齐齐" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/chatinfo_avatar_padding_horizontal">
+
+                        <ImageView
+                            android:id="@+id/chatInfoAvatar12"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_weight="6"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/avatar11" />
+
+                        <TextView
+                            android:id="@+id/chatInfoName12"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="彭维方" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/chatinfo_avatar_padding_horizontal">
+
+                        <ImageView
+                            android:id="@+id/chatInfoAvatar13"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_weight="6"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/outline_add_box_grey_400_48dp" />
+
+                        <TextView
+                            android:id="@+id/chatInfoName13"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/chatinfo_avatar_padding_horizontal">
+
+                        <ImageView
+                            android:id="@+id/chatInfoAvatar14"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_weight="6"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/outline_indeterminate_check_box_grey_400_48dp" />
+
+                        <TextView
+                            android:id="@+id/chatInfoName14"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:orientation="vertical"
+                        android:paddingHorizontal="@dimen/chatinfo_avatar_padding_horizontal"
+                        android:visibility="invisible">
+
+                        <ImageView
+                            android:id="@+id/chatInfoAvatar15"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_weight="6"
+                            android:scaleType="centerInside"
+                            app:srcCompat="@drawable/avatar11" />
+
+                        <TextView
+                            android:id="@+id/chatInfoName15"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="周彦如" />
+                    </LinearLayout>
+
+                </TableRow>
+
+            </TableLayout>
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="@color/grey" />
+
+            <LinearLayout
+                android:id="@+id/chatNameLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chatinfo_bar_height"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/chatinfo_bar_padding_horizontal">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/chatGroupName"
+                    android:textSize="18sp" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/chatName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="学习的胖"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    app:srcCompat="@drawable/baseline_keyboard_arrow_right_grey_600_24dp" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="@color/grey" />
+
+            <LinearLayout
+                android:id="@+id/chatSearchLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chatinfo_bar_height"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/chatinfo_bar_padding_horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/chatSearch"
+                    android:textSize="18sp" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    app:srcCompat="@drawable/baseline_keyboard_arrow_right_grey_600_24dp" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view5"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="@color/grey" />
+
+            <LinearLayout
+                android:id="@+id/chatMuteLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chatinfo_bar_height"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/chatinfo_bar_padding_horizontal">
+
+                <Switch
+                    android:id="@+id/chatSwitchMute"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/chatMute"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="@color/grey" />
+
+            <LinearLayout
+                android:id="@+id/chatPinLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chatinfo_bar_height"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/chatinfo_bar_padding_horizontal">
+
+                <Switch
+                    android:id="@+id/chatSwitchPin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/chatPin"
+                    android:textColor="?android:attr/textColorSecondary"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view6"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="@color/grey" />
+
+            <LinearLayout
+                android:id="@+id/chatLeaveLayout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chatinfo_bar_height"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/chatinfo_bar_padding_horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:scaleType="fitEnd"
+                    app:srcCompat="@drawable/round_logout_red_36dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/chatinfo_bar_height"
+                    android:layout_weight="1"
+                    android:gravity="start|center_vertical"
+                    android:text="@string/chatLeave"
+                    android:textColor="@color/design_default_color_error"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
