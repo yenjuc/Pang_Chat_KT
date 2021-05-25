@@ -5,6 +5,11 @@
     android:gravity="center"
     android:orientation="horizontal">
 
+    <RadioButton
+        android:id="@+id/is_checked"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp" />
+
     <ImageView
         android:id="@+id/avatar_icon"
         android:layout_width="60dp"

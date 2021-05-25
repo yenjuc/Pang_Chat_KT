@@ -1,10 +1,12 @@
 package com.example.pangchat
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -15,10 +17,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pangchat.contact.Contact
-import com.example.pangchat.contact.ContactAdapter
-import com.example.pangchat.contact.ContactDataSource
-import com.example.pangchat.contact.ContactInfo
+import com.example.pangchat.contact.*
 import com.example.pangchat.fragment.data.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,17 +25,12 @@ import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.collections.ArrayList
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ContactsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 
-
-class ContactsFragment : Fragment() {
+class SelectFriendsFragment : Fragment() {
     private lateinit var mContext: FragmentActivity
     private var recyclerView: RecyclerView? = null
-
+    private var buttonFinish: Button? = null
+    private var backView: ImageView? = null
     private val _contactInfo = MutableLiveData<ContactInfo>()
 
     private lateinit var contacts:LinkedList<Contact?>
@@ -47,11 +41,13 @@ class ContactsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recyclerView = view.findViewById(R.id.contacts_recyclerview)
+        recyclerView = view.findViewById(R.id.select_friends_recyclerview)
+        buttonFinish = view.findViewById(R.id.button_finish)
+        backView = view.findViewById(R.id.goback)
 
         contacts = LinkedList<Contact?>()
 
-        recyclerView?.adapter = ContactAdapter(contacts)
+        recyclerView?.adapter = SelectFriendsAdapter(contacts)
 
         lifecycleScope.launch {
 
@@ -66,12 +62,25 @@ class ContactsFragment : Fragment() {
         val linearLayoutManager = LinearLayoutManager(this.activity)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView?.layoutManager = linearLayoutManager
+
+
+        backView?.setOnClickListener(View.OnClickListener {
+            Toast.makeText(activity, "返回", Toast.LENGTH_LONG).show()
+
+//            val intent = Intent()
+//            activity?.let { it1 -> intent.setClass(it1, MainActivity::class.java) }
+//            intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
+//            startActivity(intent)
+//
+//            activity?.finish()
+        })
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater?.inflate(R.layout.fragment_contacts, container, false)
+        return inflater?.inflate(R.layout.fragment_select_friends, container, false)
     }
 
     // 调用网络请求函数
@@ -99,8 +108,8 @@ class ContactsFragment : Fragment() {
          * @return A new instance of fragment ContactsFragment.
          */
         // TODO: Rename and change types and number of parameters
-        fun newInstance(): ContactsFragment? {
-            return ContactsFragment()
+        fun newInstance(): SelectFriendsFragment? {
+            return SelectFriendsFragment()
         }
     }
 }
