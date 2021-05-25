@@ -44,18 +44,6 @@ class ChatActivity : AppCompatActivity() {
         messageIds.add("60a68b9085acff97802413c5")
         messageIds.add("60a68b9085acff97802413c6")
 
-        /*
-        messageIds.add("0")
-        messageIds.add("1")
-        messageIds.add("2")
-        messageIds.add("3")
-        messageIds.add("4")
-        messageIds.add("5")
-
-         */
-
-
-
         val recyclerView = findViewById<RecyclerView>(R.id.chatRecyclerView)
 
         messages = LinkedList<Message?>()
@@ -64,7 +52,6 @@ class ChatActivity : AppCompatActivity() {
 
         for(i in 0 until messageIds.size){
             lifecycleScope.launch {
-
                 // messages.clear()
                 messageIds[i]?.let { getMessageInfo(it) }
                 // messageIds.sortBy { time }
