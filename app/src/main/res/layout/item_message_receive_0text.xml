@@ -13,6 +13,7 @@
         android:layout_width="@dimen/message_minHeight"
         android:layout_height="@dimen/message_minHeight"
         android:layout_gravity="clip_horizontal"
+        android:clickable="true"
         android:contentDescription="@string/app_name"
         android:src="@drawable/avatar1" />
 

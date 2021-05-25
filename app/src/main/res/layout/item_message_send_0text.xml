@@ -13,6 +13,7 @@
         android:id="@+id/avatar_icon"
         android:layout_width="@dimen/message_minHeight"
         android:layout_height="@dimen/message_minHeight"
+        android:clickable="true"
         android:contentDescription="@string/app_name"
         android:src="@drawable/avatar1" />
 
