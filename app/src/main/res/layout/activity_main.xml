@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_gravity="start"
+        app:labelVisibilityMode="labeled"
         app:headerLayout="@layout/top_nav"
         app:layout_constraintTop_toTopOf="parent" />
 
