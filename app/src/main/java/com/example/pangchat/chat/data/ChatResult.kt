@@ -4,10 +4,10 @@ package com.example.pangchat.chat.data
  * A generic class that holds a value with its loading status.
  * @param <T>
  */
-sealed class Result<out T : Any> {
+sealed class ChatResult<out T : Any> {
 
-    data class Success<out T : Any>(val data: T) : Result<T>()
-    data class Error(val exception: Exception) : Result<Nothing>()
+    data class Success<out T : Any>(val data: T) : ChatResult<T>()
+    data class Error(val exception: Exception) : ChatResult<Nothing>()
 
     override fun toString(): String {
         return when (this) {
