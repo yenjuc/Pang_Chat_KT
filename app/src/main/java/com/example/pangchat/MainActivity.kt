@@ -63,6 +63,7 @@ class MainActivity : FragmentActivity() {
             // 表示这个页面是搜索现有的联系人
             intent.putExtra("search", "friend")
             intent.putExtra("userId", userId)
+
             intent.setClass(this@MainActivity, SearchActivity::class.java)
 
             startActivity(intent)
