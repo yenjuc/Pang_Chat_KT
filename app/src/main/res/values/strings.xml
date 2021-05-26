@@ -13,6 +13,13 @@
 
     <!-- 全局配置 -->
     <string name="BACKEND_URL">http://192.168.56.1:7000</string>
+    <!-- 聊天详情页面 -->
+    <string name="chatInfoTitle">聊天信息</string>
+    <string name="chatGroupName">群组名称</string>
+    <string name="chatSearch">查找聊天记录</string>
+    <string name="chatPin">置顶聊天</string>
+    <string name="chatMute">消息免打扰</string>
+    <string name="chatLeave">删除并退出群聊</string>
 
 
     <!-- 可以使用的昵称信息 -->

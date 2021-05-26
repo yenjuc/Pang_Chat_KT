@@ -17,4 +17,13 @@
     inner_frame_layout_padding (below variable) on round screens.
     -->
     <dimen name="inner_frame_layout_padding">5dp</dimen>
+
+    <!-- 聊天相关 -->
+    <dimen name="message_minHeight">40dp</dimen>
+    <dimen name="message_bubble_end_margin">50dp</dimen>
+
+    <!-- 聊天详情相关 -->
+    <dimen name="chatinfo_bar_height">80dp</dimen>
+    <dimen name="chatinfo_bar_padding_horizontal">16dp</dimen>
+    <dimen name="chatinfo_avatar_padding_horizontal">6dp</dimen>
 </resources>

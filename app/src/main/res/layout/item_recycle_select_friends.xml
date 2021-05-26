@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <RadioButton
+        android:id="@+id/is_checked"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp" />
+
+    <ImageView
+        android:id="@+id/avatar_icon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/avatar1" />
+
+    <TextView
+        android:id="@+id/nickname_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:text="昵称"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display4"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

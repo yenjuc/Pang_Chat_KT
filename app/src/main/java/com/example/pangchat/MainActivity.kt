@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -21,10 +22,11 @@ import java.lang.reflect.Field
 
 class MainActivity : FragmentActivity() {
     // @BindView(R.id.bottomNavigationView)
-    var topNavigationView: NavigationView? = null
+    // var topNavigationView: NavigationView? = null
     var bottomNavigationView: BottomNavigationView? =  null
     var searchView: ImageView? = null
     var menuView: ImageView? = null
+    var userId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +34,7 @@ class MainActivity : FragmentActivity() {
         FuelManager.instance.basePath = resources.getString(R.string.BACKEND_URL);
 
         val intent = intent
-        val userId = intent.getStringExtra("userId")
+        userId = intent.getStringExtra("userId")
 
         setContentView(R.layout.activity_main)
         // ButterKnife.bind(this)
@@ -48,24 +50,25 @@ class MainActivity : FragmentActivity() {
         // FIXME: 暂时用一个 bottom navigation bottom 测试
         val messagesFragment: Fragment = MessagesFragment()
 
-        topNavigationView = findViewById<NavigationView>(R.id.topNavigationView)
+//        topNavigationView = findViewById<NavigationView>(R.id.topNavigationView)
+//
+//        val headerView : View? = topNavigationView?.getHeaderView(0)
 
-        val headerView : View? = topNavigationView?.getHeaderView(0)
-
-        searchView = headerView?.findViewById<ImageView>(R.id.search)
+        searchView = findViewById<ImageView>(R.id.search)
 
         searchView?.setOnClickListener(View.OnClickListener {
             Toast.makeText(this, "进入搜索", Toast.LENGTH_LONG).show()
 
             val intent = Intent()
             // 表示这个页面是搜索现有的联系人
-            intent.putExtra("search", "friend");
+            intent.putExtra("search", "friend")
+            intent.putExtra("userId", userId)
             intent.setClass(this@MainActivity, SearchActivity::class.java)
 
             startActivity(intent)
         })
 
-        menuView = headerView?.findViewById<ImageView>(R.id.menu)
+        menuView = findViewById<ImageView>(R.id.menu)
 
         menuView?.setOnClickListener(View.OnClickListener {
             Toast.makeText(this, "显示菜单", Toast.LENGTH_LONG).show()
@@ -93,8 +96,18 @@ class MainActivity : FragmentActivity() {
                     setCurrentFragment(settingsFragment)
                     return@setOnNavigationItemSelectedListener true
                 }
+                //  FIXME: delete me
                 R.id.messages -> {
-                    setCurrentFragment(messagesFragment)
+                    // setCurrentFragment(messagesFragment)
+                    val intent = Intent(MainActivity@ this, ChatActivity::class.java)
+                    // FIXME: 应改成 chatId
+                    intent.putExtra("messageId", "0")
+                    // correct one
+                    try {
+                        startActivity(intent)
+                    } catch (ActivityNotFoundException: Exception) {
+                        Log.d("ImplicitIntents", "Can't handle this!")
+                    }
                     return@setOnNavigationItemSelectedListener true
                 }
             }
@@ -122,7 +135,11 @@ class MainActivity : FragmentActivity() {
                 R.id.newgroup -> {
                     Toast.makeText(this, "发起群聊", Toast.LENGTH_LONG).show()
 
-
+                    val intent = Intent()
+                    intent.setClass(this@MainActivity, SelectFriendsActivity::class.java)
+                    intent.putExtra("userId", userId)
+                    startActivity(intent)
+                    this.finish()
                     return@OnMenuItemClickListener true
                 }
                 R.id.newfriend -> {
@@ -130,11 +147,12 @@ class MainActivity : FragmentActivity() {
 
                     val intent = Intent()
                     // 表示这个页面是搜索所有的用户
-                    intent.putExtra("search", "user");
+                    intent.putExtra("search", "user")
+                    intent.putExtra("userId", userId)
                     intent.setClass(this@MainActivity, SearchActivity::class.java)
 
                     startActivity(intent)
-
+                    this.finish()
                     return@OnMenuItemClickListener true
                 }
             }
@@ -157,4 +175,3 @@ class MainActivity : FragmentActivity() {
     }
 
 }
-
