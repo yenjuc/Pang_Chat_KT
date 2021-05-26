@@ -22,7 +22,7 @@ import java.lang.reflect.Field
 
 class MainActivity : FragmentActivity() {
     // @BindView(R.id.bottomNavigationView)
-    var topNavigationView: NavigationView? = null
+    // var topNavigationView: NavigationView? = null
     var bottomNavigationView: BottomNavigationView? =  null
     var searchView: ImageView? = null
     var menuView: ImageView? = null
@@ -50,11 +50,11 @@ class MainActivity : FragmentActivity() {
         // FIXME: 暂时用一个 bottom navigation bottom 测试
         val messagesFragment: Fragment = MessagesFragment()
 
-        topNavigationView = findViewById<NavigationView>(R.id.topNavigationView)
+//        topNavigationView = findViewById<NavigationView>(R.id.topNavigationView)
+//
+//        val headerView : View? = topNavigationView?.getHeaderView(0)
 
-        val headerView : View? = topNavigationView?.getHeaderView(0)
-
-        searchView = headerView?.findViewById<ImageView>(R.id.search)
+        searchView = findViewById<ImageView>(R.id.search)
 
         searchView?.setOnClickListener(View.OnClickListener {
             Toast.makeText(this, "进入搜索", Toast.LENGTH_LONG).show()
@@ -68,7 +68,7 @@ class MainActivity : FragmentActivity() {
             startActivity(intent)
         })
 
-        menuView = headerView?.findViewById<ImageView>(R.id.menu)
+        menuView = findViewById<ImageView>(R.id.menu)
 
         menuView?.setOnClickListener(View.OnClickListener {
             Toast.makeText(this, "显示菜单", Toast.LENGTH_LONG).show()

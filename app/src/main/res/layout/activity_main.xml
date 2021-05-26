@@ -6,14 +6,54 @@
     android:layout_height="match_parent"
     tools:context="com.example.pangchat.MainActivity">
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/topNavigationView"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:orientation="horizontal"
         android:layout_gravity="start"
-        app:labelVisibilityMode="labeled"
-        app:headerLayout="@layout/main_top_nav"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="@color/purple_500"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="start"
+            android:layout_weight="6"
+            android:gravity="center"
+            android:text="Pang Chat"
+            android:textColor="@color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/search"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="start"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:contentDescription="TODO"
+            android:scaleType="centerInside"
+            android:src="@drawable/baseline_search_black_24dp"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
+            android:id="@+id/menu"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_gravity="start"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:contentDescription="TODO"
+            android:scaleType="centerInside"
+            android:src="@drawable/baseline_add_circle_outline_white_24dp"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/flFragment"
