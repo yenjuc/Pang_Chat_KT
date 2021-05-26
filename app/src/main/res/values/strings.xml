@@ -12,7 +12,7 @@
     <string name="save">Save</string>
 
     <!-- 全局配置 -->
-    <string name="BACKEND_URL">http://183.173.188.141:7000</string>
+    <string name="BACKEND_URL">http://192.168.56.1:7000</string>
 
 
     <!-- 可以使用的昵称信息 -->

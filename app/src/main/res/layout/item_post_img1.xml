@@ -72,6 +72,10 @@
                 android:text="余齐齐"
                 android:textColor="#4d88ff"
                 android:textStyle="bold" />
+            <ListView
+                android:id="@+id/comment_listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
         </LinearLayout>
     </LinearLayout>
