@@ -87,6 +87,19 @@
                 android:text="5小时前"
                 android:textStyle="italic" />
 
+            <TextView
+                android:id="@+id/post_like"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="6dp"
+                android:background ="#EEEEEE"
+                android:drawableLeft="@drawable/baseline_favorite_border_black_18dp"
+                android:drawablePadding="5dp"
+                android:drawableStart="@drawable/baseline_favorite_border_black_18dp"
+                android:text="余齐齐"
+                android:textColor="#4d88ff"
+                android:textStyle="bold" />
+
         </LinearLayout>
     </LinearLayout>
 

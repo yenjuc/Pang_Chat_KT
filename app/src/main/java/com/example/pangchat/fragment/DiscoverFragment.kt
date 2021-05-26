@@ -11,6 +11,7 @@ import com.example.pangchat.R
 import com.example.pangchat.discover.Discover
 import com.example.pangchat.discover.DiscoverAdapter
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * A simple [Fragment] subclass.
@@ -39,7 +40,8 @@ class DiscoverFragment : Fragment() {
                 R.drawable.avatar1,
                 getString(R.string.paragraph1),
                 "30 分钟前",
-                ArrayList()))
+                ArrayList(),arrayListOf<String>(getString(R.string.nickname1)),
+              ))
         discovers.add(Discover(getString(R.string.nickname2),
                 R.drawable.avatar2,
                 getString(R.string.paragraph2),
@@ -49,7 +51,9 @@ class DiscoverFragment : Fragment() {
                 R.drawable.avatar3,
                 getString(R.string.paragraph3),
                 "2 小时前",
-                ArrayList(imgs.subList(1, 3))))
+                ArrayList(imgs.subList(1, 3)),
+                arrayListOf<String>(getString(R.string.nickname2))
+               ))
         discovers.add(Discover(getString(R.string.nickname4),
                 R.drawable.avatar4,
                 getString(R.string.paragraph4),
