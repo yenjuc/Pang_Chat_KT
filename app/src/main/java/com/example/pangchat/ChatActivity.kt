@@ -38,6 +38,8 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
+        // TODO: 看看是否可拉取完再载入
+
         val chatId = intent.getStringExtra("chatId")
         val recyclerView = findViewById<RecyclerView>(R.id.chatRecyclerView)
 

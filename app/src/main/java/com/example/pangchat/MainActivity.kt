@@ -39,16 +39,11 @@ class MainActivity : FragmentActivity() {
         setContentView(R.layout.activity_main)
         // ButterKnife.bind(this)
 
-        // 修改下面的代码，添加向 settingsFragment的跳转逻辑
-        // TODO
         val chatsFragment: Fragment = ChatsFragment()
         val contactsFragment: Fragment = ContactsFragment()
         val discoverFragment: Fragment = DiscoverFragment()
         val settingsFragment: Fragment = SettingsFragment()
         setCurrentFragment(chatsFragment) // 初始的Fragment为chatsFragment
-
-        // FIXME: 暂时用一个 bottom navigation bottom 测试
-        val messagesFragment: Fragment = MessagesFragment()
 
 //        topNavigationView = findViewById<NavigationView>(R.id.topNavigationView)
 //
@@ -94,20 +89,6 @@ class MainActivity : FragmentActivity() {
                 }
                 R.id.settings -> {
                     setCurrentFragment(settingsFragment)
-                    return@setOnNavigationItemSelectedListener true
-                }
-                //  FIXME: delete me
-                R.id.messages -> {
-                    // setCurrentFragment(messagesFragment)
-                    val intent = Intent(MainActivity@ this, ChatActivity::class.java)
-                    // FIXME: 应改成 chatId
-                    intent.putExtra("messageId", "0")
-                    // correct one
-                    try {
-                        startActivity(intent)
-                    } catch (ActivityNotFoundException: Exception) {
-                        Log.d("ImplicitIntents", "Can't handle this!")
-                    }
                     return@setOnNavigationItemSelectedListener true
                 }
             }
