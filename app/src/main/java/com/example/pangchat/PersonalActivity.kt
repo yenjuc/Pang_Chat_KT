@@ -28,7 +28,6 @@ class PersonalActivity : FragmentActivity() {
         backView = findViewById<ImageView>(R.id.goback)
         moreView = findViewById<ImageView>(R.id.more)
 
-
         backView?.setOnClickListener(View.OnClickListener {
             val intent = Intent()
             intent.putExtra("userId", userId)

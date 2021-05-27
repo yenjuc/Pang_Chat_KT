@@ -7,13 +7,12 @@
     <string name="setting_me">Me</string>
 
 
-    <string name="BACKEND_URL">http://183.172.182.59:7000</string>
-    <!--string name="BACKEND_URL">http://172.30.7.229:7000</string-->
-
     <string name="avatar">Avatar</string>
     <string name="nickname">Nickname</string>
     <string name="save">Save</string>
 
+    <!-- 全局配置 -->
+    <string name="BACKEND_URL">http://183.173.189.243:7000</string>
     <!-- 聊天详情页面 -->
     <string name="chatInfoTitle">聊天信息</string>
     <string name="chatGroupName">群组名称</string>

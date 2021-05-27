@@ -52,15 +52,19 @@ class ContactsFragment : Fragment() {
 
         contacts = LinkedList<Contact?>()
 
-        recyclerView?.adapter = ContactAdapter(contacts)
+        recyclerView?.adapter = ContactAdapter(activity, contacts)
 
         lifecycleScope.launch {
 
             // 从Mainactivity的Intent中获取userId，作为入参传入网络请求
-            activity?.intent?.getStringExtra("userId")?.let { getContactInfo(userId = it) }
-            contacts.clear()
-            contacts.addAll(_contactInfo.value?.friendsName?.map { Contact(it, R.drawable.avatar1) }!!)
-            recyclerView?.adapter?.notifyDataSetChanged()
+            val userId : String? = activity?.intent?.getStringExtra("userId")
+            if (userId != null) {
+                getContactInfo(userId)
+                contacts.clear()
+                contacts.addAll(_contactInfo.value?.friendsName?.map { Contact(userId, it, R.drawable.avatar1) }!!)
+                recyclerView?.adapter?.notifyDataSetChanged()
+            }
+
         }
 
 
