@@ -13,11 +13,23 @@ import android.widget.Toast
 import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
+import com.example.pangchat.contact.Contact
+import com.example.pangchat.contact.ContactDataSource
+import com.example.pangchat.contact.ContactInfo
 import com.example.pangchat.fragment.*
+import com.example.pangchat.fragment.data.Result
 import com.github.kittinunf.fuel.core.FuelManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.lang.reflect.Field
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : FragmentActivity() {
@@ -27,6 +39,7 @@ class MainActivity : FragmentActivity() {
     var searchView: ImageView? = null
     var menuView: ImageView? = null
     var userId: String? = null
+    var _contactInfo = MutableLiveData<ContactInfo>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,9 +58,15 @@ class MainActivity : FragmentActivity() {
         val settingsFragment: Fragment = SettingsFragment()
         setCurrentFragment(chatsFragment) // 初始的Fragment为chatsFragment
 
-//        topNavigationView = findViewById<NavigationView>(R.id.topNavigationView)
-//
-//        val headerView : View? = topNavigationView?.getHeaderView(0)
+        var friendIds: ArrayList<String>? = null
+        var friendNames: ArrayList<String>? = null
+
+        MainScope().launch {
+            userId?.let { getFriendsInfo(it) }
+            friendIds = _contactInfo.value?.friendsId
+            friendNames = _contactInfo.value?.friendsName
+        }
+
 
         searchView = findViewById<ImageView>(R.id.search)
 
@@ -58,7 +77,8 @@ class MainActivity : FragmentActivity() {
             // 表示这个页面是搜索现有的联系人
             intent.putExtra("search", "friend")
             intent.putExtra("userId", userId)
-
+            intent.putExtra("friendIds", friendIds)
+            intent.putExtra("friendNames", friendNames)
             intent.setClass(this@MainActivity, SearchActivity::class.java)
 
             startActivity(intent)
@@ -154,6 +174,22 @@ class MainActivity : FragmentActivity() {
 
 
         popupMenu.show()
+    }
+
+    suspend fun getFriendsInfo(userId: String) {
+        val contactDataSource = ContactDataSource()
+
+        val result: Result<ContactInfo>
+
+        withContext(Dispatchers.IO) {
+            result = contactDataSource.getContactInfo(userId)
+        }
+
+        if (result is Result.Success) {
+            _contactInfo.value = result.data
+        } else {
+            // TODO：抛出并解析异常
+        }
     }
 
 }

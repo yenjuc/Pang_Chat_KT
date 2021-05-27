@@ -11,10 +11,16 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.SearchActivity
 import com.example.pangchat.R
 import com.example.pangchat.SettingsFragment
 import com.example.pangchat.afterTextChanged
+import com.example.pangchat.contact.Contact
+import com.example.pangchat.contact.ContactAdapter
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
@@ -28,7 +34,11 @@ class SearchFragment : Fragment() {
 
     private var editText: EditText ? = null
     private var buttonCancel: Button ? = null
+    var recyclerView: RecyclerView ? = null
+    var contacts = LinkedList<Contact?>()
 
+    var friendIds: ArrayList<String> ? = null
+    var friendNames: ArrayList<String> ? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,12 +48,27 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         editText = getView()?.findViewById(R.id.search_content)
         buttonCancel = getView()?.findViewById(R.id.search_cancel)
+        recyclerView = getView()?.findViewById(R.id.search_recyclerview)
 
-        // TODO: 根据输入框中的内容实时显示模糊匹配结果
+        recyclerView?.adapter = ContactAdapter(activity, contacts)
+
+        friendNames = activity?.intent?.getStringArrayListExtra("friendNames")
+        friendIds = activity?.intent?.getStringArrayListExtra("friendIds")
 
         editText?.afterTextChanged {
             val searchContent : String = editText?.text.toString()
+
+            contacts.clear()
             fuzzyMatch(searchContent)
+
+            if ((searchContent.isNotEmpty()) and (contacts.size != 0)){
+                recyclerView?.adapter?.notifyDataSetChanged()
+
+                val linearLayoutManager = LinearLayoutManager(this.activity)
+                linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+                recyclerView?.layoutManager = linearLayoutManager
+            }
+
         }
 
 
@@ -63,12 +88,24 @@ class SearchFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_search, container, false)
     }
 
+    fun fuzzyMatch(searchContent: String) {
+        for (i in 0 until friendIds?.size!!) {
+            if (friendNames?.get(i)?.contains(searchContent, true) == true) {
+                contacts.add(Contact(friendIds!![i], friendNames!![i], R.drawable.avatar1))
+            }
+        }
+    }
+
+
+
     companion object {
         fun newInstance(): SearchFragment? {
             val fragment = SearchFragment()
             return fragment
         }
     }
+
+
 }
 
 fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
@@ -83,6 +120,3 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
     })
 }
 
-fun fuzzyMatch(searchContent: String) {
-
-}
