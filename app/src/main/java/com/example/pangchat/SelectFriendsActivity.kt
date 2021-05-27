@@ -21,6 +21,7 @@ import com.google.android.material.navigation.NavigationView
 class SelectFriendsActivity : FragmentActivity() {
     // @BindView(R.id.bottomNavigationView)
     var recyclerView: RecyclerView? = null
+    var selectedIds =  ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +30,7 @@ class SelectFriendsActivity : FragmentActivity() {
 
         val intent = intent
         val userId = intent.getStringExtra("userId")
-
+        intent.putExtra("selectedIds", selectedIds)
 
         setContentView(R.layout.activity_select_friends)
 

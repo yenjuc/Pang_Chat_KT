@@ -40,6 +40,8 @@ class MainActivity : FragmentActivity() {
     var menuView: ImageView? = null
     var userId: String? = null
     var _contactInfo = MutableLiveData<ContactInfo>()
+    var friendIds: ArrayList<String>? = null
+    var friendNames: ArrayList<String>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,8 +60,6 @@ class MainActivity : FragmentActivity() {
         val settingsFragment: Fragment = SettingsFragment()
         setCurrentFragment(chatsFragment) // 初始的Fragment为chatsFragment
 
-        var friendIds: ArrayList<String>? = null
-        var friendNames: ArrayList<String>? = null
 
         MainScope().launch {
             userId?.let { getFriendsInfo(it) }
@@ -140,6 +140,8 @@ class MainActivity : FragmentActivity() {
                     val intent = Intent()
                     intent.setClass(this@MainActivity, SelectFriendsActivity::class.java)
                     intent.putExtra("userId", userId)
+                    intent.putExtra("friendIds", friendIds)
+                    intent.putExtra("friendNames", friendNames)
                     startActivity(intent)
                     this.finish()
                     return@OnMenuItemClickListener true

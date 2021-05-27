@@ -7,16 +7,14 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.R
 import com.example.pangchat.contact.SelectFriendsAdapter.SelectFriendsViewHolder
 import java.util.*
 
-class SelectFriendsAdapter(private val data: LinkedList<Contact?>?) : RecyclerView.Adapter<SelectFriendsViewHolder?>() {
+class SelectFriendsAdapter(private val mContext: FragmentActivity?, private val data: LinkedList<Contact?>?) : RecyclerView.Adapter<SelectFriendsViewHolder?>() {
 
-    // 完成类ContactViewHolder
-    // 使用itemView.findViewById()方法来寻找对应的控件
-    // TODO
     class SelectFriendsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var avatar: ImageView? = itemView.findViewById<ImageView?>(R.id.avatar_icon)
         var nickname: TextView? = itemView.findViewById<TextView?>(R.id.nickname_text)
@@ -35,19 +33,26 @@ class SelectFriendsAdapter(private val data: LinkedList<Contact?>?) : RecyclerVi
         if (contact != null) {
             holder.avatar?.setImageResource(contact.getAvatarIcon())
             holder.nickname?.text = contact.getNickname()
+            holder.itemView.setOnClickListener(View.OnClickListener {
+                holder.button?.isChecked = !holder.button?.isChecked!!
+                if (holder.button?.isChecked == true) {
+                    mContext?.intent?.getStringArrayListExtra("selectedIds")?.add(contact.getUserId())
+                }
+                else {
+                    mContext?.intent?.getStringArrayListExtra("selectedIds")?.remove(contact.getUserId())
+                }
+            })
         }
 
-        holder.avatar?.setOnClickListener(View.OnClickListener {
-            holder.button?.isChecked = !holder.button?.isChecked!!
-        })
 
-        holder.nickname?.setOnClickListener(View.OnClickListener {
-            holder.button?.isChecked = !holder.button?.isChecked!!
-        })
 
-        holder.button?.setOnClickListener(View.OnClickListener {
-            holder.button?.isChecked = !holder.button?.isChecked!!
-        })
+//        holder.nickname?.setOnClickListener(View.OnClickListener {
+//            holder.button?.isChecked = !holder.button?.isChecked!!
+//        })
+//
+//        holder.button?.setOnClickListener(View.OnClickListener {
+//            holder.button?.isChecked = !holder.button?.isChecked!!
+//        })
     }
 
     override fun getItemCount(): Int {
