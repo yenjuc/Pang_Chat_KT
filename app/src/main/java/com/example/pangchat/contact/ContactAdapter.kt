@@ -40,10 +40,15 @@ class ContactAdapter(private val mContext: FragmentActivity?, private val data: 
             holder.avatar?.setImageResource(contact.getAvatarIcon())
             holder.nickname?.text = contact.getNickname()
             holder.itemView.setOnClickListener{
-                Log.d("click contactid: ", data?.get(position)!!.getContactId())
+                val contact : Contact = data?.get(position)!!
+
+                Log.d("click userId: ", contact.getUserId())
 
                 val intent = Intent(mContext, PersonalActivity::class.java)
-                intent.putExtra("contactId", data?.get(position)!!.getContactId())
+                intent.putExtra("userId", contact.getUserId())
+                intent.putExtra("username", contact.getNickname())
+                intent.putExtra("avatar", contact.getAvatarIcon())
+
                 try {
                     mContext?.startActivity(intent)
                 } catch (ActivityNotFoundException: Exception) {

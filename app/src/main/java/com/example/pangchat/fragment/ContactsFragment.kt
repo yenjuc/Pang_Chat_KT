@@ -61,7 +61,11 @@ class ContactsFragment : Fragment() {
             if (userId != null) {
                 getContactInfo(userId)
                 contacts.clear()
-                contacts.addAll(_contactInfo.value?.friendsName?.map { Contact(userId, it, R.drawable.avatar1) }!!)
+                // contacts.addAll(_contactInfo.value?.friendsName?.map { Contact(userId, it, R.drawable.avatar1) }!!)
+                for (index in 0 until _contactInfo.value?.friendsId?.size!!) {
+                    contacts.add(Contact(_contactInfo.value?.friendsId!![index],
+                        _contactInfo.value?.friendsName!![index], R.drawable.avatar1))
+                }
                 recyclerView?.adapter?.notifyDataSetChanged()
             }
 
