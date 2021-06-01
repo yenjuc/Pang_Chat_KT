@@ -4,7 +4,6 @@ import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.gson.jsonBody
 import com.github.kittinunf.fuel.gson.responseObject
 import java.lang.Exception
-import java.util.*
 import kotlin.collections.ArrayList
 import com.github.kittinunf.result.Result as fuelResult
 
@@ -21,14 +20,14 @@ class ChatRequest {
 
     data class ChatId(val chatId: String)
 
-    fun getChat(chatId: String): Result<ChatInfo> {
+    fun getChat(chatId: String): ChatResult<ChatInfo> {
         val (_, _, result) = Fuel.post("/chat/info").jsonBody(ChatId(chatId)).responseObject<ChatInfo>()
         if (result is fuelResult.Failure) {
-            return Result.Error(result.getException())
+            return ChatResult.Error(result.getException())
         } else {
             return if (result.get().success)
-                Result.Success(result.get())
-            else Result.Error(Exception());
+                ChatResult.Success(result.get())
+            else ChatResult.Error(Exception());
         }
 
     }
