@@ -3,6 +3,7 @@ package com.example.pangchat
 import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -51,21 +52,32 @@ class ContactsFragment : Fragment() {
 
         contacts = LinkedList<Contact?>()
 
-        recyclerView?.adapter = ContactAdapter(contacts)
+        recyclerView?.adapter = ContactAdapter(activity, contacts)
 
         lifecycleScope.launch {
 
             // 从Mainactivity的Intent中获取userId，作为入参传入网络请求
-            activity?.intent?.getStringExtra("userId")?.let { getContactInfo(userId = it) }
-            contacts.clear()
-            contacts.addAll(_contactInfo.value?.friendsName?.map { Contact(it, R.drawable.avatar1) }!!)
-            recyclerView?.adapter?.notifyDataSetChanged()
+            val userId : String? = activity?.intent?.getStringExtra("userId")
+            if (userId != null) {
+                getContactInfo(userId)
+                contacts.clear()
+                // contacts.addAll(_contactInfo.value?.friendsName?.map { Contact(userId, it, R.drawable.avatar1) }!!)
+                for (index in 0 until _contactInfo.value?.friendsId?.size!!) {
+                    contacts.add(Contact(_contactInfo.value?.friendsId!![index],
+                        _contactInfo.value?.friendsName!![index], R.drawable.avatar1))
+                }
+                recyclerView?.adapter?.notifyDataSetChanged()
+            }
+
         }
 
 
         val linearLayoutManager = LinearLayoutManager(this.activity)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView?.layoutManager = linearLayoutManager
+
+
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

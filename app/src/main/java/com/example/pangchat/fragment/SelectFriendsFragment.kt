@@ -34,7 +34,7 @@ class SelectFriendsFragment : Fragment() {
     private var recyclerView: RecyclerView? = null
     private var buttonFinish: Button? = null
     private var backView: ImageView? = null
-    private val _contactInfo = MutableLiveData<ContactInfo>()
+    // private val _contactInfo = MutableLiveData<ContactInfo>()
 
     private lateinit var contacts:LinkedList<Contact?>
 
@@ -53,32 +53,46 @@ class SelectFriendsFragment : Fragment() {
         backView = headerView?.findViewById(R.id.goback)
 
         contacts = LinkedList<Contact?>()
+        recyclerView?.adapter = SelectFriendsAdapter(activity, contacts)
 
-        recyclerView?.adapter = SelectFriendsAdapter(contacts)
+        val friendNames = activity?.intent?.getStringArrayListExtra("friendNames")
+        val friendIds = activity?.intent?.getStringArrayListExtra("friendIds")
 
-        lifecycleScope.launch {
-
-            // 从Mainactivity的Intent中获取userId，作为入参传入网络请求
-            activity?.intent?.getStringExtra("userId")?.let { getContactInfo(userId = it) }
-            contacts.clear()
-            contacts.addAll(_contactInfo.value?.friendsName?.map { Contact(it, R.drawable.avatar1) }!!)
-            recyclerView?.adapter?.notifyDataSetChanged()
+        contacts.clear()
+        for (i in 0 until friendIds?.size!!) {
+            contacts.add(Contact(friendIds[i], friendNames!![i], R.drawable.avatar1))
         }
+        recyclerView?.adapter?.notifyDataSetChanged()
 
+//        lifecycleScope.launch {
+//
+//            // 从Mainactivity的Intent中获取userId，作为入参传入网络请求
+//            val userId : String? = activity?.intent?.getStringExtra("userId")
+//            if (userId != null) {
+//                contacts.clear()
+//                contacts.addAll(_contactInfo.value?.friendsName?.map { Contact(userId, it, R.drawable.avatar1) }!!)
+//                recyclerView?.adapter?.notifyDataSetChanged()
+//            }
+//        }
 
         val linearLayoutManager = LinearLayoutManager(this.activity)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView?.layoutManager = linearLayoutManager
 
-
         backView?.setOnClickListener(View.OnClickListener {
-            Toast.makeText(activity, "返回", Toast.LENGTH_LONG).show()
 
             val intent = Intent()
             activity?.let { it1 -> intent.setClass(it1, MainActivity::class.java) }
             intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
             startActivity(intent)
 
+            activity?.finish()
+        })
+
+
+        buttonFinish?.setOnClickListener(View.OnClickListener{
+            val selectedIds = activity?.intent?.getStringArrayListExtra("selectedIds")
+            // TODO: 发送建立群聊的网络请求
             activity?.finish()
         })
 
@@ -90,22 +104,22 @@ class SelectFriendsFragment : Fragment() {
         return inflater?.inflate(R.layout.fragment_select_friends, container, false)
     }
 
-    // 调用网络请求函数
-    suspend fun getContactInfo(userId: String) {
-        val contactDataSource = ContactDataSource()
-
-        val result: Result<ContactInfo>
-
-        withContext(Dispatchers.IO) {
-            result = contactDataSource.getContactInfo(userId)
-        }
-
-        if (result is Result.Success) {
-            _contactInfo.value = result.data
-        } else {
-            // TODO：抛出并解析异常
-        }
-    }
+//    // 调用网络请求函数
+//    suspend fun getContactInfo(userId: String) {
+//        val contactDataSource = ContactDataSource()
+//
+//        val result: Result<ContactInfo>
+//
+//        withContext(Dispatchers.IO) {
+//            result = contactDataSource.getContactInfo(userId)
+//        }
+//
+//        if (result is Result.Success) {
+//            _contactInfo.value = result.data
+//        } else {
+//            // TODO：抛出并解析异常
+//        }
+//    }
 
     companion object {
         /**

@@ -1,14 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.PersonalFragment">
+    tools:context=".PersonalActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="54dp"
+        android:layout_gravity="start"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/goback"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:contentDescription="TODO"
+            android:scaleType="centerInside"
+            android:src="@drawable/baseline_keyboard_arrow_left_black_24dp" />
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="6" />
+
+        <ImageView
+            android:id="@+id/more"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:src="@drawable/baseline_more_horiz_black_24dp"
+            android:clickable="true"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_marginTop="54dp"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -38,7 +75,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/post_content"
+                    android:id="@+id/userid_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingVertical="8dp"
@@ -50,7 +87,6 @@
         </LinearLayout>
 
         <View
-            android:id="@+id/post_divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginHorizontal="8dp"
@@ -68,14 +104,23 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:gravity="center_vertical"
                 android:text="动态"
-                android:gravity="center_vertical"/>
+                android:clickable="true"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/baseline_keyboard_arrow_right_black_24dp" />
+                android:src="@drawable/baseline_keyboard_arrow_right_black_24dp"
+                android:clickable="true"/>
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="2dp"
+            android:foreground="@color/grey" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -88,17 +133,48 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:gravity="center_vertical"
                 android:text="更多信息"
-                android:gravity="center_vertical"/>
+                android:clickable="true"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/baseline_keyboard_arrow_right_black_24dp" />
+                android:src="@drawable/baseline_keyboard_arrow_right_black_24dp"
+                android:clickable="true"/>
         </LinearLayout>
 
         <View
-            android:id="@+id/post_divider_2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="2dp"
+            android:foreground="@color/grey" />
+
+        <LinearLayout
+            android:id="@+id/layout_message"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            android:clickable="true">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:padding="20dp"
+                android:scaleType="fitEnd"
+                android:src="@drawable/baseline_chat_bubble_outline_black_24dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical|start"
+                android:layout_weight="1"
+                android:text="发消息" />
+        </LinearLayout>
+
+        <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginHorizontal="8dp"
@@ -108,16 +184,10 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="发消息"
-            android:gravity="center_vertical|center_horizontal"
-            android:clickable="true"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
             android:text="加为好友"
-            android:visibility="invisible"/>
+            android:visibility="invisible" />
+
 
     </LinearLayout>
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

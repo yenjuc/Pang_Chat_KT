@@ -15,8 +15,13 @@ class SearchActivity : FragmentActivity() {
 
         setContentView(R.layout.activity_search)
 
-        val searchFragment: Fragment = SearchFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.fragment, searchFragment).commit()
+        if (intent.getStringExtra("search") == "friend") {
+            val searchFragment: Fragment = SearchFragment()
+            supportFragmentManager.beginTransaction().replace(R.id.fragment, searchFragment).commit()
+        }
+
+
+
 
     }
 }
