@@ -30,7 +30,6 @@ import kotlin.collections.ArrayList
 class SelectFriendsFragment : Fragment() {
     private lateinit var mContext: FragmentActivity
 
-    private var topNavigationView: NavigationView? = null
     private var recyclerView: RecyclerView? = null
     private var buttonFinish: Button? = null
     private var backView: ImageView? = null
@@ -46,11 +45,8 @@ class SelectFriendsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         recyclerView = view.findViewById(R.id.select_friends_recyclerview)
 
-        topNavigationView = view.findViewById(R.id.topNavigationView)
-        val headerView = topNavigationView?.getHeaderView(0)
-
-        buttonFinish = headerView?.findViewById(R.id.button_finish)
-        backView = headerView?.findViewById(R.id.goback)
+        buttonFinish = getView()?.findViewById(R.id.button_finish)
+        backView = getView()?.findViewById(R.id.goback)
 
         contacts = LinkedList<Contact?>()
         recyclerView?.adapter = SelectFriendsAdapter(activity, contacts)

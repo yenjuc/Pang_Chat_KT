@@ -6,20 +6,46 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.example.pangchat.SelectFriendsFragment">
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/topNavigationView"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_gravity="start"
-        app:labelVisibilityMode="labeled"
-        app:headerLayout="@layout/event_top_nav"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="62dp">
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/goback"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:contentDescription="TODO"
+                android:scaleType="centerInside"
+                android:src="@drawable/baseline_keyboard_arrow_left_black_24dp" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="6"
+                android:gravity="center"
+                android:text="发起群聊"
+                android:textAlignment="center"
+                android:textSize="20sp"/>
+
+            <Button
+                android:id="@+id/button_finish"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="完成"/>
+
+        </LinearLayout>
+
 
         <EditText
             android:id="@+id/search_content"
