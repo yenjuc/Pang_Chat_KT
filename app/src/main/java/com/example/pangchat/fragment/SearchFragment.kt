@@ -115,28 +115,6 @@ class SearchFragment : Fragment() {
                     recyclerView?.layoutManager = linearLayoutManager
                 }
             })
-//            editText?.setOnEditorActionListener(TextView.OnEditorActionListener { textView: TextView, actionId: Int, keyEvent: KeyEvent ->
-//                if (actionId == EditorInfo.IME_ACTION_DONE) {
-//                    Toast.makeText(activity, "搜索", Toast.LENGTH_LONG).show()
-//
-//                    val searchContent: String = editText?.text.toString()
-//
-//                    contacts.clear()
-//
-//                    lifecycleScope.launch {
-//                        getUserInfo(searchContent);
-//                        contacts.add(_userInfo.value?.userId?.let { Contact(it, _userInfo.value?.username, R.drawable.avatar1) })
-//                        recyclerView?.adapter?.notifyDataSetChanged()
-//                        val linearLayoutManager = LinearLayoutManager(activity)
-//                        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-//                        recyclerView?.layoutManager = linearLayoutManager
-//                    }
-//
-//
-//                    return@OnEditorActionListener true;
-//                }
-//                false;
-//            })
         }
 
         backView?.setOnClickListener(View.OnClickListener {
