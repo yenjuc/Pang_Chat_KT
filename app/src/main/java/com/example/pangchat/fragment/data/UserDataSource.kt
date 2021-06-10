@@ -19,6 +19,7 @@ data class UserInfo(
 
 class UserDataSource {
     data class UserId(val userId: String)
+
     fun getUserInfoById(userId: String) : Result<UserInfo> {
         val up = UserDataSource.UserId(userId)
         val (_, _, result) = Fuel.post("/user/info").jsonBody(up).responseObject<UserInfo>()
@@ -31,4 +32,6 @@ class UserDataSource {
         }
 
     }
+
+
 }

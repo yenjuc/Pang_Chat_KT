@@ -42,6 +42,8 @@ class ContactsFragment : Fragment() {
 
     private lateinit var contacts:LinkedList<Contact?>
 
+    private lateinit var userId: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.mContext = requireActivity();
@@ -57,7 +59,7 @@ class ContactsFragment : Fragment() {
         lifecycleScope.launch {
 
             // 从Mainactivity的Intent中获取userId，作为入参传入网络请求
-            val userId : String? = activity?.intent?.getStringExtra("userId")
+            userId = activity?.intent?.getStringExtra("userId").toString()
             if (userId != null) {
                 getContactInfo(userId)
                 contacts.clear()

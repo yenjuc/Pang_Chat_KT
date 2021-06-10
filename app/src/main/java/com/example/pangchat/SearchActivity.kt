@@ -8,6 +8,7 @@ import com.github.kittinunf.fuel.core.FuelManager
 
 class SearchActivity : FragmentActivity() {
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

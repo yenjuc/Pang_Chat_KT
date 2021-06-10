@@ -71,11 +71,11 @@ class SearchFragment : Fragment() {
 
         recyclerView?.adapter = ContactAdapter(activity, contacts)
 
+        friendNames = activity?.intent?.getStringArrayListExtra("friendNames")
+        friendIds = activity?.intent?.getStringArrayListExtra("friendIds")
+
         if (activity?.intent?.getStringExtra("search") == "friend") {
             // buttonSearch?.visibility = View.INVISIBLE;
-
-            friendNames = activity?.intent?.getStringArrayListExtra("friendNames")
-            friendIds = activity?.intent?.getStringArrayListExtra("friendIds")
 
             editText?.afterTextChanged {
                 val searchContent: String = editText?.text.toString()
@@ -121,6 +121,8 @@ class SearchFragment : Fragment() {
             val intent = Intent()
             activity?.let { it1 -> intent.setClass(it1, MainActivity::class.java) }
             intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
+            intent.putExtra("friendIds", friendIds)
+            intent.putExtra("friendNames", friendNames)
             startActivity(intent)
 
             activity?.finish()
