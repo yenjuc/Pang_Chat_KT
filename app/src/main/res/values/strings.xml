@@ -12,7 +12,7 @@
     <string name="save">Save</string>
 
     <!-- 全局配置 -->
-    <string name="BACKEND_URL">http://183.173.191.125:7000</string>
+    <string name="BACKEND_URL">http://183.172.182.59:7000</string>
     <!-- 聊天详情页面 -->
     <string name="chatInfoTitle">聊天信息</string>
     <string name="chatGroupName">群组名称</string>
@@ -20,6 +20,9 @@
     <string name="chatPin">置顶聊天</string>
     <string name="chatMute">消息免打扰</string>
     <string name="chatLeave">删除并退出群聊</string>
+    <!-- 聊天消息 -->
+    <string name="messageRecalled">撤回了一条消息</string>
+    <string name="messageSendReedit"> 重新编辑</string>
 
 
     <!-- 可以使用的昵称信息 -->
