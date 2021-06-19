@@ -12,7 +12,9 @@
     <string name="save">Save</string>
 
     <!-- 全局配置 -->
-    <string name="BACKEND_URL">http://183.173.191.125:7000</string>
+    <string name="BACKEND_URL">http://192.168.43.141:7000</string>
+    <string name="FriendSocketURL">ws://192.168.43.141:520/ws</string>
+
     <!-- 聊天详情页面 -->
     <string name="chatInfoTitle">聊天信息</string>
     <string name="chatGroupName">群组名称</string>

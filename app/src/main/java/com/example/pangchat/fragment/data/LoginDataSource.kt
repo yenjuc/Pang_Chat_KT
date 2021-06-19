@@ -1,11 +1,11 @@
 package com.example.pangchat.fragment.data
 
-import com.github.kittinunf.fuel.Fuel
+import com.example.pangchat.utils.CookiedFuel
+import com.example.pangchat.websocketClient.FriendWebSocketClient
+import com.example.pangchat.websocketClient.webSocketClient
+import com.example.pangchat.websocketClient.webSocketURI
 import com.github.kittinunf.fuel.gson.jsonBody
 import com.github.kittinunf.fuel.gson.responseObject
-import com.google.gson.Gson
-import java.lang.Exception
-import java.util.*
 import com.github.kittinunf.result.Result as fuelResult
 
 /**
@@ -27,10 +27,14 @@ class LoginDataSource {
 
     fun login(username: String, password: String): Result<LoggedInUser> {
         val up = UsernameAndPassword(username, password)
-        val (_, _, result) = Fuel.post("/user/login").jsonBody(up).responseObject<LoggedInUser>()
+        val (_, _, result) = CookiedFuel.post("/user/login").jsonBody(up).responseObject<LoggedInUser>()
         if (result is fuelResult.Failure) {
             return Result.Error(result.getException())
         } else {
+            webSocketClient = FriendWebSocketClient(webSocketURI)
+            webSocketClient.username = username
+            webSocketClient.password = password
+            webSocketClient.connect()
             return if (result.get().success)
                 Result.Success(result.get())
             else Result.Error(Exception());
