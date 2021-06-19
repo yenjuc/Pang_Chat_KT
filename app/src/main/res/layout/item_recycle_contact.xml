@@ -24,8 +24,7 @@
             android:id="@+id/avatar_icon"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/avatar1" />
+            android:contentDescription="@string/app_name" />
 
         <TextView
             android:id="@+id/nickname_text"
@@ -33,7 +32,6 @@
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:paddingHorizontal="22dp"
-            android:text="昵称"
             android:textAppearance="@style/TextAppearance.AppCompat.Display4"
             android:textSize="18sp"
             android:textStyle="bold" />
