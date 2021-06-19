@@ -1,14 +1,9 @@
 package com.example.pangchat.contact
 
 import com.example.pangchat.fragment.data.Result
-
-import com.github.kittinunf.fuel.Fuel
+import com.example.pangchat.utils.CookiedFuel
 import com.github.kittinunf.fuel.gson.jsonBody
 import com.github.kittinunf.fuel.gson.responseObject
-import com.google.gson.Gson
-import java.lang.Exception
-import java.util.*
-import kotlin.collections.ArrayList
 import com.github.kittinunf.result.Result as fuelResult
 
 /**
@@ -23,13 +18,19 @@ data class ContactInfo(
         val friendsName: ArrayList<String>
 )
 
+data class AddFriendResult(
+    var success: Boolean,
+    val time: Long
+)
+
+
 class ContactDataSource {
 
     data class UserId(val userId: String)
 
     fun getContactInfo(userId: String): Result<ContactInfo> {
         val up = UserId(userId)
-        val (_, _, result) = Fuel.post("/user/contact/info").jsonBody(up).responseObject<ContactInfo>()
+        val (_, _, result) = CookiedFuel.post("/user/contact/info").jsonBody(up).responseObject<ContactInfo>()
         if (result is fuelResult.Failure) {
             return Result.Error(result.getException())
         } else {
@@ -37,6 +38,23 @@ class ContactDataSource {
                 Result.Success(result.get())
             else Result.Error(Exception());
         }
+
+    }
+
+
+    data class NewFriend(val friendName: String)
+
+    fun addNewFriend(friendName: String): Result<AddFriendResult> {
+        val param = NewFriend(friendName)
+        val (_, _, result) = CookiedFuel.post("/friend/add").jsonBody(param).responseObject<AddFriendResult>()
+
+        if (result.get().success) {
+            return Result.Success(result.get())
+        }
+        else {
+            return Result.Error(Exception())
+        }
+
 
     }
 

@@ -1,11 +1,8 @@
 package com.example.pangchat.fragment.data
 
-import com.github.kittinunf.fuel.Fuel
+import com.example.pangchat.utils.CookiedFuel
 import com.github.kittinunf.fuel.gson.jsonBody
 import com.github.kittinunf.fuel.gson.responseObject
-import com.google.gson.Gson
-import java.lang.Exception
-import java.util.*
 import com.github.kittinunf.result.Result as fuelResult
 
 // 后端返回的数据格式
@@ -22,7 +19,7 @@ class UserDataSource {
 
     fun getUserInfoById(userId: String) : Result<UserInfo> {
         val up = UserDataSource.UserId(userId)
-        val (_, _, result) = Fuel.post("/user/info").jsonBody(up).responseObject<UserInfo>()
+        val (_, _, result) = CookiedFuel.post("/user/info").jsonBody(up).responseObject<UserInfo>()
         if (result is fuelResult.Failure) {
             return Result.Error(result.getException())
         } else {
@@ -32,6 +29,7 @@ class UserDataSource {
         }
 
     }
+
 
 
 }

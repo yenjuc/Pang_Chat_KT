@@ -4,32 +4,25 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.Toast
-import androidx.appcompat.view.menu.MenuPopupHelper
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.lifecycleScope
-import com.example.pangchat.contact.Contact
 import com.example.pangchat.contact.ContactDataSource
 import com.example.pangchat.contact.ContactInfo
 import com.example.pangchat.fragment.*
 import com.example.pangchat.fragment.data.Result
-import com.github.kittinunf.fuel.core.FuelManager
+import com.example.pangchat.utils.CookiedFuel
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.lang.reflect.Field
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class MainActivity : FragmentActivity() {
@@ -39,17 +32,20 @@ class MainActivity : FragmentActivity() {
     var searchView: ImageView? = null
     var menuView: ImageView? = null
     var userId: String? = null
+    var username: String? = null
     var _contactInfo = MutableLiveData<ContactInfo>()
     var friendIds: ArrayList<String>? = null
     var friendNames: ArrayList<String>? = null
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        FuelManager.instance.basePath = resources.getString(R.string.BACKEND_URL);
+        CookiedFuel.basePath = resources.getString(R.string.BACKEND_URL);
 
         val intent = intent
         userId = intent.getStringExtra("userId")
+        username = intent.getStringExtra("username")
 
         setContentView(R.layout.activity_main)
         // ButterKnife.bind(this)

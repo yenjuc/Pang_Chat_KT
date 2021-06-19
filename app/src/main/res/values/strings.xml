@@ -13,6 +13,8 @@
 
     <!-- 全局配置 -->
     <string name="BACKEND_URL">http://183.172.182.59:7000</string>
+    <string name="SocketURL">ws://183.172.182.59:520/ws</string>
+
     <!-- 聊天详情页面 -->
     <string name="chatInfoTitle">聊天信息</string>
     <string name="chatGroupName">群组名称</string>

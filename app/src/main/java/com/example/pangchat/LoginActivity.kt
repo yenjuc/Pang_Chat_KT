@@ -2,10 +2,7 @@ package com.example.pangchat
 
 import android.app.Activity
 import android.content.Intent
-import androidx.lifecycle.Observer
 import android.os.Bundle
-import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -14,11 +11,15 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
-
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.example.pangchat.fragment.data.LoginDataSource
 import com.example.pangchat.fragment.ui.login.LoggedInUserView
 import com.example.pangchat.fragment.ui.login.LoginViewModel
-import com.github.kittinunf.fuel.core.FuelManager
+import com.example.pangchat.utils.CookiedFuel
+import com.example.pangchat.websocketClient.webSocketURI
+import java.net.URI
 
 class LoginActivity : AppCompatActivity() {
 
@@ -27,7 +28,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        FuelManager.instance.basePath = resources.getString(R.string.BACKEND_URL);
+        CookiedFuel.basePath = resources.getString(R.string.BACKEND_URL)
 
         setContentView(R.layout.activity_login)
 
@@ -106,6 +107,7 @@ class LoginActivity : AppCompatActivity() {
 
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
+                webSocketURI = URI(this@LoginActivity.getString(R.string.SocketURL))
                 loginViewModel.login(username.text.toString(), password.text.toString())
             }
         }
