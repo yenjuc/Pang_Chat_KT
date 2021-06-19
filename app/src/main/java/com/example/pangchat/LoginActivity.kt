@@ -107,7 +107,7 @@ class LoginActivity : AppCompatActivity() {
 
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
-                webSocketURI = URI(this@LoginActivity.getString(R.string.FriendSocketURL))
+                webSocketURI = URI(this@LoginActivity.getString(R.string.SocketURL))
                 loginViewModel.login(username.text.toString(), password.text.toString())
             }
         }

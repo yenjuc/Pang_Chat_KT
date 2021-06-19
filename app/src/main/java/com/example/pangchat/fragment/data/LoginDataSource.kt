@@ -1,7 +1,7 @@
 package com.example.pangchat.fragment.data
 
 import com.example.pangchat.utils.CookiedFuel
-import com.example.pangchat.websocketClient.FriendWebSocketClient
+import com.example.pangchat.websocketClient.MyWebSocketClient
 import com.example.pangchat.websocketClient.webSocketClient
 import com.example.pangchat.websocketClient.webSocketURI
 import com.github.kittinunf.fuel.gson.jsonBody
@@ -31,7 +31,7 @@ class LoginDataSource {
         if (result is fuelResult.Failure) {
             return Result.Error(result.getException())
         } else {
-            webSocketClient = FriendWebSocketClient(webSocketURI)
+            webSocketClient = MyWebSocketClient(webSocketURI)
             webSocketClient.username = username
             webSocketClient.password = password
             webSocketClient.connect()

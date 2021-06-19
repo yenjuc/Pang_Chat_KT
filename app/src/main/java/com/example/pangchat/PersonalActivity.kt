@@ -14,7 +14,6 @@ import com.example.pangchat.contact.AddFriendResult
 import com.example.pangchat.contact.ContactDataSource
 import com.example.pangchat.fragment.data.Result
 import com.example.pangchat.utils.CookiedFuel
-import com.example.pangchat.websocketClient.FriendWebSocketClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -35,8 +34,6 @@ class PersonalActivity : FragmentActivity() {
     var avatar: Int? = null
     var friendIds: ArrayList<String>? = null
     var isFriend: Boolean? = null
-
-    private lateinit var friendWebSocketClient: FriendWebSocketClient
 
     private var _addFriendResult = MutableLiveData<AddFriendResult>()
 

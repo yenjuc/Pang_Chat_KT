@@ -17,7 +17,6 @@ import com.example.pangchat.contact.ContactInfo
 import com.example.pangchat.fragment.*
 import com.example.pangchat.fragment.data.Result
 import com.example.pangchat.utils.CookiedFuel
-import com.example.pangchat.websocketClient.FriendWebSocketClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -38,7 +37,6 @@ class MainActivity : FragmentActivity() {
     var friendIds: ArrayList<String>? = null
     var friendNames: ArrayList<String>? = null
 
-    private lateinit var friendWebSocketClient: FriendWebSocketClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

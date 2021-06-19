@@ -5,11 +5,12 @@ import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake
 import java.net.URI
 
+// 全局变量，所有组件共享此websocket client
 lateinit var webSocketURI: URI
-lateinit var webSocketClient: FriendWebSocketClient
+lateinit var webSocketClient: MyWebSocketClient
 
-class FriendWebSocketClient(uri: URI) : WebSocketClient(uri) {
-    var hasNewFriend : Boolean = false
+class MyWebSocketClient(uri: URI) : WebSocketClient(uri) {
+    // var hasNewFriend : Boolean = false
     var username:String?=null
     var password:String?=null
 
@@ -18,9 +19,15 @@ class FriendWebSocketClient(uri: URI) : WebSocketClient(uri) {
     }
 
     override fun onMessage(message: String?) {
-        hasNewFriend = true
+        // TODO:将message转为json类型，然后对其中的业务类型做各种条件判断， 分别处理
+        // val qwq = Gson().fromJson(message, mutableMapOf<String, Any>().javaClass)
+//        if (qwq[0]["bizType"] == "USER_ADD_FRIEND")
+//        {
+//            print(message)
+//        }
         print(message)
-        // 在这里对业务类型做各种条件判断然后处理
+
+
     }
 
     override fun onClose(code: Int, reason: String?, remote: Boolean) {
