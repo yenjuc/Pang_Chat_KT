@@ -6,21 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.ChatActivity
 import com.example.pangchat.R
 import com.example.pangchat.message.data.*
-import kotlinx.coroutines.launch
 import java.util.*
 
-class MessageAdapter(private val activity: ChatActivity, private val data: LinkedList<Message?>) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
+class MessageAdapter(private val myUsername: String, private val activity: ChatActivity, private val data: LinkedList<Message?>) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
     override fun getItemViewType(position: Int): Int {
 
         // FIXME: 假设目前全部都是 text。之后应该要考虑 1. 是接收方还是发出方 2. 哪种类型 3. 是否recalled
 
         var send: Int = 0
-        if(data?.get(position)?.getNickname()?.compareTo("pwf") == 0){
+        if(data?.get(position)?.getNickname()?.compareTo(myUsername) == 0){
             send = 1
         }
 
@@ -50,13 +48,14 @@ class MessageAdapter(private val activity: ChatActivity, private val data: Linke
                 viewHolder.nickname?.text = message.getNickname()
                 viewHolder.content?.text = message.getContent()
                 viewHolder.content?.setOnLongClickListener {
-                    Log.d("long click ", position.toString())
-                    activity.recallMessage(position, message.getMessageId(), message.getNickname())
+                    if(message.getNickname().compareTo(myUsername) == 0){
+                        activity.recallMessage(position, message.getMessageId(), message.getNickname())
+                    }
                     return@setOnLongClickListener true
                 }
             }else{
                 var recallUser: String = message.getNickname()
-                if(recallUser.compareTo("pwf") == 0){
+                if(recallUser.compareTo(myUsername) == 0){
                     recallUser = "您"
                 }
                 viewHolder.recalledInfo?.text = recallUser + activity.getString(R.string.messageRecalled)

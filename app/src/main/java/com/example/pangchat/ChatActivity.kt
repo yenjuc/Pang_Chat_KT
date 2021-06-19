@@ -22,6 +22,7 @@ import com.example.pangchat.message.data.MessageIdResp
 import com.example.pangchat.message.data.MessageRequest
 import com.example.pangchat.message.data.MessageResult
 import com.example.pangchat.message.data.MessageInfo
+import com.example.pangchat.websocketClient.webSocketClient
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,7 +50,7 @@ class ChatActivity : AppCompatActivity() {
         chatId = intent.getStringExtra("chatId")
         recyclerView = findViewById(R.id.chatRecyclerView)
         messages = LinkedList<Message?>()
-        recyclerView?.adapter = MessageAdapter(this, messages)
+        recyclerView?.adapter = MessageAdapter(webSocketClient.username!!, this, messages)
         // 取得对应聊天的内容
         lifecycleScope.launch {
             if (chatId != null) {
@@ -162,13 +163,13 @@ class ChatActivity : AppCompatActivity() {
         val result: MessageResult<MessageIdResp>
 
         withContext(Dispatchers.IO) {
-            result = messageRequest.sendMessage(chatId!!, "pwf", content)
+            result = messageRequest.sendMessage(chatId!!, webSocketClient.username!!, content)
         }
 
         if (result is MessageResult.Success) {
             // _messageInfo.value = result.data
                 // FIXME: change to my data
-            val message = Message(result.data.messageId, "my id", "pwf", "1", false, content, "time")
+            val message = Message(result.data.messageId, "my id", webSocketClient.username!!, "1", false, content, "time")
             messages.add(message)
         } else {
             // TODO：抛出并解析异常

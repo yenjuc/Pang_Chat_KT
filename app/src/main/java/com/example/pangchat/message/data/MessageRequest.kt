@@ -37,7 +37,7 @@ class MessageRequest {
 
     data class MessageSend(val chatId: String, val nickname: String, val content: String)
     fun sendMessage(chatId: String, nickname: String, content: String): MessageResult<MessageIdResp>{
-        val (_, _, result) = Fuel.post("/message/send").jsonBody(MessageSend(chatId, nickname, content)).responseObject<MessageIdResp>()
+        val (_, _, result) = CookiedFuel.post("/message/send").jsonBody(MessageSend(chatId, nickname, content)).responseObject<MessageIdResp>()
         if (result is fuelResult.Failure) {
             return MessageResult.Error(result.getException())
         } else {
@@ -49,7 +49,7 @@ class MessageRequest {
 
     data class MessageIdAndUsername(val messageId: String, val username: String)
     fun recallMessage(messageId: String, username: String): MessageResult<MessageIdResp>{
-        val (_, _, result) = Fuel.post("/message/recall").jsonBody(MessageIdAndUsername(messageId, username)).responseObject<MessageIdResp>()
+        val (_, _, result) = CookiedFuel.post("/message/recall").jsonBody(MessageIdAndUsername(messageId, username)).responseObject<MessageIdResp>()
         if (result is fuelResult.Failure) {
             return MessageResult.Error(result.getException())
         } else {
