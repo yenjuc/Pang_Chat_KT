@@ -55,8 +55,14 @@ class MainActivity : FragmentActivity() {
         val contactsFragment: Fragment = ContactsFragment()
         val discoverFragment: Fragment = DiscoverFragment()
         val settingsFragment: Fragment = SettingsFragment()
-        setCurrentFragment(chatsFragment) // 初始的Fragment为chatsFragment
 
+
+        if (intent.getStringExtra("fragment") == "contact") {
+            setCurrentFragment(contactsFragment)
+        }
+        else{
+            setCurrentFragment(chatsFragment) // 初始的Fragment为chatsFragment
+        }
 
         MainScope().launch {
             getFriendsInfo()

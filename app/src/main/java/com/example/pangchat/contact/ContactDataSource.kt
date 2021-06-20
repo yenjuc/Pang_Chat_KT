@@ -15,7 +15,8 @@ data class ContactInfo(
         val success: Boolean,
         val time: Long,
         val friendsId: ArrayList<String>,
-        val friendsName: ArrayList<String>
+        val friendsName: ArrayList<String>,
+
 )
 
 data class AddFriendResult(
@@ -54,8 +55,18 @@ class ContactDataSource {
         else {
             return Result.Error(Exception())
         }
+    }
 
+    fun acceptNewFriend(friendName: String): Result<AddFriendResult> {
+        val param = NewFriend(friendName)
+        val (_, _, result) = CookiedFuel.post("/friend/accept").jsonBody(param).responseObject<AddFriendResult>()
 
+        if (result.get().success) {
+            return Result.Success(result.get())
+        }
+        else {
+            return Result.Error(Exception())
+        }
     }
 
 }

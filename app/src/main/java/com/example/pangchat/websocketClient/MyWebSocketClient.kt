@@ -24,12 +24,17 @@ class MyWebSocketClient(uri: URI) : WebSocketClient(uri) {
     var password:String?=null
     lateinit var context: Context
 
+    data class friend(val friendId: String, val friendName: String)
+
+    var newFriendList: ArrayList<friend> = ArrayList()
+
+
     override fun onOpen(handshakedata: ServerHandshake?) {
         send(JSON.toJSONString(mapOf("bizType" to "USER_LOGIN", "username" to username, "password" to password)))
     }
 
     override fun onMessage(message: String?) {
-        // TODO:将message转为json类型，然后对其中的业务类型做各种条件判断， 分别处理
+        // 将message转为json类型，然后对其中的业务类型做各种条件判断
         var arr: MutableList<MutableMap<String, *>>
         try {
             @Suppress("UNCHECKED_CAST")
@@ -40,10 +45,14 @@ class MyWebSocketClient(uri: URI) : WebSocketClient(uri) {
             arr = mutableListOf(obj as MutableMap<String, *>)
         }
         for (obj in arr) {
-            // 处理每一个
+
+            // 有新的好友申请
             if (obj.get("bizType") == "USER_ADD_FRIEND") {
                 val name: String = obj.get("friendName") as String
+                val Id: String = obj.get("friendId") as String
+                newFriendList.add(friend(Id, name))
                 sendSimpleNotification("新好友提醒", "$name 请求添加你为好友")
+
             }
         }
 

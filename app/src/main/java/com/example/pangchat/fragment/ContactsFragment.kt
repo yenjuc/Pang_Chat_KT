@@ -10,11 +10,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pangchat.contact.Contact
-import com.example.pangchat.contact.ContactAdapter
-import com.example.pangchat.contact.ContactDataSource
-import com.example.pangchat.contact.ContactInfo
+import com.example.pangchat.contact.*
 import com.example.pangchat.fragment.data.Result
+import com.example.pangchat.websocketClient.webSocketClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,11 +27,14 @@ import java.util.*
 
 class ContactsFragment : Fragment() {
     private lateinit var mContext: FragmentActivity
-    private var recyclerView: RecyclerView? = null
+    private lateinit var newFriendRecyclerView: RecyclerView
+    private lateinit var currFriendRecyclerView: RecyclerView
+
 
     private val _contactInfo = MutableLiveData<ContactInfo>()
 
-    private lateinit var contacts:LinkedList<Contact?>
+    lateinit var contacts:LinkedList<Contact?>
+    lateinit var requests:LinkedList<Contact?>
 
     // private lateinit var userId: String
 
@@ -44,33 +45,41 @@ class ContactsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recyclerView = view.findViewById(R.id.contacts_recyclerview)
+        currFriendRecyclerView = view.findViewById(R.id.contacts_recyclerview)
+        newFriendRecyclerView = view.findViewById(R.id.newfriends_recyclerview)
 
         contacts = LinkedList<Contact?>()
+        requests = LinkedList<Contact?>()
 
-        recyclerView?.adapter = ContactAdapter(activity, contacts)
+        currFriendRecyclerView.adapter = ContactAdapter(activity, contacts)
+        newFriendRecyclerView.adapter = FriendRequestAdapter(activity, requests)
 
         lifecycleScope.launch {
 
-            // 从Mainactivity的Intent中获取userId，作为入参传入网络请求
-            // userId = activity?.intent?.getStringExtra("userId").toString()
-
-                getContactInfo()
-                contacts.clear()
-                // contacts.addAll(_contactInfo.value?.friendsName?.map { Contact(userId, it, R.drawable.avatar1) }!!)
-                for (index in 0 until _contactInfo.value?.friendsId?.size!!) {
-                    contacts.add(Contact(_contactInfo.value?.friendsId!![index],
-                        _contactInfo.value?.friendsName!![index], R.drawable.avatar1))
-                }
-                recyclerView?.adapter?.notifyDataSetChanged()
-
+            // 获取现有好友列表
+            getContactInfo()
+            contacts.clear()
+            for (index in 0 until _contactInfo.value?.friendsId?.size!!) {
+                contacts.add(Contact(_contactInfo.value?.friendsId!![index],
+                    _contactInfo.value?.friendsName!![index], R.drawable.avatar1))
+            }
+            currFriendRecyclerView.adapter?.notifyDataSetChanged()
         }
 
+        for (index in 0 until webSocketClient.newFriendList.size) {
+            requests.add(Contact(
+                webSocketClient.newFriendList[index].friendId,
+                webSocketClient.newFriendList[index].friendName, R.drawable.avatar1))
+        }
+        newFriendRecyclerView.adapter?.notifyDataSetChanged()
+
+        val _linearLayoutManager = LinearLayoutManager(this.activity)
+        _linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        newFriendRecyclerView.layoutManager = _linearLayoutManager
 
         val linearLayoutManager = LinearLayoutManager(this.activity)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        recyclerView?.layoutManager = linearLayoutManager
-
+        currFriendRecyclerView.layoutManager = linearLayoutManager
 
 
     }
@@ -84,7 +93,6 @@ class ContactsFragment : Fragment() {
     // 调用网络请求函数
     suspend fun getContactInfo() {
         val contactDataSource = ContactDataSource()
-
         val result: Result<ContactInfo>
 
         withContext(Dispatchers.IO) {
@@ -97,6 +105,8 @@ class ContactsFragment : Fragment() {
             // TODO：抛出并解析异常
         }
     }
+
+
 
     companion object {
         /**
