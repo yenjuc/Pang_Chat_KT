@@ -6,12 +6,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.chat.Chat
 import com.example.pangchat.chat.ChatAdapter
+import com.example.pangchat.user.data.UserChats
+import com.example.pangchat.user.data.UserRequest
+import com.example.pangchat.user.data.UserResult
 import com.example.pangchat.websocketClient.webSocketClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * A simple [Fragment] subclass.
@@ -26,10 +34,8 @@ class ChatsFragment : Fragment() {
 
         recyclerView = view.findViewById<RecyclerView?>(R.id.chat_recyclerview)
 
-        data = LinkedList()
-        data?.add(Chat("60ac6c49ebad580e2632520b",getString(R.string.nickname1), R.drawable.avatar1, getString(R.string.sentence1), "1995/12/30"))
-        data?.add(Chat("60ac70310652f28934da7960",getString(R.string.nickname2), R.drawable.avatar2, getString(R.string.sentence2), "1990/01/13"))
 
+        data = LinkedList()
         chatAdapter = ChatAdapter(activity, data)
         recyclerView?.adapter = chatAdapter
 
@@ -37,9 +43,14 @@ class ChatsFragment : Fragment() {
         val linearLayoutManager = LinearLayoutManager(this.activity)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView?.layoutManager = linearLayoutManager
-        
-        
-        // TODO: recyclerView?.setOnTouchListener
+
+        lifecycleScope.launch{
+            var chats : ArrayList<Chat>? = getUserChats()
+            for(chat in chats!!){
+                data?.add(chat)
+            }
+            recyclerView?.adapter?.notifyDataSetChanged()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +61,21 @@ class ChatsFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater?.inflate(R.layout.fragment_chats, container, false)
+    }
+
+    suspend fun getUserChats(): ArrayList<Chat>? {
+        val userRequest = UserRequest()
+        val result: UserResult<UserChats>
+
+        withContext(Dispatchers.IO) {
+            result = userRequest.getUserChats(webSocketClient.username!!)
+        }
+
+        if (result is UserResult.Success) {
+            return result.data.chats
+        }
+        return null
+        // TODO: 解析异常
     }
 
     companion object {

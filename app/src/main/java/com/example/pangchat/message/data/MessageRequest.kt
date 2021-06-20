@@ -1,5 +1,6 @@
 package com.example.pangchat.message.data
 
+import com.example.pangchat.message.Message
 import com.example.pangchat.utils.CookiedFuel
 import com.github.kittinunf.fuel.gson.jsonBody
 import com.github.kittinunf.fuel.gson.responseObject
@@ -21,6 +22,11 @@ data class MessageIdResp(
     val messageId: String
 )
 
+data class MessageResp(
+    val success: Boolean,
+    val message: Message
+)
+
 class MessageRequest {
 
     data class MessageId(val messageId: String)
@@ -35,9 +41,9 @@ class MessageRequest {
         }
     }
 
-    data class MessageSend(val chatId: String, val nickname: String, val content: String)
-    fun sendMessage(chatId: String, nickname: String, content: String): MessageResult<MessageIdResp>{
-        val (_, _, result) = CookiedFuel.post("/message/send").jsonBody(MessageSend(chatId, nickname, content)).responseObject<MessageIdResp>()
+    data class MessageSend(val chatId: String, val username: String, val content: String)
+    fun sendMessage(chatId: String, username: String, content: String): MessageResult<MessageResp>{
+        val (_, _, result) = CookiedFuel.post("/message/send").jsonBody(MessageSend(chatId, username, content)).responseObject<MessageResp>()
         if (result is fuelResult.Failure) {
             return MessageResult.Error(result.getException())
         } else {
@@ -48,8 +54,8 @@ class MessageRequest {
     }
 
     data class MessageIdAndUsername(val messageId: String, val username: String)
-    fun recallMessage(messageId: String, username: String): MessageResult<MessageIdResp>{
-        val (_, _, result) = CookiedFuel.post("/message/recall").jsonBody(MessageIdAndUsername(messageId, username)).responseObject<MessageIdResp>()
+    fun recallMessage(messageId: String, username: String): MessageResult<MessageResp>{
+        val (_, _, result) = CookiedFuel.post("/message/recall").jsonBody(MessageIdAndUsername(messageId, username)).responseObject<MessageResp>()
         if (result is fuelResult.Failure) {
             return MessageResult.Error(result.getException())
         } else {

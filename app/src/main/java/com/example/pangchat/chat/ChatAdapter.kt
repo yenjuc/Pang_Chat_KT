@@ -38,15 +38,16 @@ class ChatAdapter(private val mContext: FragmentActivity?, private val data: Lin
         // TODO
         val chat = data?.get(position)
         if (chat != null) {
-            holder.avatar?.setImageResource(chat.getAvatarIcon())
-            holder.nickname?.text = chat.getNickname()
-            holder.lastTime?.text = chat.getLastSpeakTime()
-            holder.lastConx?.text = chat.getLastSpeak()
+            // FIXME:
+            holder.avatar?.setImageResource(R.drawable.avatar2)
+            holder.nickname?.text = chat.getChatName()
+            holder.lastTime?.text = chat.getLastUpdateTime()
+            holder.lastConx?.text = chat.getLastUpdateConx()
             holder.itemView.setOnClickListener {
-                Log.d("click chatid: ", data?.get(position)!!.getChatId())
+                Log.d("click chatid: ", chat.getId())
                 // FIXME: 应改成进入某一特定 chatId 的聊天室
                 val intent = Intent(mContext, ChatActivity::class.java)
-                intent.putExtra("chatId", data?.get(position)!!.getChatId())
+                intent.putExtra("chatId", chat.getId())
                 try {
                     mContext?.startActivity(intent)
                 } catch (ActivityNotFoundException: Exception) {
