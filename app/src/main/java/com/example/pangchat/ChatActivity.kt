@@ -13,33 +13,39 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pangchat.chat.Chat
 import com.example.pangchat.chat.data.ChatInfo
+import com.example.pangchat.chat.data.ChatMessageInfo
 import com.example.pangchat.chat.data.ChatRequest
 import com.example.pangchat.chat.data.ChatResult
 import com.example.pangchat.message.Message
 import com.example.pangchat.message.MessageAdapter
-import com.example.pangchat.message.data.MessageIdResp
-import com.example.pangchat.message.data.MessageRequest
-import com.example.pangchat.message.data.MessageResult
-import com.example.pangchat.message.data.MessageInfo
+import com.example.pangchat.message.data.*
 import com.example.pangchat.websocketClient.webSocketClient
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ChatActivity : AppCompatActivity() {
 
     private val _messageInfo = MutableLiveData<MessageInfo>()
 
-    private var chatInfo: ChatInfo? = null
+    //private var chatInfo: ChatInfo? = null
+
+    private var chat: Chat? = null
+
+    private var data: LinkedList<Message?>? = null
+
+    private var messages: ArrayList<Message>? = null
 
     private var chatId: String? = null
 
     private var recyclerView: RecyclerView? = null
 
-    private lateinit var messages:LinkedList<Message?>
+    //private lateinit var messages:LinkedList<Message?>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,26 +55,28 @@ class ChatActivity : AppCompatActivity() {
 
         chatId = intent.getStringExtra("chatId")
         recyclerView = findViewById(R.id.chatRecyclerView)
-        messages = LinkedList<Message?>()
-        recyclerView?.adapter = MessageAdapter(webSocketClient.username!!, this, messages)
+        data = LinkedList()
+        messages = ArrayList()
+        recyclerView?.adapter = MessageAdapter(webSocketClient.username!!, this, data)
         // 取得对应聊天的内容
         lifecycleScope.launch {
             if (chatId != null) {
-                getChatInfo(chatId!!)
-                // 遍历某chat中的所有messageId
-                for(i in 0 until chatInfo?.records!!.size) {
-                    getMessageInfo(chatInfo?.records!![i])
+                getChatAndMessage(chatId!!)
+                for(message in messages!!){
+                    data!!.add(message)
                 }
                 recyclerView?.adapter?.notifyDataSetChanged()
-                recyclerView?.scrollToPosition(messages.size - 1)
+                recyclerView?.scrollToPosition(messages!!.size - 1)
                 runOnUiThread {
                     val chatname = findViewById<TextView>(R.id.chatName)
-                    if(chatInfo!!.isGroup){
-                        chatname.text = chatInfo!!.groupName
+                    chatname.text = chat?.getChatName()
+                    /*
+                    if(chat?.getIsGroup() == true){
+                        chatname.text = chat?.getChatName()
                     }else{
                         // FIXME: 应改成对方名称
                         chatname.text = "对方用户名"
-                    }
+                    }*/
                 }
             }
         }
@@ -104,7 +112,7 @@ class ChatActivity : AppCompatActivity() {
                     if (chatId != null) {
                         sendMessage(chatInput.text.toString())
                         recyclerView?.adapter?.notifyDataSetChanged()
-                        recyclerView?.scrollToPosition(messages.size - 1)
+                        recyclerView?.scrollToPosition(data!!.size - 1)
                         chatInput.text?.clear()
                     }
                 }
@@ -123,22 +131,24 @@ class ChatActivity : AppCompatActivity() {
         chatInput.setText(text)
     }
 
-    private suspend fun getChatInfo(chatId: String){
+    private suspend fun getChatAndMessage(chatId: String){
         val chatRequest = ChatRequest()
-        val result: ChatResult<ChatInfo>
+        val result: ChatResult<ChatMessageInfo>
 
         withContext(Dispatchers.IO){
-            result = chatRequest.getChat(chatId)
+            result = chatRequest.getMessagesOfChat(chatId)
         }
 
         if (result is ChatResult.Success) {
-            chatInfo = result.data
+            chat = result.data.chat
+            messages = result.data.records
         } else {
             Log.d("error: ", "get chat info error")
             // TODO：抛出并解析异常
         }
     }
 
+    /*
     private suspend fun getMessageInfo(messageId: String){
         val messageRequest = MessageRequest()
         val result: MessageResult<MessageInfo>
@@ -149,18 +159,20 @@ class ChatActivity : AppCompatActivity() {
 
         if (result is MessageResult.Success) {
             _messageInfo.value = result.data
-            val message = Message(result.data.messageId, result.data.senderId, result.data.nickname, result.data.avatarIcon, result.data.recalled, result.data.content, result.data.time)
-            messages.add(message)
+            // val message = Message(result.data.messageId, result.data.senderId, result.data.nickname, result.data.avatarIcon, result.data.recalled, result.data.content, result.data.time)
+            // messages.add(message)
         } else {
             // TODO：抛出并解析异常
         }
     }
 
+     */
+
 
     // FIXME: nickname 动态取得
     private suspend fun sendMessage(content: String){
         val messageRequest = MessageRequest()
-        val result: MessageResult<MessageIdResp>
+        val result: MessageResult<MessageResp>
 
         withContext(Dispatchers.IO) {
             result = messageRequest.sendMessage(chatId!!, webSocketClient.username!!, content)
@@ -169,25 +181,26 @@ class ChatActivity : AppCompatActivity() {
         if (result is MessageResult.Success) {
             // _messageInfo.value = result.data
                 // FIXME: change to my data
-            val message = Message(result.data.messageId, "my id", webSocketClient.username!!, "1", false, content, "time")
-            messages.add(message)
+            data?.add(result.data.message)
+            // val message = Message(result.data.messageId, "my id", webSocketClient.username!!, "1", false, content, "time")
+            // messages.add(message)
         } else {
             // TODO：抛出并解析异常
         }
     }
 
-    public fun recallMessage(index: Int, messageId: String, username: String){
+    fun recallMessage(index: Int, messageId: String, username: String){
         lifecycleScope.launch {
             if(recallMessage(messageId, username)){
-                messages[index]?.setRecalled()
+                data?.get(index)?.setRecalled()
                 recyclerView?.adapter?.notifyDataSetChanged()
             }
         }
     }
 
-    public suspend fun recallMessage(messageId: String, username: String) : Boolean{
+    private suspend fun recallMessage(messageId: String, username: String) : Boolean{
         val messageRequest = MessageRequest()
-        val result: MessageResult<MessageIdResp>
+        val result: MessageResult<MessageResp>
 
         withContext(Dispatchers.IO) {
             result = messageRequest.recallMessage(messageId, username)
