@@ -3,13 +3,12 @@ package com.example.pangchat
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.utils.CookiedFuel
 
 class SelectFriendsActivity : FragmentActivity() {
     // @BindView(R.id.bottomNavigationView)
-    var recyclerView: RecyclerView? = null
-    var selectedIds =  ArrayList<String>()
+    // var recyclerView: RecyclerView? = null
+    var selectedNames =  ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,8 +16,8 @@ class SelectFriendsActivity : FragmentActivity() {
         CookiedFuel.basePath = resources.getString(R.string.BACKEND_URL);
 
         val intent = intent
-        val userId = intent.getStringExtra("userId")
-        intent.putExtra("selectedIds", selectedIds)
+        // val userId = intent.getStringExtra("userId")
+        intent.putExtra("selectedNames", selectedNames)
 
         setContentView(R.layout.activity_select_friends)
 

@@ -1,6 +1,5 @@
 package com.example.pangchat
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +10,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.pangchat.websocketClient.webSocketClient
 
 
 /**
@@ -31,7 +31,7 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         textView = getView()?.findViewById<TextView?>(R.id.username_text)
-        textView?.setText(activity?.intent?.getStringExtra("username"))
+        textView?.setText(webSocketClient.username)
         imageView = getView()?.findViewById<ImageView>(R.id.avatar_icon)
         imageView?.setImageResource(R.drawable.avatar1)
         button = getView()?.findViewById<Button>(R.id.button_modify)
@@ -46,8 +46,8 @@ class SettingsFragment : Fragment() {
 
             val intent = Intent()
             activity?.let { it1 -> intent.setClass(it1, ModifyInfoActivity::class.java) }
-            intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
-            intent.putExtra("username", activity?.intent?.getStringExtra("username"))
+            // intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
+            // intent.putExtra("username", activity?.intent?.getStringExtra("username"))
             intent.putExtra("modifyKey", "username")
 
             startActivity(intent)
@@ -61,8 +61,8 @@ class SettingsFragment : Fragment() {
 
             val intent = Intent()
             activity?.let { it1 -> intent.setClass(it1, ModifyInfoActivity::class.java) }
-            intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
-            intent.putExtra("username", activity?.intent?.getStringExtra("username"))
+            // intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
+            // intent.putExtra("username", activity?.intent?.getStringExtra("username"))
             intent.putExtra("modifyKey", "password")
 
             startActivity(intent)

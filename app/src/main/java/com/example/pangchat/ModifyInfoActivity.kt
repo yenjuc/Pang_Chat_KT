@@ -14,7 +14,7 @@ class ModifyInfoActivity : FragmentActivity(){
         CookiedFuel.basePath = resources.getString(R.string.BACKEND_URL);
 
         val intent = intent
-        val userId = intent.getStringExtra("userId")
+        // val userId = intent.getStringExtra("userId")
         val username = intent.getStringExtra("username")
         val modifyKey = intent.getStringExtra("modifyKey")
 

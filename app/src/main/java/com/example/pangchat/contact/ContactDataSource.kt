@@ -26,11 +26,11 @@ data class AddFriendResult(
 
 class ContactDataSource {
 
-    data class UserId(val userId: String)
+    // data class UserId(val userId: String?)
 
-    fun getContactInfo(userId: String): Result<ContactInfo> {
-        val up = UserId(userId)
-        val (_, _, result) = CookiedFuel.post("/user/contact/info").jsonBody(up).responseObject<ContactInfo>()
+    fun getContactInfo(): Result<ContactInfo> {
+        // val up = UserId(null)
+        val (_, _, result) = CookiedFuel.post("/user/contact/info").responseObject<ContactInfo>()
         if (result is fuelResult.Failure) {
             return Result.Error(result.getException())
         } else {
