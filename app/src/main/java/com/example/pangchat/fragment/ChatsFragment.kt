@@ -25,14 +25,7 @@ class ChatsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         recyclerView = view.findViewById<RecyclerView?>(R.id.chat_recyclerview)
-        // val context: Context? = activity
 
-        // 向ListView 添加数据，新建ChatAdapter，并向listView绑定该Adapter
-        // 添加数据的样例代码如下:
-        // data = new LinkedList<>();
-        // data.add(new Chat(getString(R.string.nickname1), R.drawable.avatar1, getString(R.string.sentence1), "2021/01/01"));
-        // data.add(new Chat(getString(R.string.nickname2), R.drawable.avatar2, getString(R.string.sentence2), "2021/01/01"));
-        // TODO
         data = LinkedList()
         data?.add(Chat("60ac6c49ebad580e2632520b",getString(R.string.nickname1), R.drawable.avatar1, getString(R.string.sentence1), "1995/12/30"))
         data?.add(Chat("60ac70310652f28934da7960",getString(R.string.nickname2), R.drawable.avatar2, getString(R.string.sentence2), "1990/01/13"))

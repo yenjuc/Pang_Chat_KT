@@ -5,11 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.ChatActivity
 import com.example.pangchat.R
 import com.example.pangchat.message.data.*
+import org.w3c.dom.Text
 import java.util.*
 
 class MessageAdapter(private val myUsername: String, private val activity: ChatActivity, private val data: LinkedList<Message?>) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
@@ -48,11 +51,19 @@ class MessageAdapter(private val myUsername: String, private val activity: ChatA
                 viewHolder.nickname?.text = message.getNickname()
                 viewHolder.content?.text = message.getContent()
                 viewHolder.content?.setOnLongClickListener {
-                    if(message.getNickname().compareTo(myUsername) == 0){
-                        activity.recallMessage(position, message.getMessageId(), message.getNickname())
-                    }
+                    viewHolder.messageAction?.visibility = View.VISIBLE
                     return@setOnLongClickListener true
                 }
+                viewHolder.messageCopy?.setOnClickListener{
+                    activity.setInput(message.getContent())
+                    viewHolder.messageAction?.visibility = View.GONE
+                }
+                viewHolder.messageRecall?.setOnClickListener {
+                    activity.recallMessage(position, message.getMessageId(), message.getNickname())
+                    viewHolder.messageAction?.visibility = View.GONE
+                }
+                // TODO: 删除消息
+
             }else{
                 var recallUser: String = message.getNickname()
                 if(recallUser.compareTo(myUsername) == 0){
@@ -65,8 +76,6 @@ class MessageAdapter(private val myUsername: String, private val activity: ChatA
                     activity.setInput(message.getContent());
                 }
             }
-
-            // viewHolder.time.text = message.getTime()
         }
     }
 
@@ -84,8 +93,11 @@ class MessageAdapter(private val myUsername: String, private val activity: ChatA
         var avatar: ImageView? = null
         var nickname: TextView? = null
         var content: TextView? = null
-        // var time: TextView
-        // var imgs: Array<ImageView?>? = null
+
+        var messageAction: LinearLayout? = null
+        var messageCopy: TextView? = null
+        var messageRecall: TextView? = null
+        var messageDelete: TextView? = null
 
         var recalledInfo: TextView? = null
         var recalledReedit: TextView? = null
@@ -96,6 +108,11 @@ class MessageAdapter(private val myUsername: String, private val activity: ChatA
                 avatar = itemView.findViewById<ImageView?>(R.id.avatar_icon)
                 nickname = itemView.findViewById<TextView?>(R.id.nickname_text)
                 content = itemView.findViewById<TextView?>(R.id.message_content)
+                messageAction = itemView.findViewById(R.id.messageAction)
+                messageAction?.visibility = View.GONE
+                messageCopy = itemView.findViewById(R.id.messageCopy)
+                messageRecall = itemView.findViewById(R.id.messageRecall)
+                messageDelete = itemView.findViewById(R.id.messageDelete)
             }else{
                 recalledInfo = itemView.findViewById(R.id.recalledInfo)
                 recalledReedit = itemView.findViewById(R.id.recalledReedit)

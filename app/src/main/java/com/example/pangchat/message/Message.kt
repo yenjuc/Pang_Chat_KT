@@ -10,7 +10,7 @@ enum class MessageType{
 class Message(
     private val messageId: String,
     private val senderId: String,
-        // private val blockedUser: LinkedList<Int>,
+    // private val blockedUser: LinkedList<Int>,
     private val nickname: String,
     private val avatarIcon: String,
     private var recalled: Boolean,
