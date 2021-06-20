@@ -1,21 +1,16 @@
 package com.example.pangchat
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ListView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pangchat.R
 import com.example.pangchat.chat.Chat
 import com.example.pangchat.chat.ChatAdapter
+import com.example.pangchat.websocketClient.webSocketClient
 import java.util.*
 
 /**
@@ -24,7 +19,6 @@ import java.util.*
  * create an instance of this fragment.
  */
 class ChatsFragment : Fragment() {
-    // private lateinit var mContext: FragmentActivity
     private var chatAdapter: ChatAdapter? = null
     private var data: LinkedList<Chat?>? = null
     private var recyclerView: RecyclerView? = null

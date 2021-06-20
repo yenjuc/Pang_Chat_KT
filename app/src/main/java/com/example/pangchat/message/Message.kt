@@ -8,14 +8,14 @@ enum class MessageType{
 
 // TODO: 确认传回参数
 class Message(
-        private val messageId: String,
-        private val senderId: String,
+    private val messageId: String,
+    private val senderId: String,
         // private val blockedUser: LinkedList<Int>,
-        private val nickname: String,
-        private val avatarIcon: String,
-        private val recalled: Boolean,
-        private val content: String,
-        private val time: String
+    private val nickname: String,
+    private val avatarIcon: String,
+    private var recalled: Boolean,
+    private val content: String,
+    private val time: String
         // private val messageType: MessageType
 ) {
     fun getMessageId(): String{
@@ -36,6 +36,10 @@ class Message(
 
     fun getRecalled(): Boolean{
         return recalled
+    }
+
+    fun setRecalled(){
+        recalled = true
     }
 
     fun getContent(): String{
