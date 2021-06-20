@@ -42,7 +42,7 @@ class SearchFragment : Fragment() {
 
     var contacts = LinkedList<Contact?>()
 
-    var friendIds: ArrayList<String> ? = null
+    // var friendIds: ArrayList<String> ? = null
     var friendNames: ArrayList<String> ? = null
 
     var _userInfo = MutableLiveData<UserInfo>()
@@ -61,7 +61,7 @@ class SearchFragment : Fragment() {
         recyclerView?.adapter = ContactAdapter(activity, contacts)
 
         friendNames = activity?.intent?.getStringArrayListExtra("friendNames")
-        friendIds = activity?.intent?.getStringArrayListExtra("friendIds")
+        // friendIds = activity?.intent?.getStringArrayListExtra("friendIds")
 
         if (activity?.intent?.getStringExtra("search") == "friend") {
             // buttonSearch?.visibility = View.INVISIBLE;
@@ -99,6 +99,7 @@ class SearchFragment : Fragment() {
                                 R.drawable.avatar1
                             )
                         }
+
                     )
                     recyclerView?.adapter?.notifyDataSetChanged()
                     val linearLayoutManager = LinearLayoutManager(activity)
@@ -112,7 +113,7 @@ class SearchFragment : Fragment() {
             val intent = Intent()
             activity?.let { it1 -> intent.setClass(it1, MainActivity::class.java) }
             // intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
-            intent.putExtra("friendIds", friendIds)
+            // intent.putExtra("friendIds", friendIds)
             intent.putExtra("friendNames", friendNames)
             startActivity(intent)
 
@@ -129,9 +130,9 @@ class SearchFragment : Fragment() {
     }
 
     fun fuzzyMatch(searchContent: String) {
-        for (i in 0 until friendIds?.size!!) {
+        for (i in 0 until friendNames?.size!!) {
             if (friendNames?.get(i)?.contains(searchContent, true) == true) {
-                contacts.add(Contact(friendIds!![i], friendNames!![i], R.drawable.avatar1))
+                contacts.add(Contact(friendNames!![i], friendNames!![i], R.drawable.avatar1))
             }
         }
     }

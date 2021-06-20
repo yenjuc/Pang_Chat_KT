@@ -2,7 +2,6 @@ package com.example.pangchat
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -34,7 +33,7 @@ class MainActivity : FragmentActivity() {
     // var userId: String? = null
     // var username: String? = null
     var _contactInfo = MutableLiveData<ContactInfo>()
-    var friendIds: ArrayList<String>? = null
+    // var friendIds: ArrayList<String>? = null
     var friendNames: ArrayList<String>? = null
 
 
@@ -59,8 +58,11 @@ class MainActivity : FragmentActivity() {
 
         MainScope().launch {
             getFriendsInfo()
-            friendIds = _contactInfo.value?.friendsId
+            // friendIds = _contactInfo.value?.friendsId
             friendNames = _contactInfo.value?.friendsName
+
+            // intent.putExtra("friendIds", friendIds)
+            intent.putExtra("friendNames", friendNames)
         }
 
 
@@ -69,13 +71,10 @@ class MainActivity : FragmentActivity() {
         searchView?.setOnClickListener(View.OnClickListener {
             Toast.makeText(this, "进入搜索", Toast.LENGTH_LONG).show()
 
-            val intent = Intent()
             // 表示这个页面是搜索现有的联系人
             intent.putExtra("search", "friend")
             // intent.putExtra("userId", userId)
 
-            intent.putExtra("friendIds", friendIds)
-            intent.putExtra("friendNames", friendNames)
             intent.setClass(this@MainActivity, SearchActivity::class.java)
 
             startActivity(intent)
@@ -134,11 +133,9 @@ class MainActivity : FragmentActivity() {
                 R.id.newgroup -> {
                     Toast.makeText(this, "发起群聊", Toast.LENGTH_LONG).show()
 
-                    val intent = Intent()
                     intent.setClass(this@MainActivity, SelectFriendsActivity::class.java)
                     // intent.putExtra("userId", userId)
-                    intent.putExtra("friendIds", friendIds)
-                    intent.putExtra("friendNames", friendNames)
+
                     startActivity(intent)
                     this.finish()
                     return@OnMenuItemClickListener true
@@ -146,7 +143,6 @@ class MainActivity : FragmentActivity() {
                 R.id.newfriend -> {
                     Toast.makeText(this, "新建好友", Toast.LENGTH_LONG).show()
 
-                    val intent = Intent()
                     // 表示这个页面是搜索所有的用户
                     intent.putExtra("search", "user")
                     // intent.putExtra("userId", userId)

@@ -41,11 +41,11 @@ class SelectFriendsFragment : Fragment() {
         recyclerView?.adapter = SelectFriendsAdapter(activity, contacts)
 
         val friendNames = activity?.intent?.getStringArrayListExtra("friendNames")
-        val friendIds = activity?.intent?.getStringArrayListExtra("friendIds")
+        // val friendIds = activity?.intent?.getStringArrayListExtra("friendIds")
 
         contacts.clear()
-        for (i in 0 until friendIds?.size!!) {
-            contacts.add(Contact(friendIds[i], friendNames!![i], R.drawable.avatar1))
+        for (i in 0 until friendNames?.size!!) {
+            contacts.add(Contact(friendNames[i], friendNames!![i], R.drawable.avatar1))
         }
         recyclerView?.adapter?.notifyDataSetChanged()
 
@@ -76,7 +76,7 @@ class SelectFriendsFragment : Fragment() {
 
 
         buttonFinish?.setOnClickListener(View.OnClickListener{
-            val selectedIds = activity?.intent?.getStringArrayListExtra("selectedIds")
+            val selectedNames = activity?.intent?.getStringArrayListExtra("selectedNames")
             // TODO: 发送建立群聊的网络请求
             activity?.finish()
         })

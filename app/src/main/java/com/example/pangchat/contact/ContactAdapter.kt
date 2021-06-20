@@ -43,7 +43,7 @@ class ContactAdapter(private val mContext: FragmentActivity?, private val data: 
 
                 val intent = Intent(mContext, PersonalActivity::class.java)
                 // intent.putExtra("myUserId", mContext?.intent?.getStringExtra("userId"))
-                intent.putExtra("friendIds", mContext?.intent?.getStringArrayListExtra("friendIds"))
+                intent.putExtra("friendNames", mContext?.intent?.getStringArrayListExtra("friendNames"))
                 intent.putExtra("userId", contact.getUserId())
                 intent.putExtra("username", contact.getNickname())
                 intent.putExtra("avatar", contact.getAvatarIcon())

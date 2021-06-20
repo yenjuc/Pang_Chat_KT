@@ -3,7 +3,6 @@ package com.example.pangchat.contact
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
@@ -36,10 +35,10 @@ class SelectFriendsAdapter(private val mContext: FragmentActivity?, private val 
             holder.itemView.setOnClickListener(View.OnClickListener {
                 holder.button?.isChecked = !holder.button?.isChecked!!
                 if (holder.button?.isChecked == true) {
-                    mContext?.intent?.getStringArrayListExtra("selectedIds")?.add(contact.getUserId())
+                    mContext?.intent?.getStringArrayListExtra("selectedNames")?.add(contact.getNickname())
                 }
                 else {
-                    mContext?.intent?.getStringArrayListExtra("selectedIds")?.remove(contact.getUserId())
+                    mContext?.intent?.getStringArrayListExtra("selectedNames")?.remove(contact.getNickname())
                 }
             })
         }
