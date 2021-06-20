@@ -2,6 +2,7 @@ package com.example.pangchat
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,11 +10,23 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pangchat.chat.Chat
+import com.example.pangchat.chat.data.ChatInfo
+import com.example.pangchat.chat.data.ChatRequest
+import com.example.pangchat.chat.data.ChatResult
 import com.example.pangchat.contact.Contact
 import com.example.pangchat.contact.SelectFriendsAdapter
+import com.example.pangchat.message.data.MessageResp
+import com.example.pangchat.message.data.MessageResult
+import com.example.pangchat.websocketClient.webSocketClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class SelectFriendsFragment : Fragment() {
@@ -77,8 +90,23 @@ class SelectFriendsFragment : Fragment() {
 
         buttonFinish?.setOnClickListener(View.OnClickListener{
             val selectedNames = activity?.intent?.getStringArrayListExtra("selectedNames")
+            lifecycleScope.launch {
+                if (selectedNames != null) {
+                    var chat : Chat? = newChat(selectedNames)
+                    if(chat != null){
+                        Log.d("click chatid: ", chat.getId())
+                        val intent = Intent(mContext, ChatActivity::class.java)
+                        intent.putExtra("chatId", chat.getId())
+                        try {
+                            mContext?.startActivity(intent)
+                        } catch (ActivityNotFoundException: Exception) {
+                            Log.d("ImplicitIntents", "Can't handle this!")
+                        }
+                    }
+                }
+            }
             // TODO: 发送建立群聊的网络请求
-            activity?.finish()
+            // activity?.finish()
         })
 
     }
@@ -89,22 +117,24 @@ class SelectFriendsFragment : Fragment() {
         return inflater?.inflate(R.layout.fragment_select_friends, container, false)
     }
 
-//    // 调用网络请求函数
-//    suspend fun getContactInfo(userId: String) {
-//        val contactDataSource = ContactDataSource()
-//
-//        val result: Result<ContactInfo>
-//
-//        withContext(Dispatchers.IO) {
-//            result = contactDataSource.getContactInfo(userId)
-//        }
-//
-//        if (result is Result.Success) {
-//            _contactInfo.value = result.data
-//        } else {
-//            // TODO：抛出并解析异常
-//        }
-//    }
+    suspend fun newChat(members: ArrayList<String>): Chat?{
+        val chatRequest = ChatRequest()
+        val result: ChatResult<ChatInfo>
+
+        withContext(Dispatchers.IO) {
+            result = chatRequest.newChat(webSocketClient.username!!, members)
+        }
+
+        if (result is ChatResult.Success) {
+            Log.d("chat", "new");
+            return result.data.chat
+        } else {
+            // TODO：抛出并解析异常
+            return null
+        }
+    }
+
+
 
     companion object {
         /**

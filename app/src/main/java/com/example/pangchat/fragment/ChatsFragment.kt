@@ -44,17 +44,32 @@ class ChatsFragment : Fragment() {
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView?.layoutManager = linearLayoutManager
 
+        if(data == null) {
+            lifecycleScope.launch {
+                data?.clear()
+                var chats: ArrayList<Chat>? = getUserChats()
+                for (chat in chats!!) {
+                    data?.add(chat)
+                }
+                recyclerView?.adapter?.notifyDataSetChanged()
+            }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onResume() {
+        super.onResume()
         lifecycleScope.launch{
+            data?.clear()
             var chats : ArrayList<Chat>? = getUserChats()
             for(chat in chats!!){
                 data?.add(chat)
             }
             recyclerView?.adapter?.notifyDataSetChanged()
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

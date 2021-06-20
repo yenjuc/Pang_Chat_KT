@@ -179,11 +179,7 @@ class ChatActivity : AppCompatActivity() {
         }
 
         if (result is MessageResult.Success) {
-            // _messageInfo.value = result.data
-                // FIXME: change to my data
             data?.add(result.data.message)
-            // val message = Message(result.data.messageId, "my id", webSocketClient.username!!, "1", false, content, "time")
-            // messages.add(message)
         } else {
             // TODO：抛出并解析异常
         }
