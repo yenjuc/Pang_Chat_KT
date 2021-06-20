@@ -16,6 +16,7 @@ import com.example.pangchat.contact.ContactInfo
 import com.example.pangchat.fragment.*
 import com.example.pangchat.fragment.data.Result
 import com.example.pangchat.utils.CookiedFuel
+import com.example.pangchat.websocketClient.webSocketClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -41,6 +42,7 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
 
         CookiedFuel.basePath = resources.getString(R.string.BACKEND_URL);
+        webSocketClient.context = this
 
         // val intent = intent
         // userId = intent.getStringExtra("userId")
@@ -69,6 +71,20 @@ class MainActivity : FragmentActivity() {
         searchView = findViewById<ImageView>(R.id.search)
 
         searchView?.setOnClickListener(View.OnClickListener {
+
+            // 用于测试
+//            val manager: NotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+//            val channelId: String = "pangchat";
+//            val channel = NotificationChannel(channelId,"pangchat",NotificationManager.IMPORTANCE_DEFAULT);
+//            manager.createNotificationChannel(channel);
+//            val notification: Notification = NotificationCompat.Builder(this,channelId)
+//                    .setContentTitle("通知标题")
+//                    .setContentText("通知正文")
+//                    .setWhen(System.currentTimeMillis())
+//                    .setSmallIcon(R.drawable.avatar1)
+//                    .build();
+//            manager.notify(1,notification);
+
             Toast.makeText(this, "进入搜索", Toast.LENGTH_LONG).show()
 
             // 表示这个页面是搜索现有的联系人
