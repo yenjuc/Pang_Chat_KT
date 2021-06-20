@@ -44,7 +44,7 @@ class PersonalActivity : FragmentActivity() {
         CookiedFuel.basePath = resources.getString(R.string.BACKEND_URL);
 
         val intent = intent
-        myUserId = intent.getStringExtra("myUserId")
+        // myUserId = intent.getStringExtra("myUserId")
         userId = intent.getStringExtra("userId")
         username = intent.getStringExtra("username")
         avatar = intent.getIntExtra("avatar", 0)

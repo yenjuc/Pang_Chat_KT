@@ -2,40 +2,29 @@ package com.example.pangchat.fragment
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
-import android.view.KeyEvent
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
-import android.widget.*
-import androidx.core.view.isInvisible
-import androidx.lifecycle.LiveData
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import butterknife.OnEditorAction
-import com.example.pangchat.*
+import com.example.pangchat.MainActivity
+import com.example.pangchat.R
 import com.example.pangchat.afterTextChanged
 import com.example.pangchat.contact.Contact
 import com.example.pangchat.contact.ContactAdapter
-import com.example.pangchat.contact.ContactDataSource
-import com.example.pangchat.contact.ContactInfo
 import com.example.pangchat.fragment.data.Result
 import com.example.pangchat.fragment.data.UserDataSource
 import com.example.pangchat.fragment.data.UserInfo
-import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 /**
@@ -102,13 +91,15 @@ class SearchFragment : Fragment() {
 
                 lifecycleScope.launch {
                     getUserInfo(searchContent);
-                    contacts.add(_userInfo.value?.userId?.let {
-                        Contact(
-                            it,
-                            _userInfo.value?.username,
-                            R.drawable.avatar1
-                        )
-                    })
+                    contacts.add(
+                        _userInfo.value?.userId?.let { it1 ->
+                            Contact(
+                                it1,
+                                _userInfo.value?.username,
+                                R.drawable.avatar1
+                            )
+                        }
+                    )
                     recyclerView?.adapter?.notifyDataSetChanged()
                     val linearLayoutManager = LinearLayoutManager(activity)
                     linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -120,7 +111,7 @@ class SearchFragment : Fragment() {
         backView?.setOnClickListener(View.OnClickListener {
             val intent = Intent()
             activity?.let { it1 -> intent.setClass(it1, MainActivity::class.java) }
-            intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
+            // intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
             intent.putExtra("friendIds", friendIds)
             intent.putExtra("friendNames", friendNames)
             startActivity(intent)
@@ -145,13 +136,13 @@ class SearchFragment : Fragment() {
         }
     }
 
-    suspend fun getUserInfo(userId: String) {
+    suspend fun getUserInfo(username: String) {
         val userDataSource = UserDataSource()
 
         val result: Result<UserInfo>
 
         withContext(Dispatchers.IO) {
-            result = userDataSource.getUserInfoById(userId)
+            result = userDataSource.getUserInfoByName(username)
         }
 
         if (result is Result.Success) {

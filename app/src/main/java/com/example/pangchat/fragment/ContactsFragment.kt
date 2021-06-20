@@ -35,7 +35,7 @@ class ContactsFragment : Fragment() {
 
     private lateinit var contacts:LinkedList<Contact?>
 
-    private lateinit var userId: String
+    // private lateinit var userId: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,9 +53,9 @@ class ContactsFragment : Fragment() {
         lifecycleScope.launch {
 
             // 从Mainactivity的Intent中获取userId，作为入参传入网络请求
-            userId = activity?.intent?.getStringExtra("userId").toString()
-            if (userId != null) {
-                getContactInfo(userId)
+            // userId = activity?.intent?.getStringExtra("userId").toString()
+
+                getContactInfo()
                 contacts.clear()
                 // contacts.addAll(_contactInfo.value?.friendsName?.map { Contact(userId, it, R.drawable.avatar1) }!!)
                 for (index in 0 until _contactInfo.value?.friendsId?.size!!) {
@@ -63,7 +63,6 @@ class ContactsFragment : Fragment() {
                         _contactInfo.value?.friendsName!![index], R.drawable.avatar1))
                 }
                 recyclerView?.adapter?.notifyDataSetChanged()
-            }
 
         }
 
@@ -83,13 +82,13 @@ class ContactsFragment : Fragment() {
     }
 
     // 调用网络请求函数
-    suspend fun getContactInfo(userId: String) {
+    suspend fun getContactInfo() {
         val contactDataSource = ContactDataSource()
 
         val result: Result<ContactInfo>
 
         withContext(Dispatchers.IO) {
-            result = contactDataSource.getContactInfo(userId)
+            result = contactDataSource.getContactInfo()
         }
 
         if (result is Result.Success) {

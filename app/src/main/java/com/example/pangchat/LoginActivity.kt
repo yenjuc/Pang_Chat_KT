@@ -68,8 +68,8 @@ class LoginActivity : AppCompatActivity() {
                 val intent = Intent()
                 intent.setClass(this@LoginActivity, MainActivity::class.java)
 
-                intent.putExtra("userId", loginResult.success.userId)
-                intent.putExtra("username", loginResult.success.displayName)
+                // intent.putExtra("userId", loginResult.success.userId)
+                // intent.putExtra("username", loginResult.success.displayName)
 
                 startActivity(intent)
 

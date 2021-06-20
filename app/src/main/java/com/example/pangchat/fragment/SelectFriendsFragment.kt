@@ -1,6 +1,5 @@
 package com.example.pangchat
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,23 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pangchat.contact.*
-import com.example.pangchat.fragment.data.Result
-import com.google.android.material.navigation.NavigationView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.pangchat.contact.Contact
+import com.example.pangchat.contact.SelectFriendsAdapter
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class SelectFriendsFragment : Fragment() {
@@ -79,7 +68,7 @@ class SelectFriendsFragment : Fragment() {
 
             val intent = Intent()
             activity?.let { it1 -> intent.setClass(it1, MainActivity::class.java) }
-            intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
+            // intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
             startActivity(intent)
 
             activity?.finish()

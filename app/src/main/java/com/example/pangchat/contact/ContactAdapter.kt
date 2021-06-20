@@ -5,13 +5,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
-import android.widget.RadioButton
 import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pangchat.ChatActivity
 import com.example.pangchat.PersonalActivity
 import com.example.pangchat.R
 import com.example.pangchat.contact.ContactAdapter.ContactViewHolder
@@ -42,10 +39,10 @@ class ContactAdapter(private val mContext: FragmentActivity?, private val data: 
             holder.itemView.setOnClickListener{
                 val contact : Contact = data?.get(position)!!
 
-                Log.d("click userId: ", contact.getUserId())
+                // Log.d("click userId: ", contact.getUserId())
 
                 val intent = Intent(mContext, PersonalActivity::class.java)
-                intent.putExtra("myUserId", mContext?.intent?.getStringExtra("userId"))
+                // intent.putExtra("myUserId", mContext?.intent?.getStringExtra("userId"))
                 intent.putExtra("friendIds", mContext?.intent?.getStringArrayListExtra("friendIds"))
                 intent.putExtra("userId", contact.getUserId())
                 intent.putExtra("username", contact.getNickname())

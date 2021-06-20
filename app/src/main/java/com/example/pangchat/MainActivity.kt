@@ -31,8 +31,8 @@ class MainActivity : FragmentActivity() {
     var bottomNavigationView: BottomNavigationView? =  null
     var searchView: ImageView? = null
     var menuView: ImageView? = null
-    var userId: String? = null
-    var username: String? = null
+    // var userId: String? = null
+    // var username: String? = null
     var _contactInfo = MutableLiveData<ContactInfo>()
     var friendIds: ArrayList<String>? = null
     var friendNames: ArrayList<String>? = null
@@ -43,9 +43,9 @@ class MainActivity : FragmentActivity() {
 
         CookiedFuel.basePath = resources.getString(R.string.BACKEND_URL);
 
-        val intent = intent
-        userId = intent.getStringExtra("userId")
-        username = intent.getStringExtra("username")
+        // val intent = intent
+        // userId = intent.getStringExtra("userId")
+        // username = intent.getStringExtra("username")
 
         setContentView(R.layout.activity_main)
         // ButterKnife.bind(this)
@@ -58,7 +58,7 @@ class MainActivity : FragmentActivity() {
 
 
         MainScope().launch {
-            userId?.let { getFriendsInfo(it) }
+            getFriendsInfo()
             friendIds = _contactInfo.value?.friendsId
             friendNames = _contactInfo.value?.friendsName
         }
@@ -72,7 +72,8 @@ class MainActivity : FragmentActivity() {
             val intent = Intent()
             // 表示这个页面是搜索现有的联系人
             intent.putExtra("search", "friend")
-            intent.putExtra("userId", userId)
+            // intent.putExtra("userId", userId)
+
             intent.putExtra("friendIds", friendIds)
             intent.putExtra("friendNames", friendNames)
             intent.setClass(this@MainActivity, SearchActivity::class.java)
@@ -135,7 +136,7 @@ class MainActivity : FragmentActivity() {
 
                     val intent = Intent()
                     intent.setClass(this@MainActivity, SelectFriendsActivity::class.java)
-                    intent.putExtra("userId", userId)
+                    // intent.putExtra("userId", userId)
                     intent.putExtra("friendIds", friendIds)
                     intent.putExtra("friendNames", friendNames)
                     startActivity(intent)
@@ -148,7 +149,7 @@ class MainActivity : FragmentActivity() {
                     val intent = Intent()
                     // 表示这个页面是搜索所有的用户
                     intent.putExtra("search", "user")
-                    intent.putExtra("userId", userId)
+                    // intent.putExtra("userId", userId)
                     intent.setClass(this@MainActivity, SearchActivity::class.java)
 
                     startActivity(intent)
@@ -174,13 +175,13 @@ class MainActivity : FragmentActivity() {
         popupMenu.show()
     }
 
-    suspend fun getFriendsInfo(userId: String) {
+    suspend fun getFriendsInfo() {
         val contactDataSource = ContactDataSource()
 
         val result: Result<ContactInfo>
 
         withContext(Dispatchers.IO) {
-            result = contactDataSource.getContactInfo(userId)
+            result = contactDataSource.getContactInfo()
         }
 
         if (result is Result.Success) {
