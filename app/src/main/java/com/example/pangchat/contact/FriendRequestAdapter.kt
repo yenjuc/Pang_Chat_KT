@@ -60,23 +60,22 @@ class FriendRequestAdapter(private val mContext: FragmentActivity?, private val 
                     }
 
                 }
-                //
-
-
             })
             holder.refuseButton.setOnClickListener(View.OnClickListener {
-                // 拒绝好友申请 -- 从websocket中去除请求，并重进该页面
-                // webSocketClient.newFriendList.removeAt(position)
-                val intent = Intent(mContext, MainActivity::class.java)
-                intent.putExtra("friendNames", mContext?.intent?.getStringArrayListExtra("friendNames"))
-                intent.putExtra("fragment", "contact")
+                // 拒绝好友申请 -- 发送请求给数据库，成功后重新推进联系人页面
+                mContext?.lifecycleScope?.launch {
+                    contact.getUserId().let { it1 -> refuse(it1) }
 
-                try {
-                    mContext?.startActivity(intent)
-                } catch (ActivityNotFoundException: Exception) {
-                    Log.d("ImplicitIntents", "Can't handle this!")
+                    val intent = Intent(mContext, MainActivity::class.java)
+                    intent.putExtra("fragment", "contact")
+
+                    try {
+                        mContext.startActivity(intent)
+                    } catch (ActivityNotFoundException: Exception) {
+                        Log.d("ImplicitIntents", "Can't handle this!")
+                    }
+
                 }
-
             })
         }
 
@@ -97,6 +96,23 @@ class FriendRequestAdapter(private val mContext: FragmentActivity?, private val 
 
         withContext(Dispatchers.IO) {
             result = contactDataSource.acceptNewFriend(friendId)
+        }
+
+        if (result is Result.Success) {
+            _acceptResult.value = result.data
+        } else {
+            // TODO：抛出并解析异常
+        }
+
+    }
+
+    suspend fun refuse(friendId: String) {
+        val contactDataSource = ContactDataSource()
+
+        val result: Result<AddFriendResult>
+
+        withContext(Dispatchers.IO) {
+            result = contactDataSource.refuseNewFriend(friendId)
         }
 
         if (result is Result.Success) {
