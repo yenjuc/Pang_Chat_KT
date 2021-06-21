@@ -15,10 +15,10 @@ data class UserInfo(
 
 
 class UserDataSource {
-    data class UserId(val userId: String)
+    data class Username(val queryUsername: String)
 
-    fun getUserInfoById(userId: String) : Result<UserInfo> {
-        val up = UserDataSource.UserId(userId)
+    fun getUserInfoByName(username: String) : Result<UserInfo> {
+        val up = Username(username)
         val (_, _, result) = CookiedFuel.post("/user/info").jsonBody(up).responseObject<UserInfo>()
         if (result is fuelResult.Failure) {
             return Result.Error(result.getException())

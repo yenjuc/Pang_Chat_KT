@@ -1,6 +1,5 @@
 package com.example.pangchat.fragment
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.method.PasswordTransformationMethod
@@ -9,21 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.pangchat.MainActivity
-import com.example.pangchat.ModifyInfoActivity
 import com.example.pangchat.R
-import com.example.pangchat.SettingsFragment
-import com.example.pangchat.contact.ContactDataSource
-import com.example.pangchat.contact.ContactInfo
 import com.example.pangchat.fragment.data.ModifyPasswordResult
 import com.example.pangchat.fragment.data.ModifyUsernameResult
 import com.example.pangchat.fragment.data.Result
 import com.example.pangchat.fragment.data.SettingsDataSource
-import com.google.android.material.textfield.TextInputEditText
+import com.example.pangchat.websocketClient.webSocketClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -63,7 +57,7 @@ class ModifyInfoFragment : Fragment() {
 
                 if (modifyKey == "username") {
                     modifyValue = editText?.getText().toString()
-                    activity?.intent?.getStringExtra("userId")?.let { it1 -> modifyUsername(it1, modifyValue!!) }
+                    modifyUsername(modifyValue!!)
                     // TODO： 异常处理
                 }
                 else if (modifyKey == "password") {
@@ -71,14 +65,14 @@ class ModifyInfoFragment : Fragment() {
 
                     val oldPassword : String = editText?.getText().toString()
                     modifyValue = editText_1?.getText().toString()
-                    activity?.intent?.getStringExtra("userId")?.let { it1 -> modifyPassword(it1, oldPassword, modifyValue) }
+                    modifyPassword(oldPassword, modifyValue)
                     // TODO: 异常处理
                 }
 
 
                 val intent = Intent()
                 activity?.let { it1 -> intent.setClass(it1, MainActivity::class.java) }
-                intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
+                // intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
                 intent.putExtra(modifyKey, modifyValue)
 
                 startActivity(intent)
@@ -97,33 +91,33 @@ class ModifyInfoFragment : Fragment() {
     }
 
 
-    suspend fun modifyUsername(userId : String, newUsername : String) {
+    suspend fun modifyUsername(newUsername : String) {
         val settingsDataSource = SettingsDataSource()
 
         val result: Result<ModifyUsernameResult>
 
         withContext(Dispatchers.IO) {
-            result = settingsDataSource.modifyUsername(userId, newUsername)
+            result = settingsDataSource.modifyUsername(newUsername)
         }
 
         if (result is Result.Success) {
-
+            webSocketClient.username = newUsername
         } else {
             // TODO：抛出并解析异常
         }
     }
 
-    suspend fun modifyPassword(userId : String, oldPassword: String, newPassword : String) {
+    suspend fun modifyPassword(oldPassword: String, newPassword : String) {
         val settingsDataSource = SettingsDataSource()
 
         val result: Result<ModifyPasswordResult>
 
         withContext(Dispatchers.IO) {
-            result = settingsDataSource.modifyPassword(userId, oldPassword, newPassword)
+            result = settingsDataSource.modifyPassword(oldPassword, newPassword)
         }
 
         if (result is Result.Success) {
-
+            webSocketClient.password = newPassword
         } else {
             // TODO：抛出并解析异常
         }

@@ -14,6 +14,7 @@ import com.example.pangchat.contact.AddFriendResult
 import com.example.pangchat.contact.ContactDataSource
 import com.example.pangchat.fragment.data.Result
 import com.example.pangchat.utils.CookiedFuel
+import com.example.pangchat.websocketClient.webSocketClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -30,10 +31,8 @@ class PersonalActivity : FragmentActivity() {
 
     var userId: String? = null
     var username: String? = null
-    var myUserId: String? = null
     var avatar: Int? = null
-    var friendIds: ArrayList<String>? = null
-    var isFriend: Boolean? = null
+    var friendNames: ArrayList<String>? = null
 
     private var _addFriendResult = MutableLiveData<AddFriendResult>()
 
@@ -42,10 +41,11 @@ class PersonalActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
 
         CookiedFuel.basePath = resources.getString(R.string.BACKEND_URL);
+        webSocketClient.context = this
 
         val intent = intent
-        myUserId = intent.getStringExtra("myUserId")
-        userId = intent.getStringExtra("userId")
+        // myUserId = intent.getStringExtra("myUserId")
+        // userId = intent.getStringExtra("userId")
         username = intent.getStringExtra("username")
         avatar = intent.getIntExtra("avatar", 0)
 
@@ -60,12 +60,12 @@ class PersonalActivity : FragmentActivity() {
         messageLayout = findViewById<LinearLayout>(R.id.layout_message)
         var textView = findViewById<TextView>(R.id.newfriend)
 
-        friendIds = intent.getStringArrayListExtra("friendIds")
+        friendNames = intent.getStringArrayListExtra("friendNames")
 
-        if (myUserId == userId) {
+        if (webSocketClient.username == username) {
             messageLayout?.visibility = View.INVISIBLE
         }
-        else if (friendIds?.contains(userId) == true) {
+        else if (friendNames?.contains(username) == true) {
             messageLayout?.setOnClickListener(View.OnClickListener {
                 Toast.makeText(this, "发消息", Toast.LENGTH_LONG).show()
             })

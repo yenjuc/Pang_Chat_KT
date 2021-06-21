@@ -1,6 +1,7 @@
 package com.example.pangchat.message
 
 import java.util.*
+import kotlin.collections.ArrayList
 
 enum class MessageType{
     TEXT, IMAGE, VIDEO, FILE
@@ -8,30 +9,42 @@ enum class MessageType{
 
 // TODO: 确认传回参数
 class Message(
-    private val messageId: String,
-    private val senderId: String,
-        // private val blockedUser: LinkedList<Int>,
-    private val nickname: String,
+    private val id: String,
+    private val username: String,
     private val avatarIcon: String,
+    private val blockedUser: ArrayList<String>,
     private var recalled: Boolean,
     private val content: String,
+    private val type: String,
     private val time: String
         // private val messageType: MessageType
 ) {
-    fun getMessageId(): String{
-        return messageId
+    fun getId(): String{
+        return id
     }
 
-    fun getSenderId(): String{
-        return senderId
-    }
-
-    fun getNickname(): String{
-        return nickname
+    fun getUsername(): String{
+        return username
     }
 
     fun getAvatarIcon(): String{
         return avatarIcon
+    }
+
+    fun getBlockedUser(): ArrayList<String>{
+        return blockedUser
+    }
+
+    // return true if the user has already delete the message
+    fun isBlocked(username: String): Boolean{
+        if(blockedUser != null){
+            return blockedUser.contains(username)
+        }
+        return false
+    }
+
+    fun addBlocked(username: String) {
+        blockedUser.add(username)
     }
 
     fun getRecalled(): Boolean{
@@ -44,6 +57,10 @@ class Message(
 
     fun getContent(): String{
         return content
+    }
+
+    fun getType(): String{
+        return type
     }
 
     fun getTime(): String{

@@ -2,7 +2,6 @@ package com.example.pangchat
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -17,6 +16,7 @@ import com.example.pangchat.contact.ContactInfo
 import com.example.pangchat.fragment.*
 import com.example.pangchat.fragment.data.Result
 import com.example.pangchat.utils.CookiedFuel
+import com.example.pangchat.websocketClient.webSocketClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -31,21 +31,22 @@ class MainActivity : FragmentActivity() {
     var bottomNavigationView: BottomNavigationView? =  null
     var searchView: ImageView? = null
     var menuView: ImageView? = null
-    var userId: String? = null
-    var username: String? = null
+    // var userId: String? = null
+    // var username: String? = null
     var _contactInfo = MutableLiveData<ContactInfo>()
-    var friendIds: ArrayList<String>? = null
-    var friendNames: ArrayList<String>? = null
+    // var friendIds: ArrayList<String>? = null
+    var friendNames = ArrayList<String>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         CookiedFuel.basePath = resources.getString(R.string.BACKEND_URL);
+        webSocketClient.context = this
 
-        val intent = intent
-        userId = intent.getStringExtra("userId")
-        username = intent.getStringExtra("username")
+        // val intent = intent
+        // userId = intent.getStringExtra("userId")
+        // username = intent.getStringExtra("username")
 
         setContentView(R.layout.activity_main)
         // ButterKnife.bind(this)
@@ -54,27 +55,51 @@ class MainActivity : FragmentActivity() {
         val contactsFragment: Fragment = ContactsFragment()
         val discoverFragment: Fragment = DiscoverFragment()
         val settingsFragment: Fragment = SettingsFragment()
-        setCurrentFragment(chatsFragment) // 初始的Fragment为chatsFragment
 
+
+        if (intent.getStringExtra("fragment") == "contact") {
+            setCurrentFragment(contactsFragment)
+        }
+        else{
+            setCurrentFragment(chatsFragment) // 初始的Fragment为chatsFragment
+        }
 
         MainScope().launch {
-            userId?.let { getFriendsInfo(it) }
-            friendIds = _contactInfo.value?.friendsId
-            friendNames = _contactInfo.value?.friendsName
+            getFriendsInfo()
+            // friendIds = _contactInfo.value?.friendsId
+            friendNames?.clear()
+            for (index in 0 until (_contactInfo.value?.friendsInfo?.size!!)) {
+                _contactInfo.value?.friendsInfo!![index].let { friendNames?.add(it.getUsername()) }
+            }
+
+            // intent.putExtra("friendIds", friendIds)
+            intent.putExtra("friendNames", friendNames)
         }
 
 
         searchView = findViewById<ImageView>(R.id.search)
 
         searchView?.setOnClickListener(View.OnClickListener {
+
+            // 用于测试
+//            val manager: NotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+//            val channelId: String = "pangchat";
+//            val channel = NotificationChannel(channelId,"pangchat",NotificationManager.IMPORTANCE_DEFAULT);
+//            manager.createNotificationChannel(channel);
+//            val notification: Notification = NotificationCompat.Builder(this,channelId)
+//                    .setContentTitle("通知标题")
+//                    .setContentText("通知正文")
+//                    .setWhen(System.currentTimeMillis())
+//                    .setSmallIcon(R.drawable.avatar1)
+//                    .build();
+//            manager.notify(1,notification);
+
             Toast.makeText(this, "进入搜索", Toast.LENGTH_LONG).show()
 
-            val intent = Intent()
             // 表示这个页面是搜索现有的联系人
             intent.putExtra("search", "friend")
-            intent.putExtra("userId", userId)
-            intent.putExtra("friendIds", friendIds)
-            intent.putExtra("friendNames", friendNames)
+            // intent.putExtra("userId", userId)
+
             intent.setClass(this@MainActivity, SearchActivity::class.java)
 
             startActivity(intent)
@@ -133,11 +158,9 @@ class MainActivity : FragmentActivity() {
                 R.id.newgroup -> {
                     Toast.makeText(this, "发起群聊", Toast.LENGTH_LONG).show()
 
-                    val intent = Intent()
                     intent.setClass(this@MainActivity, SelectFriendsActivity::class.java)
-                    intent.putExtra("userId", userId)
-                    intent.putExtra("friendIds", friendIds)
-                    intent.putExtra("friendNames", friendNames)
+                    // intent.putExtra("userId", userId)
+
                     startActivity(intent)
                     this.finish()
                     return@OnMenuItemClickListener true
@@ -145,10 +168,9 @@ class MainActivity : FragmentActivity() {
                 R.id.newfriend -> {
                     Toast.makeText(this, "新建好友", Toast.LENGTH_LONG).show()
 
-                    val intent = Intent()
                     // 表示这个页面是搜索所有的用户
                     intent.putExtra("search", "user")
-                    intent.putExtra("userId", userId)
+                    // intent.putExtra("userId", userId)
                     intent.setClass(this@MainActivity, SearchActivity::class.java)
 
                     startActivity(intent)
@@ -174,13 +196,13 @@ class MainActivity : FragmentActivity() {
         popupMenu.show()
     }
 
-    suspend fun getFriendsInfo(userId: String) {
+    suspend fun getFriendsInfo() {
         val contactDataSource = ContactDataSource()
 
         val result: Result<ContactInfo>
 
         withContext(Dispatchers.IO) {
-            result = contactDataSource.getContactInfo(userId)
+            result = contactDataSource.getContactInfo()
         }
 
         if (result is Result.Success) {
@@ -189,5 +211,7 @@ class MainActivity : FragmentActivity() {
             // TODO：抛出并解析异常
         }
     }
+
+
 
 }

@@ -18,10 +18,10 @@ data class ModifyPasswordResult(
 
 class SettingsDataSource {
 
-    data class UserIdAndNewName(val userId: String, val newUsername: String)
+    data class UserNewName(val newUsername: String)
 
-    fun modifyUsername(userId: String, newUsername: String): Result<ModifyUsernameResult> {
-        val up = UserIdAndNewName(userId, newUsername)
+    fun modifyUsername(newUsername: String): Result<ModifyUsernameResult> {
+        val up = UserNewName(newUsername)
         val (_, _, result) = CookiedFuel.post("/user/modify/name").jsonBody(up).responseObject<ModifyUsernameResult>()
         if (result is fuelResult.Failure) {
             return Result.Error(result.getException())
@@ -33,10 +33,10 @@ class SettingsDataSource {
 
     }
 
-    data class UserIdAndOldNewPassword(val userId: String, val oldPassword: String, val newPassword: String)
+    data class UserOldNewPassword(val oldPassword: String, val newPassword: String)
 
-    fun modifyPassword(userId: String, oldPassword: String, newPassword: String): Result<ModifyPasswordResult> {
-        val up = UserIdAndOldNewPassword(userId, oldPassword, newPassword)
+    fun modifyPassword(oldPassword: String, newPassword: String): Result<ModifyPasswordResult> {
+        val up = UserOldNewPassword(oldPassword, newPassword)
         val (_, _, result) = CookiedFuel.post("/user/modify/password").jsonBody(up).responseObject<ModifyPasswordResult>()
         if (result is fuelResult.Failure) {
             return Result.Error(result.getException())

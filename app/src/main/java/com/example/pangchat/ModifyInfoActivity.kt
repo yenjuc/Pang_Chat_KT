@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.example.pangchat.fragment.ModifyInfoFragment
 import com.example.pangchat.utils.CookiedFuel
+import com.example.pangchat.websocketClient.webSocketClient
 
 class ModifyInfoActivity : FragmentActivity(){
 
@@ -12,9 +13,10 @@ class ModifyInfoActivity : FragmentActivity(){
         super.onCreate(savedInstanceState)
 
         CookiedFuel.basePath = resources.getString(R.string.BACKEND_URL);
+        webSocketClient.context = this
 
         val intent = intent
-        val userId = intent.getStringExtra("userId")
+        // val userId = intent.getStringExtra("userId")
         val username = intent.getStringExtra("username")
         val modifyKey = intent.getStringExtra("modifyKey")
 
