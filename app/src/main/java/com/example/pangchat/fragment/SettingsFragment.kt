@@ -2,6 +2,7 @@ package com.example.pangchat
 
 import android.content.Intent
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +24,11 @@ class SettingsFragment : Fragment() {
     private var imageView: ImageView? = null
     private var button: Button? = null
 
+    // 拍照回传码
+    val CAMERA_REQUEST_CODE = 0;
+    // 相册选择回传码
+    val GALLERY_REQUEST_CODE = 1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -35,6 +41,16 @@ class SettingsFragment : Fragment() {
         imageView = getView()?.findViewById<ImageView>(R.id.avatar_icon)
         imageView?.setImageResource(R.drawable.avatar1)
         button = getView()?.findViewById<Button>(R.id.button_modify)
+
+
+        imageView?.setOnClickListener(View.OnClickListener {
+            // 修改头像
+            val pickIntent : Intent = Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+            startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
+
+        })
 
 
         textView?.setOnClickListener(View.OnClickListener {
@@ -76,6 +92,31 @@ class SettingsFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater?.inflate(R.layout.fragment_settings, container, false)
+    }
+
+
+    //当拍摄照片完成时会回调到onActivityResult 在这里处理照片的裁剪
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        if (resultCode == Activity.RESULT_OK) {
+//            if (requestCode == CAMERA_REQUEST_CODE) {
+//
+//            }
+//            else if (requestCode == GALLERY_REQUEST_CODE)
+//                try {
+//                    //该uri是上一个Activity返回的
+//                    val imageUri = data?.getData();
+//                    if(imageUri!=null) {
+//                        val bit: Bitmap = BitmapFactory.decodeStream(activity?.getContentResolver()?.openInputStream(imageUri));
+//
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                }
+//            }
+//        }
+//        super.onActivityResult(requestCode, resultCode, data);
     }
 
 
