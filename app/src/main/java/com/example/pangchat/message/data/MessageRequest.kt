@@ -41,9 +41,9 @@ class MessageRequest {
         }
     }
 
-    data class MessageSend(val chatId: String, val username: String, val content: String)
-    fun sendMessage(chatId: String, username: String, content: String): MessageResult<MessageResp>{
-        val (_, _, result) = CookiedFuel.post("/message/send").jsonBody(MessageSend(chatId, username, content)).responseObject<MessageResp>()
+    data class MessageSend(val chatId: String, val senderId: String, val type: String, val content: String)
+    fun sendMessage(chatId: String, senderId: String, type: String, content: String): MessageResult<MessageResp>{
+        val (_, _, result) = CookiedFuel.post("/message/send").jsonBody(MessageSend(chatId, senderId, type, content)).responseObject<MessageResp>()
         if (result is fuelResult.Failure) {
             return MessageResult.Error(result.getException())
         } else {
@@ -53,9 +53,9 @@ class MessageRequest {
         }
     }
 
-    data class MessageIdAndUsername(val messageId: String, val username: String)
-    fun recallMessage(messageId: String, username: String): MessageResult<MessageResp>{
-        val (_, _, result) = CookiedFuel.post("/message/recall").jsonBody(MessageIdAndUsername(messageId, username)).responseObject<MessageResp>()
+    data class MessageIdAndUsername(val messageId: String)
+    fun recallMessage(messageId: String): MessageResult<MessageResp>{
+        val (_, _, result) = CookiedFuel.post("/message/recall").jsonBody(MessageIdAndUsername(messageId)).responseObject<MessageResp>()
         if (result is fuelResult.Failure) {
             return MessageResult.Error(result.getException())
         } else {

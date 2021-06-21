@@ -66,9 +66,9 @@ class ChatRequest {
         }
     }
 
-    data class UsernameAndMembers(val username: String, val members: ArrayList<String>)
-    fun newChat(username: String, members: ArrayList<String>): ChatResult<ChatInfo> {
-        val (_, _, result) = CookiedFuel.post("/chat/new").jsonBody(UsernameAndMembers(username, members)).responseObject<ChatInfo>()
+    data class UsernameAndMembers(val userId: String, val members: ArrayList<String>)
+    fun newChat(userId: String, members: ArrayList<String>): ChatResult<ChatInfo> {
+        val (_, _, result) = CookiedFuel.post("/chat/new").jsonBody(UsernameAndMembers(userId, members)).responseObject<ChatInfo>()
         if (result is fuelResult.Failure) {
             return ChatResult.Error(result.getException())
         } else {

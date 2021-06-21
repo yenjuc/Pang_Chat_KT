@@ -83,7 +83,7 @@ class ChatsFragment : Fragment() {
         val result: UserResult<UserChats>
 
         withContext(Dispatchers.IO) {
-            result = userRequest.getUserChats(webSocketClient.username!!)
+            result = userRequest.getUserChats(webSocketClient.userId!!)
         }
 
         if (result is UserResult.Success) {

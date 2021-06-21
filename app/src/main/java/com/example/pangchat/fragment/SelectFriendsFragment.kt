@@ -54,11 +54,11 @@ class SelectFriendsFragment : Fragment() {
         recyclerView?.adapter = SelectFriendsAdapter(activity, contacts)
 
         val friendNames = activity?.intent?.getStringArrayListExtra("friendNames")
-        // val friendIds = activity?.intent?.getStringArrayListExtra("friendIds")
+        val friendIds = activity?.intent?.getStringArrayListExtra("friendIds")
 
         contacts.clear()
         for (i in 0 until friendNames?.size!!) {
-            contacts.add(Contact(friendNames[i], friendNames!![i], R.drawable.avatar1))
+            contacts.add(Contact(friendIds!![i], friendNames!![i], R.drawable.avatar1))
         }
         recyclerView?.adapter?.notifyDataSetChanged()
 
@@ -89,10 +89,10 @@ class SelectFriendsFragment : Fragment() {
 
 
         buttonFinish?.setOnClickListener(View.OnClickListener{
-            val selectedNames = activity?.intent?.getStringArrayListExtra("selectedNames")
+            val selectedIds = activity?.intent?.getStringArrayListExtra("selectedIds")
             lifecycleScope.launch {
-                if (selectedNames != null) {
-                    var chat : Chat? = newChat(selectedNames)
+                if (selectedIds != null) {
+                    var chat : Chat? = newChat(selectedIds)
                     if(chat != null){
                         Log.d("click chatid: ", chat.getId())
                         val intent = Intent(mContext, ChatActivity::class.java)
@@ -122,7 +122,7 @@ class SelectFriendsFragment : Fragment() {
         val result: ChatResult<ChatInfo>
 
         withContext(Dispatchers.IO) {
-            result = chatRequest.newChat(webSocketClient.username!!, members)
+            result = chatRequest.newChat(webSocketClient.userId!!, members)
         }
 
         if (result is ChatResult.Success) {

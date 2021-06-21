@@ -16,6 +16,7 @@ import com.example.pangchat.contact.ContactInfo
 import com.example.pangchat.fragment.*
 import com.example.pangchat.fragment.data.Result
 import com.example.pangchat.utils.CookiedFuel
+import com.example.pangchat.websocketClient.MyWebSocketClient
 import com.example.pangchat.websocketClient.webSocketClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.Dispatchers
@@ -34,7 +35,7 @@ class MainActivity : FragmentActivity() {
     // var userId: String? = null
     // var username: String? = null
     var _contactInfo = MutableLiveData<ContactInfo>()
-    // var friendIds: ArrayList<String>? = null
+    var friendIds = ArrayList<String>()
     var friendNames = ArrayList<String>()
 
 
@@ -68,11 +69,13 @@ class MainActivity : FragmentActivity() {
             getFriendsInfo()
             // friendIds = _contactInfo.value?.friendsId
             friendNames?.clear()
+            friendIds?.clear()
             for (index in 0 until (_contactInfo.value?.friendsInfo?.size!!)) {
                 _contactInfo.value?.friendsInfo!![index].let { friendNames?.add(it.getUsername()) }
+                _contactInfo.value?.friendsInfo!![index].let { friendIds?.add(it.getUserId()) }
             }
 
-            // intent.putExtra("friendIds", friendIds)
+            intent.putExtra("friendIds", friendIds)
             intent.putExtra("friendNames", friendNames)
         }
 

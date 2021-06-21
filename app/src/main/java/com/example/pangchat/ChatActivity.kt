@@ -57,7 +57,7 @@ class ChatActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.chatRecyclerView)
         data = LinkedList()
         messages = ArrayList()
-        recyclerView?.adapter = MessageAdapter(webSocketClient.username!!, this, data)
+        recyclerView?.adapter = MessageAdapter(webSocketClient.userId!!, this, data)
         // 取得对应聊天的内容
         lifecycleScope.launch {
             if (chatId != null) {
@@ -175,7 +175,8 @@ class ChatActivity : AppCompatActivity() {
         val result: MessageResult<MessageResp>
 
         withContext(Dispatchers.IO) {
-            result = messageRequest.sendMessage(chatId!!, webSocketClient.username!!, content)
+            // FIXME: type
+            result = messageRequest.sendMessage(chatId!!, webSocketClient.userId!!, "text", content)
         }
 
         if (result is MessageResult.Success) {
@@ -185,21 +186,21 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    fun recallMessage(index: Int, messageId: String, username: String){
+    fun recallMessage(index: Int, messageId: String){
         lifecycleScope.launch {
-            if(recallMessage(messageId, username)){
+            if(recallMessage(messageId)){
                 data?.get(index)?.setRecalled()
                 recyclerView?.adapter?.notifyDataSetChanged()
             }
         }
     }
 
-    private suspend fun recallMessage(messageId: String, username: String) : Boolean{
+    private suspend fun recallMessage(messageId: String) : Boolean{
         val messageRequest = MessageRequest()
         val result: MessageResult<MessageResp>
 
         withContext(Dispatchers.IO) {
-            result = messageRequest.recallMessage(messageId, username)
+            result = messageRequest.recallMessage(messageId)
         }
 
         return result is MessageResult.Success

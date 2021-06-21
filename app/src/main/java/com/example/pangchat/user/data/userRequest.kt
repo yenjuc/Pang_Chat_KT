@@ -13,10 +13,10 @@ data class UserChats(
 
 class UserRequest {
 
-    data class Username(val username: String)
+    data class Username(val userId: String)
 
-    fun getUserChats(username: String): UserResult<UserChats> {
-        val (_, _, result) = CookiedFuel.post("/user/chats").jsonBody(Username(username)).responseObject<UserChats>()
+    fun getUserChats(userId: String): UserResult<UserChats> {
+        val (_, _, result) = CookiedFuel.post("/user/chats").jsonBody(Username(userId)).responseObject<UserChats>()
         if (result is fuelResult.Failure) {
             return UserResult.Error(result.getException())
         } else {

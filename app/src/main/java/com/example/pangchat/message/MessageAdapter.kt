@@ -16,17 +16,17 @@ import com.example.pangchat.websocketClient.webSocketClient
 import org.w3c.dom.Text
 import java.util.*
 
-class MessageAdapter(private val myUsername: String, private val activity: ChatActivity, private val data: LinkedList<Message?>?) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
+class MessageAdapter(private val myUserId: String, private val activity: ChatActivity, private val data: LinkedList<Message?>?) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
     override fun getItemViewType(position: Int): Int {
 
         // FIXME: 假设目前全部都是 text。之后应该要考虑 1. 是接收方还是发出方 2. 哪种类型 3. 是否recalled
 
-        if(data?.get(position)?.isBlocked(myUsername) == true){
+        if(data?.get(position)?.isBlocked(myUserId) == true){
             return 0
         }
 
         var send: Int = 1
-        if(data?.get(position)?.getUsername()?.compareTo(myUsername) == 0){
+        if(data?.get(position)?.getSenderId()?.compareTo(myUserId) == 0){
             send = 2
         }
 
@@ -53,7 +53,7 @@ class MessageAdapter(private val myUsername: String, private val activity: ChatA
         val viewHolder = holder as MessageViewHolder
         if (message != null) {
             // FIXME: 增加 popup
-            if(!message.isBlocked(myUsername)){
+            if(!message.isBlocked(myUserId)){
                 if(viewHolder.viewType > 2){
                     // FIXME: avatar 设置
                     viewHolder.nickname?.text = message.getUsername()
@@ -67,14 +67,14 @@ class MessageAdapter(private val myUsername: String, private val activity: ChatA
                         viewHolder.messageAction?.visibility = View.GONE
                     }
                     viewHolder.messageRecall?.setOnClickListener {
-                        activity.recallMessage(position, message.getId(), message.getUsername())
+                        activity.recallMessage(position, message.getId())
                         viewHolder.messageAction?.visibility = View.GONE
                     }
                     // TODO: 删除消息
 
                 }else{
                     var recallMsg: String = message.getUsername()
-                    if(recallMsg.compareTo(myUsername) == 0){
+                    if(message.getSenderId().compareTo(myUserId) == 0){
                         recallMsg = "您"
                     }
                     recallMsg += activity.getString(R.string.messageRecalled)
