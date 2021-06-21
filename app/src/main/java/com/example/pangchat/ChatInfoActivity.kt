@@ -143,4 +143,17 @@ class ChatInfoActivity : AppCompatActivity() {
 
         return result is UserResult.Success
     }
+
+    fun toAddChatMember(){
+        val intent = Intent(this, SelectFriendsActivity::class.java)
+        intent.putExtra("chatId", chat?.getId())
+        intent.putStringArrayListExtra("members", chat?.getMembers())
+        try {
+            this.startActivity(intent)
+            this.finish()
+        } catch (ActivityNotFoundException: Exception) {
+            Log.d("ImplicitIntents", "Can't handle this!")
+        }
+    }
+
 }

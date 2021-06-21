@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.lifecycleScope
@@ -27,6 +29,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.example.pangchat.fragment.data.Result
+import com.example.pangchat.user.data.CommonResp
+import com.example.pangchat.user.data.UserRequest
+import com.example.pangchat.user.data.UserResult
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -60,6 +65,10 @@ class SelectFriendsFragment : Fragment() {
         // val friendIds = activity?.intent?.getStringArrayListExtra("friendIds")
 
         members = activity?.intent?.getStringArrayListExtra("members") as ArrayList<String>
+        val selectFriendName = view.findViewById<TextView>(R.id.selectFriendName)
+        if(members.size != 0){
+            selectFriendName.text = "邀请好友加入聊天"
+        }
 
         lifecycleScope.launch {
             getFriendsInfo()
@@ -97,31 +106,58 @@ class SelectFriendsFragment : Fragment() {
         recyclerView?.layoutManager = linearLayoutManager
 
         backView?.setOnClickListener(View.OnClickListener {
+            if(members.size == 0){
+                val intent = Intent()
+                activity?.let { it1 -> intent.setClass(it1, MainActivity::class.java) }
+                // intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
+                startActivity(intent)
 
-            val intent = Intent()
-            activity?.let { it1 -> intent.setClass(it1, MainActivity::class.java) }
-            // intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
-            startActivity(intent)
+                activity?.finish()
+            }else{
+                val chatId = activity?.intent?.getStringExtra("chatId")
+                val intent = Intent(activity, ChatInfoActivity::class.java)
+                intent.putExtra("chatId", chatId)
+                try {
+                    startActivity(intent)
+                    requireActivity().finish()
+                } catch (ActivityNotFoundException: Exception) {
+                    Log.d("ImplicitIntents", "Can't handle this!")
+                }
+            }
 
-            activity?.finish()
         })
-
 
         buttonFinish?.setOnClickListener(View.OnClickListener{
             val selectedIds = activity?.intent?.getStringArrayListExtra("selectedIds")
             lifecycleScope.launch {
                 if (selectedIds != null) {
-                    var chat : Chat? = newChat(selectedIds)
-                    if(chat != null){
-                        Log.d("click chatid: ", chat.getId())
-                        val intent = Intent(mContext, ChatActivity::class.java)
-                        intent.putExtra("chatId", chat.getId())
-                        try {
-                            mContext?.startActivity(intent)
-                        } catch (ActivityNotFoundException: Exception) {
-                            Log.d("ImplicitIntents", "Can't handle this!")
+                    if(members.size == 0){
+                        var chat : Chat? = newChat(selectedIds)
+                        if(chat != null){
+                            Log.d("click chatid: ", chat.getId())
+                            val intent = Intent(mContext, ChatActivity::class.java)
+                            intent.putExtra("chatId", chat.getId())
+                            try {
+                                mContext?.startActivity(intent)
+                                finishActivity()
+                            } catch (ActivityNotFoundException: Exception) {
+                                Log.d("ImplicitIntents", "Can't handle this!")
+                            }
                         }
-                        finishActivity()
+                    }else{
+                        val chatId = activity?.intent?.getStringExtra("chatId")
+                        if(chatId != null && addChatMember(chatId, selectedIds)){
+                            val intent = Intent(mContext, ChatInfoActivity::class.java)
+                            intent.putExtra("chatId", chatId)
+                            try {
+                                mContext?.startActivity(intent)
+                                finishActivity()
+                            } catch (ActivityNotFoundException: Exception) {
+                                Log.d("ImplicitIntents", "Can't handle this!")
+                            }
+                        }else{
+                            Toast.makeText(activity, "邀请失败！请稍后重试", Toast.LENGTH_LONG).show()
+                        }
                     }
                 }
             }
@@ -188,6 +224,23 @@ class SelectFriendsFragment : Fragment() {
 //            // TODO：抛出并解析异常
 //        }
 //    }
+
+    suspend fun addChatMember(chatId: String, users: ArrayList<String>): Boolean{
+        val userRequest = UserRequest()
+        val result: UserResult<CommonResp>
+
+        withContext(Dispatchers.IO) {
+            result = userRequest.userChat(users, chatId, "invite")
+        }
+
+        if (result is UserResult.Success) {
+            Log.d("chat", "success")
+        } else {
+            // TODO：抛出并解析异常
+        }
+
+        return result is UserResult.Success
+    }
 
     companion object {
         /**

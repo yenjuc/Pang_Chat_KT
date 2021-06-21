@@ -97,10 +97,10 @@ class ChatActivity : AppCompatActivity() {
             intent.putExtra("chatId", chatId)
             try {
                 startActivity(intent)
+                this.finish()
             } catch (ActivityNotFoundException: Exception) {
                 Log.d("ImplicitIntents", "Can't handle this!")
             }
-            this.finish()
         }
 
         val chatInput = findViewById<TextInputEditText>(R.id.chatInput)
@@ -161,7 +161,6 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    // FIXME: nickname 动态取得
     private suspend fun sendMessage(content: String){
         val messageRequest = MessageRequest()
         val result: MessageResult<MessageResp>

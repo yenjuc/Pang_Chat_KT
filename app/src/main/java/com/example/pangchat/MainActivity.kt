@@ -24,6 +24,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class MainActivity : FragmentActivity() {
@@ -160,7 +161,7 @@ class MainActivity : FragmentActivity() {
             when (item?.itemId) {
                 R.id.newgroup -> {
                     Toast.makeText(this, "发起群聊", Toast.LENGTH_LONG).show()
-
+                    intent.putStringArrayListExtra("members", ArrayList<String>())
                     intent.setClass(this@MainActivity, SelectFriendsActivity::class.java)
                     // intent.putExtra("userId", userId)
 
