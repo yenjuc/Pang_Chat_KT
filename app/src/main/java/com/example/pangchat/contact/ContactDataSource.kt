@@ -24,6 +24,11 @@ data class AddFriendResult(
     val time: Long
 )
 
+data class IsFriendResult(
+    var isFriend: Boolean,
+    var success: Boolean,
+    val time: Long
+)
 
 class ContactDataSource {
 
@@ -81,6 +86,19 @@ class ContactDataSource {
         else {
             return Result.Error(Exception())
         }
+    }
+
+    fun isFriend(friendId: String): Result<IsFriendResult> {
+        val param = NewFriendId(friendId)
+        val (_, _, result) = CookiedFuel.post("/friend/whether").jsonBody(param).responseObject<IsFriendResult>()
+
+        if (result.get().success) {
+            return Result.Success(result.get())
+        }
+        else {
+            return Result.Error(Exception())
+        }
+
     }
 
 }
