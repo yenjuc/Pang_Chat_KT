@@ -1,7 +1,5 @@
 package com.example.pangchat.chat
 
-import com.example.pangchat.message.Message
-
 class Chat(
         private val id: String,
         private val records: ArrayList<String>, // 存 message id

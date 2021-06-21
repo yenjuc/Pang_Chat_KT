@@ -93,6 +93,7 @@ class ChatActivity : AppCompatActivity() {
         // TODO: 进入聊天室详情页面 activity
         chatinfo.setOnClickListener {
             val intent = Intent(this, ChatInfoActivity::class.java)
+            intent.putExtra("chatId", chatId)
             try {
                 startActivity(intent)
             } catch (ActivityNotFoundException: Exception) {
@@ -147,27 +148,6 @@ class ChatActivity : AppCompatActivity() {
             // TODO：抛出并解析异常
         }
     }
-
-    /*
-    private suspend fun getMessageInfo(messageId: String){
-        val messageRequest = MessageRequest()
-        val result: MessageResult<MessageInfo>
-
-        withContext(Dispatchers.IO) {
-            result = messageRequest.getMessage(messageId)
-        }
-
-        if (result is MessageResult.Success) {
-            _messageInfo.value = result.data
-            // val message = Message(result.data.messageId, result.data.senderId, result.data.nickname, result.data.avatarIcon, result.data.recalled, result.data.content, result.data.time)
-            // messages.add(message)
-        } else {
-            // TODO：抛出并解析异常
-        }
-    }
-
-     */
-
 
     // FIXME: nickname 动态取得
     private suspend fun sendMessage(content: String){
