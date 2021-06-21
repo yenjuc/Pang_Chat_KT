@@ -12,8 +12,8 @@
     <string name="save">Save</string>
 
     <!-- 全局配置 -->
-    <string name="BACKEND_URL">http://183.172.182.59:7000</string>
-    <string name="SocketURL">ws://183.172.182.59:520/ws</string>
+    <string name="BACKEND_URL">http://183.173.186.8:7000</string>
+    <string name="SocketURL">ws://183.173.186.8:520/ws</string>
 
     <!-- 聊天详情页面 -->
     <string name="chatInfoTitle">聊天信息</string>

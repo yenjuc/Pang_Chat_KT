@@ -38,7 +38,7 @@ class SelectFriendsAdapter(private val mContext: FragmentActivity?, private val 
                     mContext?.intent?.getStringArrayListExtra("selectedNames")?.add(contact.getNickname())
                 }
                 else {
-                    mContext?.intent?.getStringArrayListExtra("selectedNames")?.remove(contact.getNickname())
+
                 }
             })
         }

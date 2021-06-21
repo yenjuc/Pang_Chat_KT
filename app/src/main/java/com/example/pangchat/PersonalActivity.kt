@@ -41,6 +41,7 @@ class PersonalActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
 
         CookiedFuel.basePath = resources.getString(R.string.BACKEND_URL);
+        webSocketClient.context = this
 
         val intent = intent
         // myUserId = intent.getStringExtra("myUserId")
