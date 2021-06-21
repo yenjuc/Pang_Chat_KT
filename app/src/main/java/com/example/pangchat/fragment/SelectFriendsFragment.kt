@@ -102,13 +102,16 @@ class SelectFriendsFragment : Fragment() {
                         } catch (ActivityNotFoundException: Exception) {
                             Log.d("ImplicitIntents", "Can't handle this!")
                         }
+                        finishActivity()
                     }
                 }
             }
-            // TODO: 发送建立群聊的网络请求
-            // activity?.finish()
         })
 
+    }
+
+    private suspend fun finishActivity(){
+        activity?.finish()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

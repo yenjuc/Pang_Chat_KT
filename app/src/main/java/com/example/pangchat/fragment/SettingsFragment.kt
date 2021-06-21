@@ -68,7 +68,7 @@ class SettingsFragment : Fragment() {
 
             startActivity(intent)
 
-            activity?.finish()
+            // activity?.finish()
 
         })
 
@@ -83,7 +83,7 @@ class SettingsFragment : Fragment() {
 
             startActivity(intent)
 
-            activity?.finish()
+            // activity?.finish()
         })
     }
 

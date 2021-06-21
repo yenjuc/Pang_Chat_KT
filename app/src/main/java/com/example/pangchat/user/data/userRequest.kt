@@ -11,6 +11,10 @@ data class UserChats(
         val chats: ArrayList<Chat>
 )
 
+data class CommonResp(
+    val success: Boolean
+)
+
 class UserRequest {
 
     data class Username(val userId: String)
@@ -24,6 +28,17 @@ class UserRequest {
                 UserResult.Success(result.get())
             else UserResult.Error(Exception());
         }
+    }
 
+    data class userChatOp(val userId: ArrayList<String>, val chatId: String, val opType: String)
+    fun userChat(userId: ArrayList<String>, chatId: String, opType: String): UserResult<CommonResp>{
+        val (_, _, result) = CookiedFuel.post("/user/chat").jsonBody(userChatOp(userId, chatId, opType)).responseObject<CommonResp>()
+        if (result is fuelResult.Failure) {
+            return UserResult.Error(result.getException())
+        } else {
+            return if (result.get().success)
+                UserResult.Success(result.get())
+            else UserResult.Error(Exception());
+        }
     }
 }

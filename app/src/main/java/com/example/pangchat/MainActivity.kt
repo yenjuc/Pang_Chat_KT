@@ -165,7 +165,7 @@ class MainActivity : FragmentActivity() {
                     // intent.putExtra("userId", userId)
 
                     startActivity(intent)
-                    this.finish()
+                    // this.finish()
                     return@OnMenuItemClickListener true
                 }
                 R.id.newfriend -> {
@@ -177,7 +177,7 @@ class MainActivity : FragmentActivity() {
                     intent.setClass(this@MainActivity, SearchActivity::class.java)
 
                     startActivity(intent)
-                    this.finish()
+                    // this.finish()
                     return@OnMenuItemClickListener true
                 }
             }

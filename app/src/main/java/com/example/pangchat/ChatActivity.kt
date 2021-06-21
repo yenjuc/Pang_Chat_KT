@@ -70,11 +70,12 @@ class ChatActivity : AppCompatActivity() {
                 runOnUiThread {
                     val chatname = findViewById<TextView>(R.id.chatName)
                     chatname.text = chat?.getChatName()
+                    // FIXME: 两人聊天应改成对方名称
                     /*
-                    if(chat?.getIsGroup() == true){
+                    if(chat?.getIsGroup() == false){
                         chatname.text = chat?.getChatName()
                     }else{
-                        // FIXME: 应改成对方名称
+
                         chatname.text = "对方用户名"
                     }*/
                 }
@@ -99,6 +100,7 @@ class ChatActivity : AppCompatActivity() {
             } catch (ActivityNotFoundException: Exception) {
                 Log.d("ImplicitIntents", "Can't handle this!")
             }
+            this.finish()
         }
 
         val chatInput = findViewById<TextInputEditText>(R.id.chatInput)
@@ -126,6 +128,16 @@ class ChatActivity : AppCompatActivity() {
             }
         }
     }
+
+    /*
+    override fun onResume() {
+        super.onResume()
+        if(chat != null && !chat!!.getMembers().contains(webSocketClient.userId)){
+            this.finish()
+        }
+    }
+
+     */
 
     public fun setInput(text: String){
         val chatInput = findViewById<TextInputEditText>(R.id.chatInput)
