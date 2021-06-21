@@ -13,7 +13,7 @@ import com.github.kittinunf.result.Result as fuelResult
  */
 
 // 后端返回的数据格式
-data class LoggedInUser(
+data class LoggedUser(
         val success: Boolean,
         val time: Long,
         val username: String,
@@ -25,9 +25,9 @@ class LoginDataSource {
 
     data class UsernameAndPassword(val username: String, val password: String)
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
+    fun login(username: String, password: String): Result<LoggedUser> {
         val up = UsernameAndPassword(username, password)
-        val (_, _, result) = CookiedFuel.post("/user/login").jsonBody(up).responseObject<LoggedInUser>()
+        val (_, _, result) = CookiedFuel.post("/user/login").jsonBody(up).responseObject<LoggedUser>()
         if (result is fuelResult.Failure) {
             return Result.Error(result.getException())
         } else {
@@ -35,6 +35,19 @@ class LoginDataSource {
             webSocketClient.username = username
             webSocketClient.password = password
             webSocketClient.connect()
+            return if (result.get().success)
+                Result.Success(result.get())
+            else Result.Error(Exception());
+        }
+
+    }
+
+    fun logon(username: String, password: String): Result<LoggedUser> {
+        val up = UsernameAndPassword(username, password)
+        val (_, _, result) = CookiedFuel.post("/user/logon").jsonBody(up).responseObject<LoggedUser>()
+        if (result is fuelResult.Failure) {
+            return Result.Error(result.getException())
+        } else {
             return if (result.get().success)
                 Result.Success(result.get())
             else Result.Error(Exception());

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
@@ -15,7 +14,7 @@ import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.example.pangchat.fragment.data.LoginDataSource
-import com.example.pangchat.fragment.ui.login.LoggedInUserView
+import com.example.pangchat.fragment.ui.login.LoggedUserView
 import com.example.pangchat.fragment.ui.login.LoginViewModel
 import com.example.pangchat.utils.CookiedFuel
 import com.example.pangchat.websocketClient.webSocketURI
@@ -35,6 +34,8 @@ class LoginActivity : AppCompatActivity() {
         val username = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login)
+        val logon = findViewById<Button>(R.id.logon)
+
         val loading = findViewById<ProgressBar>(R.id.loading)
 
         loginViewModel = LoginViewModel(LoginDataSource())
@@ -44,6 +45,7 @@ class LoginActivity : AppCompatActivity() {
 
             // disable login button unless both username / password is valid
             login.isEnabled = loginState.isDataValid
+            logon.isEnabled = loginState.isDataValid
 
             if (loginState.usernameError != null) {
                 username.error = getString(loginState.usernameError)
@@ -79,6 +81,20 @@ class LoginActivity : AppCompatActivity() {
 
         })
 
+        loginViewModel.logonResult.observe(this@LoginActivity, Observer {
+            val logonResult = it ?: return@Observer
+
+            loading.visibility = View.GONE
+            if (logonResult.error != null) {
+                showLogonFailed(logonResult.error)
+            }
+            if (logonResult.success != null) {
+                Toast.makeText(applicationContext, "Logon succeed!", Toast.LENGTH_SHORT).show()
+            }
+
+        })
+
+
         username.afterTextChanged {
             loginViewModel.loginDataChanged(
                     username.text.toString(),
@@ -94,26 +110,33 @@ class LoginActivity : AppCompatActivity() {
                 )
             }
 
-            setOnEditorActionListener { _, actionId, _ ->
-                when (actionId) {
-                    EditorInfo.IME_ACTION_DONE ->
-                        loginViewModel.login(
-                                username.text.toString(),
-                                password.text.toString()
-                        )
-                }
-                false
-            }
+//            setOnEditorActionListener { _, actionId, _ ->
+//                when (actionId) {
+//                    EditorInfo.IME_ACTION_DONE ->
+//                        loginViewModel.login(
+//                                username.text.toString(),
+//                                password.text.toString()
+//                        )
+//                }
+//                false
+//            }
 
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
                 webSocketURI = URI(this@LoginActivity.getString(R.string.SocketURL))
                 loginViewModel.login(username.text.toString(), password.text.toString())
             }
+
+            logon.setOnClickListener {
+                loading.visibility = View.VISIBLE
+                webSocketURI = URI(this@LoginActivity.getString(R.string.SocketURL))
+                loginViewModel.logon(username.text.toString(), password.text.toString())
+            }
+
         }
     }
 
-    private fun updateUiWithUser(model: LoggedInUserView) {
+    private fun updateUiWithUser(model: LoggedUserView) {
         val welcome = getString(R.string.welcome)
         val displayName = model.displayName
         // TODO : initiate successful logged in experience
@@ -127,6 +150,12 @@ class LoginActivity : AppCompatActivity() {
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
     }
+
+    private fun showLogonFailed(@StringRes errorString: Int) {
+        Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
+    }
+
+
 }
 
 /**
