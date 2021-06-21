@@ -45,14 +45,13 @@ class FriendRequestAdapter(private val mContext: FragmentActivity?, private val 
         if (contact != null) {
             holder.avatar.setImageResource(contact.getAvatarIcon())
             holder.nickname.text = contact.getNickname()
-
-            val intent = Intent(mContext, MainActivity::class.java)
-            intent.putExtra("fragment", "contact")
-
             holder.acceptButton.setOnClickListener(View.OnClickListener {
                 // 接受好友申请 -- 发送请求给数据库，成功后重新推进联系人页面
                 mContext?.lifecycleScope?.launch {
                     contact.getUserId().let { it1 -> accept(it1) }
+
+                    val intent = Intent(mContext, MainActivity::class.java)
+                    intent.putExtra("fragment", "contact")
 
                     try {
                         mContext.startActivity(intent)
