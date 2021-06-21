@@ -35,7 +35,7 @@ class MainActivity : FragmentActivity() {
     // var username: String? = null
     var _contactInfo = MutableLiveData<ContactInfo>()
     // var friendIds: ArrayList<String>? = null
-    var friendNames: ArrayList<String>? = null
+    var friendNames = ArrayList<String>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,7 +71,6 @@ class MainActivity : FragmentActivity() {
             for (index in 0 until (_contactInfo.value?.friendsInfo?.size!!)) {
                 _contactInfo.value?.friendsInfo!![index].let { friendNames?.add(it.getUsername()) }
             }
-
 
             // intent.putExtra("friendIds", friendIds)
             intent.putExtra("friendNames", friendNames)
