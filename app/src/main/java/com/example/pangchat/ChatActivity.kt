@@ -70,11 +70,12 @@ class ChatActivity : AppCompatActivity() {
                 runOnUiThread {
                     val chatname = findViewById<TextView>(R.id.chatName)
                     chatname.text = chat?.getChatName()
+                    // FIXME: 两人聊天应改成对方名称
                     /*
-                    if(chat?.getIsGroup() == true){
+                    if(chat?.getIsGroup() == false){
                         chatname.text = chat?.getChatName()
                     }else{
-                        // FIXME: 应改成对方名称
+
                         chatname.text = "对方用户名"
                     }*/
                 }
@@ -93,8 +94,10 @@ class ChatActivity : AppCompatActivity() {
         // TODO: 进入聊天室详情页面 activity
         chatinfo.setOnClickListener {
             val intent = Intent(this, ChatInfoActivity::class.java)
+            intent.putExtra("chatId", chatId)
             try {
                 startActivity(intent)
+                this.finish()
             } catch (ActivityNotFoundException: Exception) {
                 Log.d("ImplicitIntents", "Can't handle this!")
             }
@@ -126,6 +129,16 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    /*
+    override fun onResume() {
+        super.onResume()
+        if(chat != null && !chat!!.getMembers().contains(webSocketClient.userId)){
+            this.finish()
+        }
+    }
+
+     */
+
     public fun setInput(text: String){
         val chatInput = findViewById<TextInputEditText>(R.id.chatInput)
         chatInput.setText(text)
@@ -148,28 +161,6 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    /*
-    private suspend fun getMessageInfo(messageId: String){
-        val messageRequest = MessageRequest()
-        val result: MessageResult<MessageInfo>
-
-        withContext(Dispatchers.IO) {
-            result = messageRequest.getMessage(messageId)
-        }
-
-        if (result is MessageResult.Success) {
-            _messageInfo.value = result.data
-            // val message = Message(result.data.messageId, result.data.senderId, result.data.nickname, result.data.avatarIcon, result.data.recalled, result.data.content, result.data.time)
-            // messages.add(message)
-        } else {
-            // TODO：抛出并解析异常
-        }
-    }
-
-     */
-
-
-    // FIXME: nickname 动态取得
     private suspend fun sendMessage(content: String){
         val messageRequest = MessageRequest()
         val result: MessageResult<MessageResp>

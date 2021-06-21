@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import com.example.pangchat.contact.AddFriendResult
 import com.example.pangchat.contact.ContactDataSource
+import com.example.pangchat.contact.IsFriendResult
 import com.example.pangchat.fragment.data.Result
 import com.example.pangchat.utils.CookiedFuel
 import com.example.pangchat.websocketClient.webSocketClient
@@ -29,12 +30,13 @@ class PersonalActivity : FragmentActivity() {
     var userIdView: TextView ? = null
     var messageLayout : LinearLayout ? = null
 
-    var userId: String? = null
-    var username: String? = null
-    var avatar: Int? = null
-    var friendNames: ArrayList<String>? = null
+    lateinit var userId: String
+    lateinit var username: String
+    var avatar: Int = 0
+    // var friendNames: ArrayList<String>? = null
 
     private var _addFriendResult = MutableLiveData<AddFriendResult>()
+    private var _isFriendResult = MutableLiveData<IsFriendResult>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,8 +47,8 @@ class PersonalActivity : FragmentActivity() {
 
         val intent = intent
         // myUserId = intent.getStringExtra("myUserId")
-        // userId = intent.getStringExtra("userId")
-        username = intent.getStringExtra("username")
+        userId = intent.getStringExtra("userId").toString()
+        username = intent.getStringExtra("username").toString()
         avatar = intent.getIntExtra("avatar", 0)
 
         setContentView(R.layout.activity_personal)
@@ -60,35 +62,42 @@ class PersonalActivity : FragmentActivity() {
         messageLayout = findViewById<LinearLayout>(R.id.layout_message)
         var textView = findViewById<TextView>(R.id.newfriend)
 
-        friendNames = intent.getStringArrayListExtra("friendNames")
+        val context: Context = this
 
-        if (webSocketClient.username == username) {
-            messageLayout?.visibility = View.INVISIBLE
-        }
-        else if (friendNames?.contains(username) == true) {
-            messageLayout?.setOnClickListener(View.OnClickListener {
-                Toast.makeText(this, "发消息", Toast.LENGTH_LONG).show()
-            })
-        }
-        else {
-            textView.text = "加好友"
-            messageLayout?.setOnClickListener(View.OnClickListener {
-                // Toast.makeText(this, "加好友", Toast.LENGTH_LONG).show()
-                // TODO: 加好友的操作
-                val context: Context = this
+        // friendNames = intent.getStringArrayListExtra("friendNames")
 
-                MainScope().launch {
+        MainScope().launch {
+            isFriend(userId)
 
-                    username?.let { it1 -> sendFriendRequest(it1) }
+            if (webSocketClient.username == username) {
+                messageLayout?.visibility = View.INVISIBLE
+            }
+            else if (_isFriendResult.value?.isFriend == true) {
+                messageLayout?.setOnClickListener(View.OnClickListener {
+                    Toast.makeText(context, "发消息", Toast.LENGTH_LONG).show()
+                })
+            }
+            else {
+                textView.text = "加好友"
+                messageLayout?.setOnClickListener(View.OnClickListener {
+                    Toast.makeText(context, "加好友", Toast.LENGTH_LONG).show()
+                    // TODO: 加好友的操作
 
-                    if (_addFriendResult.value?.success == true) {
-                        Toast.makeText(context, "成功发送好友申请", Toast.LENGTH_LONG).show()
+                    MainScope().launch {
+
+                        username.let { it1 -> sendFriendRequest(it1) }
+
+                        if (_addFriendResult.value?.success == true) {
+                            Toast.makeText(context, "成功发送好友申请", Toast.LENGTH_LONG).show()
+                        }
                     }
-                }
-                finish()
+                    finish()
 
-            })
+                })
+            }
+
         }
+
 
 
         backView?.setOnClickListener(View.OnClickListener {
@@ -99,7 +108,7 @@ class PersonalActivity : FragmentActivity() {
 
         usernameView?.text = username
         userIdView?.text = userId
-        avatarView?.setImageResource(avatar!!)
+        avatarView?.setImageResource(avatar)
         // TODO: 后续可以通过网络请求设置更多信息
 
 
@@ -124,4 +133,22 @@ class PersonalActivity : FragmentActivity() {
             // TODO：抛出并解析异常
         }
     }
+
+    suspend fun isFriend(friendId: String) {
+        val contactDataSource = ContactDataSource()
+
+        val result: Result<IsFriendResult>
+
+        withContext(Dispatchers.IO) {
+            result = contactDataSource.isFriend(friendId)
+        }
+
+        if (result is Result.Success) {
+            _isFriendResult.value = result.data
+        } else {
+            print("ex")
+            // TODO：抛出并解析异常
+        }
+    }
+
 }

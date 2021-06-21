@@ -23,7 +23,7 @@ data class ChatInfo(
 data class ChatUserInfo(
     val success: Boolean,
     val chat: Chat,
-    val records: ArrayList<User>
+    val members: ArrayList<User>
 )
 
 data class ChatMessageInfo(
@@ -40,9 +40,9 @@ data class ChatInfo(
 class ChatRequest {
 
     data class ChatId(val chatId: String)
-    /*
-    fun getChat(chatId: String): ChatResult<ChatInfo> {
-        val (_, _, result) = CookiedFuel.post("/chat/info").jsonBody(ChatId(chatId)).responseObject<ChatInfo>()
+
+    fun getChatAndMembers(chatId: String): ChatResult<ChatUserInfo> {
+        val (_, _, result) = CookiedFuel.post("/chat/members").jsonBody(ChatId(chatId)).responseObject<ChatUserInfo>()
         if (result is fuelResult.Failure) {
             return ChatResult.Error(result.getException())
         } else {
@@ -50,10 +50,7 @@ class ChatRequest {
                 ChatResult.Success(result.get())
             else ChatResult.Error(Exception());
         }
-
     }
-
-     */
 
     fun getMessagesOfChat(chatId: String) : ChatResult<ChatMessageInfo> {
         val (_, _, result) = CookiedFuel.post("/chat/messages").jsonBody(ChatId(chatId)).responseObject<ChatMessageInfo>()

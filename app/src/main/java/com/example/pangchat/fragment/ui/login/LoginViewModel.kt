@@ -1,20 +1,22 @@
 package com.example.pangchat.fragment.ui.login
 
+import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import android.util.Patterns
+import com.example.pangchat.R
+import com.example.pangchat.fragment.data.LoggedUser
 import com.example.pangchat.fragment.data.LoginDataSource
 import com.example.pangchat.fragment.data.Result
-
-import com.example.pangchat.R
-import com.example.pangchat.fragment.data.LoggedInUser
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * User details post authentication that is exposed to the UI
  */
-data class LoggedInUserView(
+data class LoggedUserView(
         val displayName: String,
         val userId: String
         //... other data fields that may be accessible to the UI
@@ -23,8 +25,8 @@ data class LoggedInUserView(
 /**
  * Authentication result : success (user details) or error message.
  */
-data class LoginResult(
-        val success: LoggedInUserView? = null,
+data class LogResult(
+        val success: LoggedUserView? = null,
         val error: Int? = null
 )
 
@@ -40,25 +42,46 @@ class LoginViewModel(private val loginDataSource: LoginDataSource) : ViewModel()
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
 
-    private val _loginResult = MutableLiveData<LoginResult>()
-    val loginResult: LiveData<LoginResult> = _loginResult
+    private val _loginResult = MutableLiveData<LogResult>()
+    val loginResult: LiveData<LogResult> = _loginResult
+
+    private val _logonResult = MutableLiveData<LogResult>()
+    val logonResult: LiveData<LogResult> = _logonResult
 
     fun login(username: String, password: String) {
         MainScope().launch {
 
-            val result: Result<LoggedInUser>
+            val result: Result<LoggedUser>
 
             withContext(Dispatchers.IO) {
                 result = loginDataSource.login(username, password)
             }
 
             if (result is Result.Success) {
-               _loginResult.value = LoginResult(success = LoggedInUserView(displayName = result.data.username, userId = result.data.userId))
+               _loginResult.value = LogResult(success = LoggedUserView(displayName = result.data.username, userId = result.data.userId))
             } else {
-                _loginResult.value = LoginResult(error = R.string.login_failed)
+                _loginResult.value = LogResult(error = R.string.login_failed)
             }
         }
     }
+
+    fun logon(username: String, password: String) {
+        MainScope().launch {
+
+            val result: Result<LoggedUser>
+
+            withContext(Dispatchers.IO) {
+                result = loginDataSource.logon(username, password)
+            }
+
+            if (result is Result.Success) {
+                _logonResult.value = LogResult(success = LoggedUserView(displayName = result.data.username, userId = result.data.userId))
+            } else {
+                _logonResult.value = LogResult(error = R.string.logon_failed)
+            }
+        }
+    }
+
 
     fun loginDataChanged(username: String, password: String) {
         if (!isUserNameValid(username)) {
