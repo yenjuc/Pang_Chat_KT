@@ -20,6 +20,7 @@ lateinit var webSocketClient: MyWebSocketClient
 
 class MyWebSocketClient(uri: URI) : WebSocketClient(uri) {
     // var hasNewFriend : Boolean = false
+    var userId:String? = null
     var username:String?=null
     var password:String?=null
     lateinit var context: Context

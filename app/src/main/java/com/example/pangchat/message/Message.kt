@@ -10,6 +10,7 @@ enum class MessageType{
 // TODO: 确认传回参数
 class Message(
     private val id: String,
+    private val senderId: String,
     private val username: String,
     private val avatarIcon: String,
     private val blockedUser: ArrayList<String>,
@@ -21,6 +22,10 @@ class Message(
 ) {
     fun getId(): String{
         return id
+    }
+
+    fun getSenderId(): String{
+        return senderId
     }
 
     fun getUsername(): String{
@@ -36,15 +41,15 @@ class Message(
     }
 
     // return true if the user has already delete the message
-    fun isBlocked(username: String): Boolean{
+    fun isBlocked(userId: String): Boolean{
         if(blockedUser != null){
-            return blockedUser.contains(username)
+            return blockedUser.contains(userId)
         }
         return false
     }
 
-    fun addBlocked(username: String) {
-        blockedUser.add(username)
+    fun addBlocked(userId: String) {
+        blockedUser.add(userId)
     }
 
     fun getRecalled(): Boolean{

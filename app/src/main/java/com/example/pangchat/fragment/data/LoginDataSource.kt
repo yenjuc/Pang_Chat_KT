@@ -15,7 +15,7 @@ import com.github.kittinunf.result.Result as fuelResult
 // 后端返回的数据格式
 data class LoggedInUser(
         val success: Boolean,
-        val time: Long,
+        // val time: Long,
         val username: String,
         val userId: String
 )
@@ -34,6 +34,7 @@ class LoginDataSource {
             webSocketClient = MyWebSocketClient(webSocketURI)
             webSocketClient.username = username
             webSocketClient.password = password
+            webSocketClient.userId = result.get().userId
             webSocketClient.connect()
             return if (result.get().success)
                 Result.Success(result.get())

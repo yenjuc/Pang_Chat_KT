@@ -30,15 +30,17 @@ class SelectFriendsAdapter(private val mContext: FragmentActivity?, private val 
         // TODO
         val contact = data?.get(position)
         if (contact != null) {
-            holder.avatar?.setImageResource(contact.getAvatarIcon())
+            holder.avatar?.setImageResource(contact.getAvatar())
             holder.nickname?.text = contact.getNickname()
             holder.itemView.setOnClickListener(View.OnClickListener {
                 holder.button?.isChecked = !holder.button?.isChecked!!
                 if (holder.button?.isChecked == true) {
                     mContext?.intent?.getStringArrayListExtra("selectedNames")?.add(contact.getNickname())
+                    mContext?.intent?.getStringArrayListExtra("selectedIds")?.add(contact.getUserId())
                 }
                 else {
-
+                    mContext?.intent?.getStringArrayListExtra("selectedNames")?.remove(contact.getNickname())
+                    mContext?.intent?.getStringArrayListExtra("selectedIds")?.remove(contact.getUserId())
                 }
             })
         }

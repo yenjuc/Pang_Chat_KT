@@ -545,6 +545,43 @@
                 android:background="@color/grey" />
 
             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/chatinfo_bar_height"
+                android:background="?attr/selectableItemBackground"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="@dimen/chatinfo_bar_padding_horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/chatGroupIcon"
+                    android:textSize="18sp" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="0"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/avatar11" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view9"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="8dp"
+                android:layout_weight="1"
+                android:background="@color/grey" />
+
+            <LinearLayout
                 android:id="@+id/chatSearchLayout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/chatinfo_bar_height"

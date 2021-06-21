@@ -34,7 +34,7 @@ class ContactAdapter(private val mContext: FragmentActivity?, private val data: 
         // TODO
         val contact = data?.get(position)
         if (contact != null) {
-            holder.avatar?.setImageResource(contact.getAvatarIcon())
+            holder.avatar?.setImageResource(contact.getAvatar())
             holder.nickname?.text = contact.getNickname()
             holder.itemView.setOnClickListener{
                 val contact : Contact = data?.get(position)!!
@@ -46,7 +46,7 @@ class ContactAdapter(private val mContext: FragmentActivity?, private val data: 
                 intent.putExtra("friendNames", mContext?.intent?.getStringArrayListExtra("friendNames"))
                 intent.putExtra("userId", contact.getUserId())
                 intent.putExtra("username", contact.getNickname())
-                intent.putExtra("avatar", contact.getAvatarIcon())
+                intent.putExtra("avatar", contact.getAvatar())
 
                 try {
                     mContext?.startActivity(intent)

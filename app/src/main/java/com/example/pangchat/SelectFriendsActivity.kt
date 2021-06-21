@@ -10,6 +10,7 @@ class SelectFriendsActivity : FragmentActivity() {
     // @BindView(R.id.bottomNavigationView)
     // var recyclerView: RecyclerView? = null
     var selectedNames =  ArrayList<String>()
+    var selectedIds = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,6 +21,7 @@ class SelectFriendsActivity : FragmentActivity() {
         val intent = intent
         // val userId = intent.getStringExtra("userId")
         intent.putExtra("selectedNames", selectedNames)
+        intent.putExtra("selectedIds", selectedIds)
 
         setContentView(R.layout.activity_select_friends)
 
