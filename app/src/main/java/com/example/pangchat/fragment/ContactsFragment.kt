@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.contact.*
 import com.example.pangchat.fragment.data.Result
-import com.example.pangchat.websocketClient.webSocketClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -58,20 +57,24 @@ class ContactsFragment : Fragment() {
 
             // 获取现有好友列表
             getContactInfo()
+
             contacts.clear()
-            for (index in 0 until _contactInfo.value?.friendsId?.size!!) {
-                contacts.add(Contact(_contactInfo.value?.friendsId!![index],
-                    _contactInfo.value?.friendsName!![index], R.drawable.avatar1))
+            for (index in 0 until _contactInfo.value?.friendsInfo?.size!!) {
+                contacts.add(Contact(_contactInfo.value?.friendsInfo!![index].getUserId(),
+                    _contactInfo.value?.friendsInfo!![index].getUsername(), R.drawable.avatar1))
             }
             currFriendRecyclerView.adapter?.notifyDataSetChanged()
+
+            requests.clear()
+            for (index in 0 until _contactInfo.value?.newfriendsInfo?.size!!) {
+                requests.add(Contact(
+                    _contactInfo.value?.newfriendsInfo!![index].getUserId(),
+                    _contactInfo.value?.newfriendsInfo!![index].getUsername(), R.drawable.avatar1))
+            }
+            newFriendRecyclerView.adapter?.notifyDataSetChanged()
         }
 
-        for (index in 0 until webSocketClient.newFriendList.size) {
-            requests.add(Contact(
-                webSocketClient.newFriendList[index].friendId,
-                webSocketClient.newFriendList[index].friendName, R.drawable.avatar1))
-        }
-        newFriendRecyclerView.adapter?.notifyDataSetChanged()
+
 
         val _linearLayoutManager = LinearLayoutManager(this.activity)
         _linearLayoutManager.orientation = LinearLayoutManager.VERTICAL

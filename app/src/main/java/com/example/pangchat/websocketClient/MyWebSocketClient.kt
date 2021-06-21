@@ -26,8 +26,6 @@ class MyWebSocketClient(uri: URI) : WebSocketClient(uri) {
 
     data class friend(val friendId: String, val friendName: String)
 
-    var newFriendList: ArrayList<friend> = ArrayList()
-
 
     override fun onOpen(handshakedata: ServerHandshake?) {
         send(JSON.toJSONString(mapOf("bizType" to "USER_LOGIN", "username" to username, "password" to password)))
@@ -50,7 +48,6 @@ class MyWebSocketClient(uri: URI) : WebSocketClient(uri) {
             if (obj.get("bizType") == "USER_ADD_FRIEND") {
                 val name: String = obj.get("friendName") as String
                 val Id: String = obj.get("friendId") as String
-                newFriendList.add(friend(Id, name))
                 sendSimpleNotification("新好友提醒", "$name 请求添加你为好友")
 
             }

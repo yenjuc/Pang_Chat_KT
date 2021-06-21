@@ -11,14 +11,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
-import com.example.pangchat.chat.Chat
 import com.example.pangchat.contact.ContactDataSource
 import com.example.pangchat.contact.ContactInfo
 import com.example.pangchat.fragment.*
 import com.example.pangchat.fragment.data.Result
-import com.example.pangchat.user.data.UserChats
-import com.example.pangchat.user.data.UserRequest
-import com.example.pangchat.user.data.UserResult
 import com.example.pangchat.utils.CookiedFuel
 import com.example.pangchat.websocketClient.webSocketClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -27,7 +23,6 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 class MainActivity : FragmentActivity() {
@@ -72,7 +67,11 @@ class MainActivity : FragmentActivity() {
         MainScope().launch {
             getFriendsInfo()
             // friendIds = _contactInfo.value?.friendsId
-            friendNames = _contactInfo.value?.friendsName
+            friendNames?.clear()
+            for (index in 0 until (_contactInfo.value?.friendsInfo?.size!!)) {
+                _contactInfo.value?.friendsInfo!![index].let { friendNames?.add(it.getUsername()) }
+            }
+
 
             // intent.putExtra("friendIds", friendIds)
             intent.putExtra("friendNames", friendNames)
