@@ -9,11 +9,20 @@ import android.widget.Button
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.contact.Contact
+import com.example.pangchat.contact.ContactDataSource
+import com.example.pangchat.contact.ContactInfo
 import com.example.pangchat.contact.SelectFriendsAdapter
+import com.example.pangchat.fragment.data.Result
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class SelectFriendsFragment : Fragment() {
@@ -22,9 +31,10 @@ class SelectFriendsFragment : Fragment() {
     private var recyclerView: RecyclerView? = null
     private var buttonFinish: Button? = null
     private var backView: ImageView? = null
-    // private val _contactInfo = MutableLiveData<ContactInfo>()
+    private val _contactInfo = MutableLiveData<ContactInfo>()
 
     private lateinit var contacts:LinkedList<Contact?>
+    private var members = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,14 +50,30 @@ class SelectFriendsFragment : Fragment() {
         contacts = LinkedList<Contact?>()
         recyclerView?.adapter = SelectFriendsAdapter(activity, contacts)
 
-        val friendNames = activity?.intent?.getStringArrayListExtra("friendNames")
+        // val friendNames = activity?.intent?.getStringArrayListExtra("friendNames")
         // val friendIds = activity?.intent?.getStringArrayListExtra("friendIds")
 
-        contacts.clear()
-        for (i in 0 until friendNames?.size!!) {
-            contacts.add(Contact(friendNames[i], friendNames!![i], R.drawable.avatar1))
+        members = activity?.intent?.getStringArrayListExtra("members") as ArrayList<String>
+
+        lifecycleScope.launch {
+            getFriendsInfo()
+            contacts.clear()
+
+            for (index in 0 until (_contactInfo.value?.friendsInfo?.size!!)) {
+                if (_contactInfo.value?.friendsInfo!![index].getUserId() in members == false) {
+                    contacts.add(
+                        Contact(
+                            _contactInfo.value?.friendsInfo!![index].getUserId(),
+                            _contactInfo.value?.friendsInfo!![index].getUsername(),
+                            R.drawable.avatar1
+                        )
+                    )
+                }
+
+            }
+            recyclerView?.adapter?.notifyDataSetChanged()
         }
-        recyclerView?.adapter?.notifyDataSetChanged()
+
 
 //        lifecycleScope.launch {
 //
@@ -89,6 +115,21 @@ class SelectFriendsFragment : Fragment() {
         return inflater?.inflate(R.layout.fragment_select_friends, container, false)
     }
 
+    suspend fun getFriendsInfo() {
+        val contactDataSource = ContactDataSource()
+
+        val result: Result<ContactInfo>
+
+        withContext(Dispatchers.IO) {
+            result = contactDataSource.getContactInfo()
+        }
+
+        if (result is Result.Success) {
+            _contactInfo.value = result.data
+        } else {
+            // TODO：抛出并解析异常
+        }
+    }
 //    // 调用网络请求函数
 //    suspend fun getContactInfo(userId: String) {
 //        val contactDataSource = ContactDataSource()
