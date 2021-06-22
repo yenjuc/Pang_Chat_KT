@@ -49,7 +49,7 @@ class ChatsFragment : Fragment() {
                 data?.clear()
                 var chats: ArrayList<Chat>? = getUserChats()
                 if(chats != null){
-                    for (chat in chats!!) {
+                    for (chat in chats) {
                         data?.add(chat)
                     }
                     recyclerView?.adapter?.notifyDataSetChanged()
@@ -67,8 +67,10 @@ class ChatsFragment : Fragment() {
         lifecycleScope.launch{
             data?.clear()
             var chats : ArrayList<Chat>? = getUserChats()
-            for(chat in chats!!){
-                data?.add(chat)
+            if(chats != null){
+                for(chat in chats){
+                    data?.add(chat)
+                }
             }
             recyclerView?.adapter?.notifyDataSetChanged()
         }

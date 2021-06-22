@@ -6,6 +6,8 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
@@ -56,11 +58,14 @@ class ChatActivity : AppCompatActivity() {
 
     private var messages: ArrayList<Message>? = null
 
+    private var bitmaps: LinkedList<Bitmap?> ?= null
+
     private var chatId: String? = null
 
     private var recyclerView: RecyclerView? = null
 
     private var _uploadInfo: MutableLiveData<UploadResult> ?= null
+
 
     // 相册选择回传码
     val GALLERY_REQUEST_CODE = 1
@@ -77,7 +82,8 @@ class ChatActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.chatRecyclerView)
         data = LinkedList()
         messages = ArrayList()
-        recyclerView?.adapter = MessageAdapter(webSocketClient.userId!!, this, data)
+        bitmaps = LinkedList()
+        recyclerView?.adapter = MessageAdapter(webSocketClient.userId!!, this, data, bitmaps)
         // 取得对应聊天的内容
         lifecycleScope.launch {
             if (chatId != null) {
@@ -85,6 +91,8 @@ class ChatActivity : AppCompatActivity() {
                 if(messages != null){
                     for(message in messages!!){
                         data!!.add(message)
+                        // TODO: 建立映射
+                        downloadBitmap(message.getAvatar())
                     }
                     recyclerView?.adapter?.notifyDataSetChanged()
                     recyclerView?.scrollToPosition(messages!!.size - 1)
@@ -113,7 +121,6 @@ class ChatActivity : AppCompatActivity() {
         back.setOnClickListener { this.finish() }
 
         val chatinfo = findViewById<ImageView>(R.id.chatInfo)
-        // TODO: 进入聊天室详情页面 activity
         chatinfo.setOnClickListener {
             val intent = Intent(this, ChatInfoActivity::class.java)
             intent.putExtra("chatId", chatId)
@@ -133,7 +140,7 @@ class ChatActivity : AppCompatActivity() {
         // 假设第一个是发送视频
 
 
-        val videoSender = findViewById<ImageView>(R.id.imageView4)
+        val videoSender = findViewById<ImageView>(R.id.chatVideo)
         videoSender.setOnClickListener{
             // 修改头像
             val pickIntent : Intent = Intent(Intent.ACTION_PICK,
@@ -169,8 +176,6 @@ class ChatActivity : AppCompatActivity() {
 
             val location = getLocation()
             if(location != null){
-                // TODO: 发送当前位置的Message
-
                 Toast.makeText(this, "发送当前位置", Toast.LENGTH_LONG).show()
                 lifecycleScope.launch {
                     sendMessage(location.latitude.toString() + ";" + location.longitude.toString(), "location")
@@ -324,7 +329,6 @@ class ChatActivity : AppCompatActivity() {
         val result: MessageResult<MessageResp>
 
         withContext(Dispatchers.IO) {
-            // FIXME: type
             result = messageRequest.sendMessage(chatId!!, webSocketClient.userId!!, type, content)
         }
 
@@ -373,5 +377,13 @@ class ChatActivity : AppCompatActivity() {
         }
 
         return result is MessageResult.Success
+    }
+    
+    suspend fun downloadBitmap(url: String){
+        withContext(Dispatchers.IO){
+            val result = CookiedFuel.get(url).awaitByteArray();
+            val bit: Bitmap = BitmapFactory.decodeByteArray(result, 0, result.size)
+            bitmaps?.add(bit)
+        }
     }
 }
