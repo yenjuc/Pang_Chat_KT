@@ -23,6 +23,7 @@ import com.github.kittinunf.fuel.core.BlobDataPart
 import com.github.kittinunf.fuel.core.DataPart
 import com.github.kittinunf.fuel.coroutines.awaitByteArray
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.InputStream
@@ -40,7 +41,7 @@ class SettingsFragment : Fragment() {
     private lateinit var avatarUrl: String
 
     var _userInfo = MutableLiveData<UserInfo>()
-    lateinit var _uploadInfo: UploadResult
+    var _uploadInfo = MutableLiveData<UploadResult>()
     lateinit var _modifyInfo :ModifyAvatarResult
 
 
@@ -80,6 +81,7 @@ class SettingsFragment : Fragment() {
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
             startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
+
         })
 
 
@@ -141,7 +143,7 @@ class SettingsFragment : Fragment() {
                         imageView?.setImageBitmap(BitmapFactory.decodeStream(activity?.getContentResolver()?.openInputStream(imageUri)))
 
                         // 向服务器发送请求
-                        lifecycleScope.launch {
+                        MainScope().launch {
                             val splited = imageUri.lastPathSegment!!.split("/");
                             withContext(Dispatchers.IO) {
                                 inputImage =
@@ -154,7 +156,7 @@ class SettingsFragment : Fragment() {
                                     splited[splited.size - 1]
                                 )
                             )
-                            modifyAvatar(_uploadInfo.url)
+                            modifyAvatar(_uploadInfo.value!!.url)
                         }
                     }
                 } catch (e: Exception) {
@@ -208,9 +210,9 @@ class SettingsFragment : Fragment() {
         }
 
         if (result is Result.Success) {
-            _uploadInfo = result.data
+            _uploadInfo.value = result.data
         } else {
-            // TODO：抛出并解析异常 // 是不是不应该把suspend的那个函数放到IO里 不是 IO就是用来执行suspend用的
+            // TODO：抛出并解析异常
         }
     }
 

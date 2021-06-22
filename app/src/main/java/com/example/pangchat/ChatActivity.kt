@@ -1,6 +1,7 @@
 package com.example.pangchat
 
 
+import android.app.Activity
 import android.Manifest
 import android.content.Context
 import android.content.Intent
@@ -11,6 +12,7 @@ import android.location.LocationManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
@@ -18,23 +20,35 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.chat.Chat
-import com.example.pangchat.chat.data.ChatInfo
 import com.example.pangchat.chat.data.ChatMessageInfo
 import com.example.pangchat.chat.data.ChatRequest
 import com.example.pangchat.chat.data.ChatResult
+import com.example.pangchat.fragment.data.FileDataSource
+import com.example.pangchat.fragment.data.Result
+import com.example.pangchat.fragment.data.UploadResult
 import com.example.pangchat.message.Message
 import com.example.pangchat.message.MessageAdapter
-import com.example.pangchat.message.data.*
+import com.example.pangchat.message.data.MessageInfo
+import com.example.pangchat.message.data.MessageRequest
+import com.example.pangchat.message.data.MessageResp
+import com.example.pangchat.message.data.MessageResult
+import com.example.pangchat.utils.CookiedFuel
 import com.example.pangchat.websocketClient.webSocketClient
+import com.github.kittinunf.fuel.core.BlobDataPart
+import com.github.kittinunf.fuel.core.DataPart
+import com.github.kittinunf.fuel.coroutines.awaitByteArray
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.InputStream
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -49,6 +63,13 @@ class ChatActivity : AppCompatActivity() {
     private var chatId: String? = null
 
     private var recyclerView: RecyclerView? = null
+
+    private var _uploadInfo: MutableLiveData<UploadResult> ?= null
+
+    // 相册选择回传码
+    val GALLERY_REQUEST_CODE = 1
+
+    //private lateinit var messages:LinkedList<Message?>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -110,6 +131,20 @@ class ChatActivity : AppCompatActivity() {
 
         // TODO: set 各种 listener
         val chatMoreAction = findViewById<LinearLayout>(R.id.chatMoreLayout)
+
+        // 假设第一个是发送视频
+
+
+        val videoSender = findViewById<ImageView>(R.id.imageView4)
+        videoSender.setOnClickListener{
+            // 修改头像
+            val pickIntent : Intent = Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "video/*");
+            startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
+        }
+
+
         val chatAction = findViewById<ImageView>(R.id.chatAction)
         chatAction.setOnClickListener {
             if(chatInput.text?.isEmpty() == false){
@@ -219,10 +254,72 @@ class ChatActivity : AppCompatActivity() {
     }
 
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == GALLERY_REQUEST_CODE){
+                try {
+                    //该uri是上一个Activity返回的
+                    val videoUri = data?.getData();
+                    if(videoUri!=null) {
+
+                        // 向服务器发送请求
+                        MainScope().launch {
+                            val splited = videoUri.lastPathSegment!!.split("/");
+                            val inputVideo: InputStream
+                            withContext(Dispatchers.IO) {
+                                inputVideo = getContentResolver()?.openInputStream(videoUri)!!
+                            }
+
+                            uploadVideo(
+                                BlobDataPart(
+                                    inputVideo,
+                                    "file",
+                                    splited[splited.size - 1]
+                                )
+                            )
+
+                            withContext(Dispatchers.IO) {
+                                val result = CookiedFuel.get(_uploadInfo?.value!!.url).awaitByteArray();
+                                // bit = BitmapFactory.decodeByteArray(result, 0, result.size)
+                            }
+                            // imageView?.setImageBitmap(bit) // 必须放在IO外面
+
+
+//                            modifyAvatar(_uploadInfo.url)
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+    }
+
+
     public fun setInput(text: String){
         val chatInput = findViewById<TextInputEditText>(R.id.chatInput)
         chatInput.setText(text)
     }
+
+    suspend fun uploadVideo(file: DataPart) {
+        val fileDataSource = FileDataSource()
+
+        val result: Result<UploadResult>
+
+        withContext(Dispatchers.IO) {
+            result = fileDataSource.uploadFile(file)
+        }
+
+        if (result is Result.Success) {
+            // _uploadInfo = result.data
+        } else {
+            // TODO：抛出并解析异常
+        }
+    }
+
+
 
     private suspend fun getChatAndMessage(chatId: String){
         val chatRequest = ChatRequest()
