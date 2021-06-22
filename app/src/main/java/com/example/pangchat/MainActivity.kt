@@ -3,6 +3,7 @@ package com.example.pangchat
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -11,10 +12,18 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import com.example.pangchat.contact.ContactDataSource
 import com.example.pangchat.contact.ContactInfo
+import com.example.pangchat.discover.data.DiscoverRequest
+import com.example.pangchat.discover.data.DiscoverResult
+import com.example.pangchat.discover.data.postLikeResult
+import com.example.pangchat.discover.data.sendPostResult
 import com.example.pangchat.fragment.*
 import com.example.pangchat.fragment.data.Result
+import com.example.pangchat.message.data.MessageRequest
+import com.example.pangchat.message.data.MessageResp
+import com.example.pangchat.message.data.MessageResult
 import com.example.pangchat.utils.CookiedFuel
 import com.example.pangchat.websocketClient.MyWebSocketClient
 import com.example.pangchat.websocketClient.webSocketClient
@@ -218,6 +227,8 @@ class MainActivity : FragmentActivity() {
             // TODO：抛出并解析异常
         }
     }
+
+
 
 
 

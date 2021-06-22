@@ -18,8 +18,9 @@ import android.widget.TextView
 import com.example.pangchat.R
 import com.example.pangchat.comment.Comment
 import java.util.*
+import kotlin.collections.ArrayList
 
-class CommentAdapter (private val data: LinkedList<Comment?>?) : BaseAdapter() {
+class CommentAdapter (private val data: ArrayList<Comment?>?) : BaseAdapter() {
     override fun getCount(): Int {
         if (data != null) {
             return data.size
