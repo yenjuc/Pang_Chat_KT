@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/chatBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/grey"
+        android:gravity="center"
+        android:minHeight="36dp"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:context=".newPostActivity"
+    >
+    <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/discover_comment_input"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:maxLines="4"
+                android:paddingVertical="6dp"
+                android:hint="Comment"
+                android:scrollbars="vertical"
+                />
+    <Button
+        android:minHeight="0dp"
+        android:minWidth="60dp"
+        android:id="@+id/button_send_comment"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/btstyle"
+        android:paddingVertical="6dp"
+        android:layout_marginLeft="10dp"
+        android:textColor="#FFFFFF"
+        android:text="Send"/>
+
+
+    </LinearLayout>

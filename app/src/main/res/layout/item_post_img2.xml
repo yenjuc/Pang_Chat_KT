@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingHorizontal="4dp"
-    android:paddingVertical="4dp">
+    android:paddingVertical="4dp"
+    tools:context=".newPostActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -69,13 +70,29 @@
                     tools:srcCompat="@tools:sample/backgrounds/scenic" />
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/post_time"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingVertical="6dp"
-                android:text="5小时前"
-                android:textStyle="italic" />
+            <RelativeLayout android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:orientation="horizontal"
+                android:paddingHorizontal="4dp"
+                android:layout_marginBottom="5dp">
+                <TextView
+                    android:layout_alignParentStart="true"
+                    android:id="@+id/post_time"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="4dp"
+                    android:text="5小时前"
+                    android:textStyle="italic" />
+
+                <Button
+                    android:layout_alignParentEnd="true"
+                    android:id="@+id/show_more"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="#EEEEEE"
+                    android:drawableEnd="@drawable/ic_baseline_more_horiz_24"></Button>
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/post_like"
