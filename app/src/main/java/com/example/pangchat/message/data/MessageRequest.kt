@@ -11,7 +11,7 @@ data class MessageInfo(
         val messageId: String,
         val senderId: String,
         val nickname: String,
-        val avatarIcon: String,
+        val avatar: String,
         val recalled: Boolean,
         val content: String,
         val time: String
@@ -30,6 +30,7 @@ data class MessageResp(
 class MessageRequest {
 
     data class MessageId(val messageId: String)
+    /*
     fun getMessage(messageId: String): MessageResult<MessageInfo> {
         val (_, _, result) = CookiedFuel.post("/message/info").jsonBody(MessageId(messageId)).responseObject<MessageInfo>()
         if (result is fuelResult.Failure) {
@@ -40,6 +41,8 @@ class MessageRequest {
             else MessageResult.Error(Exception());
         }
     }
+
+     */
 
     data class MessageSend(val chatId: String, val senderId: String, val type: String, val content: String)
     fun sendMessage(chatId: String, senderId: String, type: String, content: String): MessageResult<MessageResp>{

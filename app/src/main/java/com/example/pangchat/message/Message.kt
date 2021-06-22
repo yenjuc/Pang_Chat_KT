@@ -12,7 +12,7 @@ class Message(
     private val id: String,
     private val senderId: String,
     private val username: String,
-    private val avatarIcon: String,
+    private val avatar: String,
     private val blockedUser: ArrayList<String>,
     private var recalled: Boolean,
     private val content: String,
@@ -32,8 +32,8 @@ class Message(
         return username
     }
 
-    fun getAvatarIcon(): String{
-        return avatarIcon
+    fun getAvatar(): String{
+        return avatar
     }
 
     fun getBlockedUser(): ArrayList<String>{

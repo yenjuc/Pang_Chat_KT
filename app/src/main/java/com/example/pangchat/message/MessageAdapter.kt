@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.ChatActivity
+import com.example.pangchat.PersonalActivity
 import com.example.pangchat.R
 import com.example.pangchat.message.data.*
 import java.util.*
@@ -89,6 +90,19 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
             if(!message.isBlocked(myUserId)){
                 if(viewHolder.viewType > 2){
                     // FIXME: avatar 设置
+                    viewHolder.avatar?.setOnClickListener {
+                        val intent = Intent(activity, PersonalActivity::class.java)
+                        intent.putExtra("userId", message.getSenderId())
+                        intent.putExtra("username", message.getUsername())
+                        intent.putExtra("avatar", message.getAvatar())
+                        try {
+                            activity.startActivity(intent)
+                        } catch (ActivityNotFoundException: Exception) {
+                            Log.d("ImplicitIntents", "Can't handle this!")
+                        }
+                    }
+
+
                     viewHolder.nickname?.text = message.getUsername()
                     viewHolder.content?.text = message.getContent()
                     viewHolder.content?.setOnLongClickListener {
