@@ -1,0 +1,267 @@
+Index: app/src/main/java/com/example/pangchat/fragment/SettingsFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pangchat\n\nimport android.content.Intent\nimport android.os.Bundle\nimport android.provider.MediaStore\nimport android.view.LayoutInflater\nimport android.view.View\nimport android.view.ViewGroup\nimport android.widget.Button\nimport android.widget.ImageView\nimport android.widget.TextView\nimport android.widget.Toast\nimport androidx.fragment.app.Fragment\nimport com.example.pangchat.websocketClient.webSocketClient\n\n\n/**\n * A simple [Fragment] subclass.\n * Use the [SettingsFragment.newInstance] factory method to\n * create an instance of this fragment.\n */\nclass SettingsFragment : Fragment() {\n    private var textView: TextView? = null\n    private var imageView: ImageView? = null\n    private var button: Button? = null\n\n    // 拍照回传码\n    val CAMERA_REQUEST_CODE = 0;\n    // 相册选择回传码\n    val GALLERY_REQUEST_CODE = 1\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n\n    }\n\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\n\n        textView = getView()?.findViewById<TextView?>(R.id.username_text)\n        textView?.setText(webSocketClient.username)\n        imageView = getView()?.findViewById<ImageView>(R.id.avatar_icon)\n        imageView?.setImageResource(R.drawable.avatar1)\n        button = getView()?.findViewById<Button>(R.id.button_modify)\n\n\n        imageView?.setOnClickListener(View.OnClickListener {\n            // 修改头像\n            val pickIntent : Intent = Intent(Intent.ACTION_PICK,\n                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);\n            pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, \"image/*\");\n            startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);\n\n        })\n\n\n        textView?.setOnClickListener(View.OnClickListener {\n            Toast.makeText(activity, \"修改昵称\", Toast.LENGTH_LONG).show()\n\n            // 进入修改昵称页面\n            // 想法：统一写一个修改信息的fragment  activity\n            // 根据修改内容的不同显示不同布局\n\n            val intent = Intent()\n            activity?.let { it1 -> intent.setClass(it1, ModifyInfoActivity::class.java) }\n            // intent.putExtra(\"userId\", activity?.intent?.getStringExtra(\"userId\"))\n            // intent.putExtra(\"username\", activity?.intent?.getStringExtra(\"username\"))\n            intent.putExtra(\"modifyKey\", \"username\")\n\n            startActivity(intent)\n\n            activity?.finish()\n\n        })\n\n        button?.setOnClickListener(View.OnClickListener {\n            Toast.makeText(activity, \"修改密码\", Toast.LENGTH_LONG).show()\n\n            val intent = Intent()\n            activity?.let { it1 -> intent.setClass(it1, ModifyInfoActivity::class.java) }\n            // intent.putExtra(\"userId\", activity?.intent?.getStringExtra(\"userId\"))\n            // intent.putExtra(\"username\", activity?.intent?.getStringExtra(\"username\"))\n            intent.putExtra(\"modifyKey\", \"password\")\n\n            startActivity(intent)\n\n            activity?.finish()\n        })\n    }\n\n\n    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,\n                              savedInstanceState: Bundle?): View? {\n        // Inflate the layout for this fragment\n        return inflater?.inflate(R.layout.fragment_settings, container, false)\n    }\n\n\n    //当拍摄照片完成时会回调到onActivityResult 在这里处理照片的裁剪\n\n    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {\n//        if (resultCode == Activity.RESULT_OK) {\n//            if (requestCode == CAMERA_REQUEST_CODE) {\n//\n//            }\n//            else if (requestCode == GALLERY_REQUEST_CODE)\n//                try {\n//                    //该uri是上一个Activity返回的\n//                    val imageUri = data?.getData();\n//                    if(imageUri!=null) {\n//                        val bit: Bitmap = BitmapFactory.decodeStream(activity?.getContentResolver()?.openInputStream(imageUri));\n//\n//                    }\n//                } catch (Exception e) {\n//                    e.printStackTrace();\n//                }\n//                }\n//            }\n//        }\n//        super.onActivityResult(requestCode, resultCode, data);\n    }\n\n\n\n    companion object {\n        fun newInstance(): SettingsFragment? {\n            val fragment = SettingsFragment()\n            return fragment\n        }\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pangchat/fragment/SettingsFragment.kt	(revision b0d604c70413bfecf19f727737ca846e53b17b77)
++++ app/src/main/java/com/example/pangchat/fragment/SettingsFragment.kt	(date 1624341427142)
+@@ -1,5 +1,6 @@
+ package com.example.pangchat
+ 
++import android.app.Activity
+ import android.content.Intent
+ import android.os.Bundle
+ import android.provider.MediaStore
+@@ -11,7 +12,16 @@
+ import android.widget.TextView
+ import android.widget.Toast
+ import androidx.fragment.app.Fragment
++import androidx.lifecycle.lifecycleScope
++import com.example.pangchat.fragment.data.FileDataSource
++import com.example.pangchat.fragment.data.Result
++import com.example.pangchat.fragment.data.UploadResult
+ import com.example.pangchat.websocketClient.webSocketClient
++import com.github.kittinunf.fuel.core.BlobDataPart
++import com.github.kittinunf.fuel.core.DataPart
++import kotlinx.coroutines.Dispatchers
++import kotlinx.coroutines.launch
++import kotlinx.coroutines.withContext
+ 
+ 
+ /**
+@@ -23,6 +33,7 @@
+     private var textView: TextView? = null
+     private var imageView: ImageView? = null
+     private var button: Button? = null
++    private lateinit var avatarUrl: String
+ 
+     // 拍照回传码
+     val CAMERA_REQUEST_CODE = 0;
+@@ -36,6 +47,9 @@
+ 
+     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+ 
++
++
++
+         textView = getView()?.findViewById<TextView?>(R.id.username_text)
+         textView?.setText(webSocketClient.username)
+         imageView = getView()?.findViewById<ImageView>(R.id.avatar_icon)
+@@ -91,38 +105,73 @@
+     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                               savedInstanceState: Bundle?): View? {
+         // Inflate the layout for this fragment
+-        return inflater?.inflate(R.layout.fragment_settings, container, false)
++        return inflater.inflate(R.layout.fragment_settings, container, false)
+     }
+ 
+ 
+     //当拍摄照片完成时会回调到onActivityResult 在这里处理照片的裁剪
+ 
+     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+-//        if (resultCode == Activity.RESULT_OK) {
+-//            if (requestCode == CAMERA_REQUEST_CODE) {
+-//
+-//            }
+-//            else if (requestCode == GALLERY_REQUEST_CODE)
+-//                try {
+-//                    //该uri是上一个Activity返回的
+-//                    val imageUri = data?.getData();
+-//                    if(imageUri!=null) {
+-//                        val bit: Bitmap = BitmapFactory.decodeStream(activity?.getContentResolver()?.openInputStream(imageUri));
+-//
+-//                    }
+-//                } catch (Exception e) {
+-//                    e.printStackTrace();
+-//                }
+-//                }
+-//            }
+-//        }
+-//        super.onActivityResult(requestCode, resultCode, data);
++        if (resultCode == Activity.RESULT_OK) {
++            if (requestCode == CAMERA_REQUEST_CODE) {
++                print("qwq")
++            }
++            else if (requestCode == GALLERY_REQUEST_CODE){
++                try {
++                    //该uri是上一个Activity返回的
++                    val imageUri = data?.getData();
++                    if(imageUri!=null) {
++
++                        // 向服务器发送请求
++                        lifecycleScope.launch {
++                            withContext(Dispatchers.IO) {
++                                val splited = imageUri.lastPathSegment!!.split("/");
++                                uploadImage(
++                                    BlobDataPart(
++                                        activity?.getContentResolver()?.openInputStream(imageUri)!!,
++                                        "file",
++                                        splited[splited.size - 1]
++                                    )
++                                )
++                            }
++
++
++                        }
++
++//                        imageView?.setImageBitmap(bit)
++                    }
++                } catch (e: Exception) {
++                    e.printStackTrace();
++                }
++
++            }
++        }
++        // super.onActivityResult(requestCode, resultCode, data);
+     }
+ 
++    suspend fun getUserInfo() {
++
++    }
++
++    suspend fun uploadImage(file: DataPart) {
++        val fileDataSource = FileDataSource()
++
++        val result: Result<UploadResult>
++
++        withContext(Dispatchers.IO) {
++            result = fileDataSource.uploadFile(file)
++        }
++
++        if (result is Result.Success) {
++
++        } else {
++            // TODO：抛出并解析异常
++        }
++    }
+ 
+ 
+     companion object {
+-        fun newInstance(): SettingsFragment? {
++        fun newInstance(): SettingsFragment {
+             val fragment = SettingsFragment()
+             return fragment
+         }
+Index: app/src/main/java/com/example/pangchat/fragment/data/UserDataSource.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pangchat.fragment.data\n\nimport com.example.pangchat.utils.CookiedFuel\nimport com.github.kittinunf.fuel.gson.jsonBody\nimport com.github.kittinunf.fuel.gson.responseObject\nimport com.github.kittinunf.result.Result as fuelResult\n\n// 后端返回的数据格式\ndata class UserInfo(\n    val success: Boolean,\n    val time: Long,\n    val username: String,\n    val userId: String\n)\n\n\nclass UserDataSource {\n    data class Username(val queryUsername: String)\n\n    fun getUserInfoByName(username: String) : Result<UserInfo> {\n        val up = Username(username)\n        val (_, _, result) = CookiedFuel.post(\"/user/info\").jsonBody(up).responseObject<UserInfo>()\n        if (result is fuelResult.Failure) {\n            return Result.Error(result.getException())\n        } else {\n            return if (result.get().success)\n                Result.Success(result.get())\n            else Result.Error(Exception());\n        }\n\n    }\n\n\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pangchat/fragment/data/UserDataSource.kt	(revision b0d604c70413bfecf19f727737ca846e53b17b77)
++++ app/src/main/java/com/example/pangchat/fragment/data/UserDataSource.kt	(date 1624341769282)
+@@ -10,7 +10,7 @@
+     val success: Boolean,
+     val time: Long,
+     val username: String,
+-    val userId: String
++    val userId: String,
+ )
+ 
+ 
+@@ -30,6 +30,19 @@
+ 
+     }
+ 
++//    fun getSelfnfo() : Result<UserInfo> {
++//        val up = Username(username)
++//        val (_, _, result) = CookiedFuel.post("/user/info").jsonBody(up).responseObject<UserInfo>()
++//        if (result is fuelResult.Failure) {
++//            return Result.Error(result.getException())
++//        } else {
++//            return if (result.get().success)
++//                Result.Success(result.get())
++//            else Result.Error(Exception());
++//        }
++//
++//    }
++
+ 
+ 
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/pangchat/MainActivity.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pangchat\n\nimport android.annotation.SuppressLint\nimport android.content.Context\nimport android.os.Bundle\nimport android.view.MenuItem\nimport android.view.View\nimport android.widget.ImageView\nimport android.widget.PopupMenu\nimport android.widget.Toast\nimport androidx.fragment.app.Fragment\nimport androidx.fragment.app.FragmentActivity\nimport androidx.lifecycle.MutableLiveData\nimport com.example.pangchat.contact.ContactDataSource\nimport com.example.pangchat.contact.ContactInfo\nimport com.example.pangchat.fragment.*\nimport com.example.pangchat.fragment.data.Result\nimport com.example.pangchat.utils.CookiedFuel\nimport com.example.pangchat.websocketClient.webSocketClient\nimport com.google.android.material.bottomnavigation.BottomNavigationView\nimport kotlinx.coroutines.Dispatchers\nimport kotlinx.coroutines.MainScope\nimport kotlinx.coroutines.launch\nimport kotlinx.coroutines.withContext\nimport java.util.*\n\n\nclass MainActivity : FragmentActivity() {\n    // @BindView(R.id.bottomNavigationView)\n    // var topNavigationView: NavigationView? = null\n    var bottomNavigationView: BottomNavigationView? =  null\n    var searchView: ImageView? = null\n    var menuView: ImageView? = null\n    // var userId: String? = null\n    // var username: String? = null\n    var _contactInfo = MutableLiveData<ContactInfo>()\n    // var friendIds: ArrayList<String>? = null\n    var friendNames = ArrayList<String>()\n\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n\n        CookiedFuel.basePath = resources.getString(R.string.BACKEND_URL);\n        webSocketClient.context = this\n\n        // val intent = intent\n        // userId = intent.getStringExtra(\"userId\")\n        // username = intent.getStringExtra(\"username\")\n\n        setContentView(R.layout.activity_main)\n        // ButterKnife.bind(this)\n\n        val chatsFragment: Fragment = ChatsFragment()\n        val contactsFragment: Fragment = ContactsFragment()\n        val discoverFragment: Fragment = DiscoverFragment()\n        val settingsFragment: Fragment = SettingsFragment()\n\n\n        if (intent.getStringExtra(\"fragment\") == \"contact\") {\n            setCurrentFragment(contactsFragment)\n        }\n        else{\n            setCurrentFragment(chatsFragment) // 初始的Fragment为chatsFragment\n        }\n\n        MainScope().launch {\n            getFriendsInfo()\n            // friendIds = _contactInfo.value?.friendsId\n            friendNames?.clear()\n            for (index in 0 until (_contactInfo.value?.friendsInfo?.size!!)) {\n                _contactInfo.value?.friendsInfo!![index].let { friendNames?.add(it.getUsername()) }\n            }\n\n            // intent.putExtra(\"friendIds\", friendIds)\n            intent.putExtra(\"friendNames\", friendNames)\n        }\n\n\n        searchView = findViewById<ImageView>(R.id.search)\n\n        searchView?.setOnClickListener(View.OnClickListener {\n\n            // 用于测试\n//            val manager: NotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager\n//            val channelId: String = \"pangchat\";\n//            val channel = NotificationChannel(channelId,\"pangchat\",NotificationManager.IMPORTANCE_DEFAULT);\n//            manager.createNotificationChannel(channel);\n//            val notification: Notification = NotificationCompat.Builder(this,channelId)\n//                    .setContentTitle(\"通知标题\")\n//                    .setContentText(\"通知正文\")\n//                    .setWhen(System.currentTimeMillis())\n//                    .setSmallIcon(R.drawable.avatar1)\n//                    .build();\n//            manager.notify(1,notification);\n\n            Toast.makeText(this, \"进入搜索\", Toast.LENGTH_LONG).show()\n\n            // 表示这个页面是搜索现有的联系人\n            intent.putExtra(\"search\", \"friend\")\n            // intent.putExtra(\"userId\", userId)\n\n            intent.setClass(this@MainActivity, SearchActivity::class.java)\n\n            startActivity(intent)\n        })\n\n        menuView = findViewById<ImageView>(R.id.menu)\n\n        menuView?.setOnClickListener(View.OnClickListener {\n            Toast.makeText(this, \"显示菜单\", Toast.LENGTH_LONG).show()\n\n            showPopupMenu(this, menuView!!)\n        })\n\n\n        bottomNavigationView = findViewById(R.id.bottomNavigationView)\n        bottomNavigationView?.setOnNavigationItemSelectedListener(BottomNavigationView.OnNavigationItemSelectedListener setOnNavigationItemSelectedListener@{ item: MenuItem? ->\n            when (item?.itemId) {\n                R.id.chats -> {\n                    setCurrentFragment(chatsFragment)\n                    return@setOnNavigationItemSelectedListener true\n                }\n                R.id.contacts -> {\n                    setCurrentFragment(contactsFragment)\n                    return@setOnNavigationItemSelectedListener true\n                }\n                R.id.discover -> {\n                    setCurrentFragment(discoverFragment)\n                    return@setOnNavigationItemSelectedListener true\n                }\n                R.id.settings -> {\n                    setCurrentFragment(settingsFragment)\n                    return@setOnNavigationItemSelectedListener true\n                }\n            }\n            false\n        }\n        )\n    }\n\n    private fun setCurrentFragment(fragment: Fragment?) {\n        if (fragment != null) {\n            supportFragmentManager.beginTransaction().replace(R.id.flFragment, fragment).commit()\n        }\n    }\n\n    @SuppressLint(\"RestrictedApi\")\n    private fun showPopupMenu(context: Context, view: View) {\n        val popupMenu = PopupMenu(this, view)\n        popupMenu.menuInflater.inflate(R.menu.add_nav_menu, popupMenu.menu)\n\n//        val menuHelper = MenuPopupHelper(context, MenuBuilder(context), view)\n//        menuHelper.setForceShowIcon(true);\n\n        popupMenu.setOnMenuItemClickListener(PopupMenu.OnMenuItemClickListener { item: MenuItem? ->\n            when (item?.itemId) {\n                R.id.newgroup -> {\n                    Toast.makeText(this, \"发起群聊\", Toast.LENGTH_LONG).show()\n\n                    intent.setClass(this@MainActivity, SelectFriendsActivity::class.java)\n                    // intent.putExtra(\"userId\", userId)\n\n                    startActivity(intent)\n                    this.finish()\n                    return@OnMenuItemClickListener true\n                }\n                R.id.newfriend -> {\n                    Toast.makeText(this, \"新建好友\", Toast.LENGTH_LONG).show()\n\n                    // 表示这个页面是搜索所有的用户\n                    intent.putExtra(\"search\", \"user\")\n                    // intent.putExtra(\"userId\", userId)\n                    intent.setClass(this@MainActivity, SearchActivity::class.java)\n\n                    startActivity(intent)\n                    this.finish()\n                    return@OnMenuItemClickListener true\n                }\n            }\n            false\n        })\n\n//        try {\n//            val field: Field = popupMenu.javaClass.getDeclaredField(\"mPopup\")\n//            field.isAccessible = true\n//            val mHelper = field.get(popupMenu) as MenuPopupHelper\n//            mHelper.setForceShowIcon(true)\n//        } catch (e: IllegalAccessException) {\n//            e.printStackTrace()\n//        } catch (e: NoSuchFieldException) {\n//            e.printStackTrace()\n//        }\n\n\n        popupMenu.show()\n    }\n\n    suspend fun getFriendsInfo() {\n        val contactDataSource = ContactDataSource()\n\n        val result: Result<ContactInfo>\n\n        withContext(Dispatchers.IO) {\n            result = contactDataSource.getContactInfo()\n        }\n\n        if (result is Result.Success) {\n            _contactInfo.value = result.data\n        } else {\n            // TODO：抛出并解析异常\n        }\n    }\n\n\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pangchat/MainActivity.kt	(revision b0d604c70413bfecf19f727737ca846e53b17b77)
++++ app/src/main/java/com/example/pangchat/MainActivity.kt	(date 1624306931179)
+@@ -23,6 +23,7 @@
+ import kotlinx.coroutines.launch
+ import kotlinx.coroutines.withContext
+ import java.util.*
++import kotlin.collections.ArrayList
+ 
+ 
+ class MainActivity : FragmentActivity() {
+@@ -157,7 +158,7 @@
+             when (item?.itemId) {
+                 R.id.newgroup -> {
+                     Toast.makeText(this, "发起群聊", Toast.LENGTH_LONG).show()
+-
++                    intent.putStringArrayListExtra("members", ArrayList<String>())
+                     intent.setClass(this@MainActivity, SelectFriendsActivity::class.java)
+                     // intent.putExtra("userId", userId)
+ 
+Index: app/src/main/java/com/example/pangchat/websocketClient/MyWebSocketClient.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pangchat.websocketClient\n\nimport android.app.Notification\nimport android.app.NotificationChannel\nimport android.app.NotificationManager\nimport android.content.Context\nimport android.content.Context.NOTIFICATION_SERVICE\nimport androidx.core.app.NotificationCompat\nimport com.alibaba.fastjson.JSON\nimport com.example.pangchat.R\nimport com.google.gson.Gson\nimport com.google.gson.JsonSyntaxException\nimport org.java_websocket.client.WebSocketClient\nimport org.java_websocket.handshake.ServerHandshake\nimport java.net.URI\n\n// 全局变量，所有组件共享此websocket client\nlateinit var webSocketURI: URI\nlateinit var webSocketClient: MyWebSocketClient\n\nclass MyWebSocketClient(uri: URI) : WebSocketClient(uri) {\n    // var hasNewFriend : Boolean = false\n    var username:String?=null\n    var password:String?=null\n    lateinit var context: Context\n\n    data class friend(val friendId: String, val friendName: String)\n\n\n    override fun onOpen(handshakedata: ServerHandshake?) {\n        send(JSON.toJSONString(mapOf(\"bizType\" to \"USER_LOGIN\", \"username\" to username, \"password\" to password)))\n    }\n\n    override fun onMessage(message: String?) {\n        // 将message转为json类型，然后对其中的业务类型做各种条件判断\n        var arr: MutableList<MutableMap<String, *>>\n        try {\n            @Suppress(\"UNCHECKED_CAST\")\n            arr = Gson().fromJson(message, MutableList::class.java) as MutableList<MutableMap<String, *>>\n        } catch (e:JsonSyntaxException){\n            val obj = Gson().fromJson(message, MutableMap::class.java)\n            @Suppress(\"UNCHECKED_CAST\")\n            arr = mutableListOf(obj as MutableMap<String, *>)\n        }\n        for (obj in arr) {\n\n            // 有新的好友申请\n            if (obj.get(\"bizType\") == \"USER_ADD_FRIEND\") {\n                val name: String = obj.get(\"friendName\") as String\n                val Id: String = obj.get(\"friendId\") as String\n                sendSimpleNotification(\"新好友提醒\", \"$name 请求添加你为好友\")\n\n            }\n        }\n\n\n\n\n    }\n\n    override fun onClose(code: Int, reason: String?, remote: Boolean) {\n        print(\"123\")\n    }\n\n    override fun onError(ex: Exception?) {\n        print(ex)\n    }\n\n\n    fun sendSimpleNotification(title: String, text: String) {\n        val manager: NotificationManager = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager\n        val channelId: String = \"pangchat\";\n        val channel = NotificationChannel(channelId,\"pangchat\",\n            NotificationManager.IMPORTANCE_DEFAULT);\n        manager.createNotificationChannel(channel);\n        val notification: Notification = NotificationCompat.Builder(context,channelId)\n            .setContentTitle(title)\n            .setContentText(text)\n            .setWhen(System.currentTimeMillis())\n            .setSmallIcon(R.drawable.avatar1)\n            .build();\n        manager.notify(1,notification);\n    }\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pangchat/websocketClient/MyWebSocketClient.kt	(revision b0d604c70413bfecf19f727737ca846e53b17b77)
++++ app/src/main/java/com/example/pangchat/websocketClient/MyWebSocketClient.kt	(date 1624339935398)
+@@ -22,6 +22,7 @@
+     // var hasNewFriend : Boolean = false
+     var username:String?=null
+     var password:String?=null
++    var userId: String?=null
+     lateinit var context: Context
+ 
+     data class friend(val friendId: String, val friendName: String)
+Index: app/src/main/java/com/example/pangchat/fragment/data/FileDataSource.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pangchat/fragment/data/FileDataSource.kt	(date 1624340781391)
++++ app/src/main/java/com/example/pangchat/fragment/data/FileDataSource.kt	(date 1624340781391)
+@@ -0,0 +1,30 @@
++package com.example.pangchat.fragment.data
++
++import com.example.pangchat.utils.CookiedFuel
++import com.github.kittinunf.fuel.core.DataPart
++import com.github.kittinunf.fuel.gson.responseObject
++import com.github.kittinunf.result.Result as fuelResult
++
++data class UploadResult(
++    val url: String,
++    val success: Boolean,
++    val time: String
++)
++
++class FileDataSource {
++    data class fileUpload(val file: DataPart)
++
++    fun uploadFile(file: DataPart): Result<UploadResult> {
++        val param = fileUpload(file)
++        val (_, _, result) = CookiedFuel.upload("/test/upload").add(file).responseObject<UploadResult>()
++        if (result is fuelResult.Failure<*>) {
++            return Result.Error(result.getException())
++        } else {
++            return if (result.get().success)
++                Result.Success(result.get())
++            else Result.Error(Exception());
++        }
++
++    }
++
++}
+\ No newline at end of file

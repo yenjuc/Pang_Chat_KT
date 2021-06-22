@@ -157,7 +157,7 @@ class SearchFragment : Fragment() {
 
 
     companion object {
-        fun newInstance(): SearchFragment? {
+        fun newInstance(): SearchFragment {
             val fragment = SearchFragment()
             return fragment
         }

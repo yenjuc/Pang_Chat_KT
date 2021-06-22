@@ -10,7 +10,8 @@ data class UserInfo(
     val success: Boolean,
     val time: Long,
     val username: String,
-    val userId: String
+    val userId: String,
+    val avatar: String
 )
 
 
@@ -29,7 +30,6 @@ class UserDataSource {
         }
 
     }
-
 
 
 }

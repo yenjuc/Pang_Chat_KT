@@ -15,6 +15,11 @@ data class ModifyPasswordResult(
         val time: Long,
 )
 
+data class ModifyAvatarResult(
+    val success: Boolean,
+    val time: Long
+)
+
 
 class SettingsDataSource {
 
@@ -47,5 +52,21 @@ class SettingsDataSource {
         }
 
     }
+
+    data class Avatar(val newAvatar: String)
+
+    fun modifyAvatar(avatar: String): Result<ModifyAvatarResult> {
+        val up = Avatar(newAvatar = avatar)
+        val (_, _, result) = CookiedFuel.post("/user/modify/avatar").jsonBody(up).responseObject<ModifyAvatarResult>()
+        if (result is fuelResult.Failure) {
+            return Result.Error(result.getException())
+        } else {
+            return if (result.get().success)
+                Result.Success(result.get())
+            else Result.Error(Exception());
+        }
+
+    }
+
 
 }
