@@ -40,7 +40,6 @@ data class ChatInfo(
 class ChatRequest {
 
     data class ChatId(val chatId: String)
-
     fun getChatAndMembers(chatId: String): ChatResult<ChatUserInfo> {
         val (_, _, result) = CookiedFuel.post("/chat/members").jsonBody(ChatId(chatId)).responseObject<ChatUserInfo>()
         if (result is fuelResult.Failure) {

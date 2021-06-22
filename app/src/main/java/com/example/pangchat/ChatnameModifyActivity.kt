@@ -17,8 +17,6 @@ import kotlinx.coroutines.withContext
 
 class ChatnameModifyActivity : AppCompatActivity() {
 
-    var success: Boolean? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chatname_modify)
@@ -56,11 +54,7 @@ class ChatnameModifyActivity : AppCompatActivity() {
 
     private fun modify(chatId: String, value: String){
         lifecycleScope.launch {
-            if(modifyChatname(chatId, value)){
-                success = true
-            }else{
-                false
-            }
+            modifyChatname(chatId, value)
         }
     }
 

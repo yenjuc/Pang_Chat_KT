@@ -1,7 +1,14 @@
 package com.example.pangchat
 
 
+import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +16,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,10 +40,6 @@ import kotlin.collections.ArrayList
 
 class ChatActivity : AppCompatActivity() {
 
-    private val _messageInfo = MutableLiveData<MessageInfo>()
-
-    //private var chatInfo: ChatInfo? = null
-
     private var chat: Chat? = null
 
     private var data: LinkedList<Message?>? = null
@@ -44,8 +49,6 @@ class ChatActivity : AppCompatActivity() {
     private var chatId: String? = null
 
     private var recyclerView: RecyclerView? = null
-
-    //private lateinit var messages:LinkedList<Message?>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -127,17 +130,83 @@ class ChatActivity : AppCompatActivity() {
                 }
             }
         }
-    }
 
-    /*
-    override fun onResume() {
-        super.onResume()
-        if(chat != null && !chat!!.getMembers().contains(webSocketClient.userId)){
-            this.finish()
+        val chatLocation = findViewById<ImageView>(R.id.chatLocation)
+        chatLocation.setOnClickListener {
+
+            val location = getLocation()
+            if(location != null){
+                val mapIntent: Intent = Uri.parse(
+                    "geo:" + location.latitude + ", " + location.longitude
+                ).let{
+                        location ->
+                    Intent(Intent.ACTION_VIEW, location)
+                }
+
+                val intentChooser = Intent.createChooser(mapIntent, "选择地图")
+
+                try{
+                    startActivity(intentChooser)
+                }catch (ActivityNotFoundException: Exception){
+                    Log.d("ImplicitIntents", "Can't handle this!")
+                }
+            }
         }
     }
 
-     */
+    override fun onResume() {
+        super.onResume()
+        Log.d("back: ", "resume")
+    }
+
+    private fun getLocation(): Location?{
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (ActivityCompat.checkSelfPermission(                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 1)
+            return null
+        }
+
+        var location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            if (location == null) {
+                Toast.makeText(this, "空位置", Toast.LENGTH_LONG).show()
+                location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                if (location == null) {
+                    Toast.makeText(this, "网络位置为空", Toast.LENGTH_LONG).show()
+                }
+                else {
+                    Toast.makeText(this, "使用网络位置", Toast.LENGTH_LONG).show()
+                }
+            }
+        // }
+        return location
+    }
+
+
+    @Override
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode == 1){
+
+            for(index in permissions.indices){
+                if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "" + "权限" + permissions[index] + "申请成功", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "" + "权限" + permissions[index] + "申请失败", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
 
     public fun setInput(text: String){
         val chatInput = findViewById<TextInputEditText>(R.id.chatInput)
