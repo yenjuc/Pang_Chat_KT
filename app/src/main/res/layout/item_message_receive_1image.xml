@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="4dp"
     android:layout_marginVertical="4dp"
-    android:layoutDirection="rtl"
     android:orientation="horizontal"
     android:paddingHorizontal="6dp"
     android:paddingVertical="4dp">
@@ -20,7 +21,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
+        android:layout_marginStart="10dp"
         android:orientation="vertical">
 
         <TextView
@@ -49,7 +50,17 @@
             android:paddingTop="6dp"
             android:paddingEnd="8dp"
             android:paddingBottom="8dp"
-            android:text="@string/sentence10" />
+            android:text="@string/sentence10"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/messageImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/message_bubble_end_margin"
+            android:adjustViewBounds="true"
+            android:scaleType="centerInside"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
         <LinearLayout
             android:id="@+id/messageAction"

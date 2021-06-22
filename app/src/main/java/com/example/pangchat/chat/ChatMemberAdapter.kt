@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.ChatInfoActivity
+import com.example.pangchat.PersonalActivity
 import com.example.pangchat.R
 import com.example.pangchat.SelectFriendsActivity
 import com.example.pangchat.message.data.*
@@ -43,12 +44,20 @@ class ChatMemberAdapter(private val activity: ChatInfoActivity, private val data
                 // FIXME: icon
                 viewHolder.avatar.setImageResource(R.drawable.avatar2)
                 viewHolder.block.setOnClickListener {
-                    // TODO: 跳转至某人页面
+                    val intent = Intent(activity, PersonalActivity::class.java)
+                    intent.putExtra("userId", user.getUserId())
+                    intent.putExtra("username", user.getUsername())
+                    intent.putExtra("avatar", user.getAvatar())
+
+                    try {
+                        activity.startActivity(intent)
+                    } catch (ActivityNotFoundException: Exception) {
+                        Log.d("ImplicitIntents", "Can't handle this!")
+                    }
                 }
             } else {
                 viewHolder.avatar.setImageResource(R.drawable.outline_add_box_grey_400_48dp)
                 viewHolder.avatar.setOnClickListener {
-                    // TODO: 发增加成员请求以及跳转至增加成员页面
                     activity.toAddChatMember()
                 }
             }

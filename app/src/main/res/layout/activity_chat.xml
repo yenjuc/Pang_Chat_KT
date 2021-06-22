@@ -70,21 +70,11 @@
         android:gravity="bottom"
         android:minHeight="36dp"
         android:orientation="horizontal"
+        android:paddingHorizontal="10dp"
         android:paddingBottom="10dp"
         app:layout_constraintBottom_toTopOf="@+id/chatMoreLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
-
-        <ImageView
-            android:id="@+id/chatVoice"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackground"
-            android:clickable="true"
-            android:paddingVertical="2dp"
-            android:scaleType="centerInside"
-            app:srcCompat="@drawable/round_graphic_eq_white_24dp" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
@@ -106,7 +96,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <ImageView
-            android:id="@+id/chatEmoji"
+            android:id="@+id/chatVoice"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:layout_weight="1"
@@ -114,7 +104,7 @@
             android:clickable="true"
             android:paddingVertical="2dp"
             android:scaleType="centerInside"
-            app:srcCompat="@drawable/outline_emoji_emotions_white_24dp" />
+            app:srcCompat="@drawable/round_graphic_eq_white_24dp" />
 
         <ImageView
             android:id="@+id/chatAction"
@@ -149,7 +139,7 @@
         android:orientation="vertical"
         android:paddingHorizontal="20dp"
         android:paddingVertical="20dp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -160,16 +150,7 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                app:srcCompat="@drawable/round_camera_alt_white_48dp" />
-
-            <ImageView
-                android:id="@+id/imageView3"
+                android:id="@+id/chatImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -178,16 +159,16 @@
                 app:srcCompat="@drawable/round_insert_photo_white_48dp" />
 
             <ImageView
-                android:id="@+id/imageView5"
+                android:id="@+id/chatVideo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="?attr/selectableItemBackground"
                 android:clickable="true"
-                app:srcCompat="@drawable/baseline_folder_open_white_48dp" />
+                app:srcCompat="@drawable/round_camera_alt_white_48dp" />
 
             <ImageView
-                android:id="@+id/imageView6"
+                android:id="@+id/chatLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

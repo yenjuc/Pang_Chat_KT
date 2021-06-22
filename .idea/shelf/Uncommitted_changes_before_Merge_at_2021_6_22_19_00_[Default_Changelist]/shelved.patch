@@ -1,0 +1,376 @@
+Index: app/src/main/java/com/example/pangchat/fragment/data/SettingsDataSource.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pangchat.fragment.data\n\nimport com.example.pangchat.utils.CookiedFuel\nimport com.github.kittinunf.fuel.gson.jsonBody\nimport com.github.kittinunf.fuel.gson.responseObject\nimport com.github.kittinunf.result.Result as fuelResult\n\ndata class ModifyUsernameResult(\n    val success: Boolean,\n    val time: Long,\n)\n\ndata class ModifyPasswordResult(\n        val success: Boolean,\n        val time: Long,\n)\n\n\nclass SettingsDataSource {\n\n    data class UserNewName(val newUsername: String)\n\n    fun modifyUsername(newUsername: String): Result<ModifyUsernameResult> {\n        val up = UserNewName(newUsername)\n        val (_, _, result) = CookiedFuel.post(\"/user/modify/name\").jsonBody(up).responseObject<ModifyUsernameResult>()\n        if (result is fuelResult.Failure) {\n            return Result.Error(result.getException())\n        } else {\n            return if (result.get().success)\n                Result.Success(result.get())\n            else Result.Error(Exception());\n        }\n\n    }\n\n    data class UserOldNewPassword(val oldPassword: String, val newPassword: String)\n\n    fun modifyPassword(oldPassword: String, newPassword: String): Result<ModifyPasswordResult> {\n        val up = UserOldNewPassword(oldPassword, newPassword)\n        val (_, _, result) = CookiedFuel.post(\"/user/modify/password\").jsonBody(up).responseObject<ModifyPasswordResult>()\n        if (result is fuelResult.Failure) {\n            return Result.Error(result.getException())\n        } else {\n            return if (result.get().success)\n                Result.Success(result.get())\n            else Result.Error(Exception());\n        }\n\n    }\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pangchat/fragment/data/SettingsDataSource.kt	(revision 1610676725c3482fd70f75f0b87ce805b556bef9)
++++ app/src/main/java/com/example/pangchat/fragment/data/SettingsDataSource.kt	(date 1624350656785)
+@@ -15,6 +15,11 @@
+         val time: Long,
+ )
+ 
++data class ModifyAvatarResult(
++    val success: Boolean,
++    val time: Long
++)
++
+ 
+ class SettingsDataSource {
+ 
+@@ -48,4 +53,20 @@
+ 
+     }
+ 
++    data class Avatar(val newAvatar: String)
++
++    fun modifyAvatar(avatar: String): Result<ModifyAvatarResult> {
++        val up = Avatar(newAvatar = avatar)
++        val (_, _, result) = CookiedFuel.post("/user/modify/avatar").jsonBody(up).responseObject<ModifyAvatarResult>()
++        if (result is fuelResult.Failure) {
++            return Result.Error(result.getException())
++        } else {
++            return if (result.get().success)
++                Result.Success(result.get())
++            else Result.Error(Exception());
++        }
++
++    }
++
++
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/pangchat/fragment/data/FileDataSource.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pangchat/fragment/data/FileDataSource.kt	(date 1624350656753)
++++ app/src/main/java/com/example/pangchat/fragment/data/FileDataSource.kt	(date 1624350656753)
+@@ -0,0 +1,46 @@
++package com.example.pangchat.fragment.data
++
++import com.example.pangchat.utils.CookiedFuel
++import com.github.kittinunf.fuel.core.DataPart
++import com.github.kittinunf.fuel.gson.responseObject
++import com.github.kittinunf.result.Result as fuelResult
++
++data class UploadResult(
++    val url: String,
++    val success: Boolean,
++    val time: String
++)
++
++
++class FileDataSource {
++    data class fileUpload(val file: DataPart)
++
++    fun uploadFile(file: DataPart): Result<UploadResult> {
++        val param = fileUpload(file)
++        val (_, _, result) = CookiedFuel.upload("/test/upload").add(file).responseObject<UploadResult>()
++        if (result is fuelResult.Failure<*>) {
++            return Result.Error(result.getException())
++        } else {
++            return if (result.get().success)
++                Result.Success(result.get())
++            else Result.Error(Exception());
++        }
++
++    }
++
++    // data class fileDownload(val filename: String)
++
++//    fun downloadFile(filename: String): Result<DownloadResult> {
++//        val param = fileDownload(filename)
++//        val (_, _, result) = CookiedFuel.get("/test/url").jsonBody(param).responseObject<DownloadResult>()
++//        if (result is fuelResult.Failure<*>) {
++//            return Result.Error(result.getException())
++//        } else {
++//            return if (result.get().success)
++//                Result.Success(result.get())
++//            else Result.Error(Exception());
++//        }
++//
++//    }
++
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/pangchat/fragment/SettingsFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pangchat\n\nimport android.content.Intent\nimport android.os.Bundle\nimport android.provider.MediaStore\nimport android.view.LayoutInflater\nimport android.view.View\nimport android.view.ViewGroup\nimport android.widget.Button\nimport android.widget.ImageView\nimport android.widget.TextView\nimport android.widget.Toast\nimport androidx.fragment.app.Fragment\nimport com.example.pangchat.websocketClient.webSocketClient\n\n\n/**\n * A simple [Fragment] subclass.\n * Use the [SettingsFragment.newInstance] factory method to\n * create an instance of this fragment.\n */\nclass SettingsFragment : Fragment() {\n    private var textView: TextView? = null\n    private var imageView: ImageView? = null\n    private var button: Button? = null\n\n    // 拍照回传码\n    val CAMERA_REQUEST_CODE = 0;\n    // 相册选择回传码\n    val GALLERY_REQUEST_CODE = 1\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n\n    }\n\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\n\n        textView = getView()?.findViewById<TextView?>(R.id.username_text)\n        textView?.setText(webSocketClient.username)\n        imageView = getView()?.findViewById<ImageView>(R.id.avatar_icon)\n        imageView?.setImageResource(R.drawable.avatar1)\n        button = getView()?.findViewById<Button>(R.id.button_modify)\n\n\n        imageView?.setOnClickListener(View.OnClickListener {\n            // 修改头像\n            val pickIntent : Intent = Intent(Intent.ACTION_PICK,\n                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);\n            pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, \"image/*\");\n            startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);\n\n        })\n\n\n        textView?.setOnClickListener(View.OnClickListener {\n            Toast.makeText(activity, \"修改昵称\", Toast.LENGTH_LONG).show()\n\n            // 进入修改昵称页面\n            // 想法：统一写一个修改信息的fragment  activity\n            // 根据修改内容的不同显示不同布局\n\n            val intent = Intent()\n            activity?.let { it1 -> intent.setClass(it1, ModifyInfoActivity::class.java) }\n            // intent.putExtra(\"userId\", activity?.intent?.getStringExtra(\"userId\"))\n            // intent.putExtra(\"username\", activity?.intent?.getStringExtra(\"username\"))\n            intent.putExtra(\"modifyKey\", \"username\")\n\n            startActivity(intent)\n\n            // activity?.finish()\n\n        })\n\n        button?.setOnClickListener(View.OnClickListener {\n            Toast.makeText(activity, \"修改密码\", Toast.LENGTH_LONG).show()\n\n            val intent = Intent()\n            activity?.let { it1 -> intent.setClass(it1, ModifyInfoActivity::class.java) }\n            // intent.putExtra(\"userId\", activity?.intent?.getStringExtra(\"userId\"))\n            // intent.putExtra(\"username\", activity?.intent?.getStringExtra(\"username\"))\n            intent.putExtra(\"modifyKey\", \"password\")\n\n            startActivity(intent)\n\n            // activity?.finish()\n        })\n    }\n\n\n    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,\n                              savedInstanceState: Bundle?): View? {\n        // Inflate the layout for this fragment\n        return inflater?.inflate(R.layout.fragment_settings, container, false)\n    }\n\n\n    //当拍摄照片完成时会回调到onActivityResult 在这里处理照片的裁剪\n\n    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {\n//        if (resultCode == Activity.RESULT_OK) {\n//            if (requestCode == CAMERA_REQUEST_CODE) {\n//\n//            }\n//            else if (requestCode == GALLERY_REQUEST_CODE)\n//                try {\n//                    //该uri是上一个Activity返回的\n//                    val imageUri = data?.getData();\n//                    if(imageUri!=null) {\n//                        val bit: Bitmap = BitmapFactory.decodeStream(activity?.getContentResolver()?.openInputStream(imageUri));\n//\n//                    }\n//                } catch (Exception e) {\n//                    e.printStackTrace();\n//                }\n//                }\n//            }\n//        }\n//        super.onActivityResult(requestCode, resultCode, data);\n    }\n\n\n\n    companion object {\n        fun newInstance(): SettingsFragment? {\n            val fragment = SettingsFragment()\n            return fragment\n        }\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pangchat/fragment/SettingsFragment.kt	(revision 1610676725c3482fd70f75f0b87ce805b556bef9)
++++ app/src/main/java/com/example/pangchat/fragment/SettingsFragment.kt	(date 1624358382920)
+@@ -1,6 +1,9 @@
+ package com.example.pangchat
+ 
++import android.app.Activity
+ import android.content.Intent
++import android.graphics.Bitmap
++import android.graphics.BitmapFactory
+ import android.os.Bundle
+ import android.provider.MediaStore
+ import android.view.LayoutInflater
+@@ -11,7 +14,18 @@
+ import android.widget.TextView
+ import android.widget.Toast
+ import androidx.fragment.app.Fragment
++import androidx.lifecycle.MutableLiveData
++import androidx.lifecycle.lifecycleScope
++import com.example.pangchat.fragment.data.*
++import com.example.pangchat.utils.CookiedFuel
+ import com.example.pangchat.websocketClient.webSocketClient
++import com.github.kittinunf.fuel.core.BlobDataPart
++import com.github.kittinunf.fuel.core.DataPart
++import com.github.kittinunf.fuel.coroutines.awaitByteArray
++import kotlinx.coroutines.Dispatchers
++import kotlinx.coroutines.launch
++import kotlinx.coroutines.withContext
++import java.io.InputStream
+ 
+ 
+ /**
+@@ -23,6 +37,12 @@
+     private var textView: TextView? = null
+     private var imageView: ImageView? = null
+     private var button: Button? = null
++    private lateinit var avatarUrl: String
++
++    var _userInfo = MutableLiveData<UserInfo>()
++    lateinit var _uploadInfo: UploadResult
++    lateinit var _modifyInfo :ModifyAvatarResult
++
+ 
+     // 拍照回传码
+     val CAMERA_REQUEST_CODE = 0;
+@@ -39,9 +59,20 @@
+         textView = getView()?.findViewById<TextView?>(R.id.username_text)
+         textView?.setText(webSocketClient.username)
+         imageView = getView()?.findViewById<ImageView>(R.id.avatar_icon)
+-        imageView?.setImageResource(R.drawable.avatar1)
++
+         button = getView()?.findViewById<Button>(R.id.button_modify)
+ 
++        lifecycleScope.launch{
++            webSocketClient.username?.let { getInfo(it) }
++
++            // 发起下载图片请求
++            val bit: Bitmap;
++            withContext(Dispatchers.IO) {
++                val result = CookiedFuel.get(_userInfo.value!!.avatar).awaitByteArray();
++                bit = BitmapFactory.decodeByteArray(result, 0, result.size)
++            }
++            imageView?.setImageBitmap(bit) // 必须放在IO外面
++        }
+ 
+         imageView?.setOnClickListener(View.OnClickListener {
+             // 修改头像
+@@ -49,7 +80,6 @@
+                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+             pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+             startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
+-
+         })
+ 
+ 
+@@ -83,7 +113,7 @@
+ 
+             startActivity(intent)
+ 
+-            // activity?.finish()
++
+         })
+     }
+ 
+@@ -91,38 +121,101 @@
+     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                               savedInstanceState: Bundle?): View? {
+         // Inflate the layout for this fragment
+-        return inflater?.inflate(R.layout.fragment_settings, container, false)
++        return inflater.inflate(R.layout.fragment_settings, container, false)
+     }
+ 
+ 
+     //当拍摄照片完成时会回调到onActivityResult 在这里处理照片的裁剪
+ 
+     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+-//        if (resultCode == Activity.RESULT_OK) {
+-//            if (requestCode == CAMERA_REQUEST_CODE) {
+-//
+-//            }
+-//            else if (requestCode == GALLERY_REQUEST_CODE)
+-//                try {
+-//                    //该uri是上一个Activity返回的
+-//                    val imageUri = data?.getData();
+-//                    if(imageUri!=null) {
+-//                        val bit: Bitmap = BitmapFactory.decodeStream(activity?.getContentResolver()?.openInputStream(imageUri));
+-//
+-//                    }
+-//                } catch (Exception e) {
+-//                    e.printStackTrace();
+-//                }
+-//                }
+-//            }
+-//        }
+-//        super.onActivityResult(requestCode, resultCode, data);
+-    }
++        if (resultCode == Activity.RESULT_OK) {
++            if (requestCode == CAMERA_REQUEST_CODE) {
++                print("qwq")
++            }
++            else if (requestCode == GALLERY_REQUEST_CODE){
++                try {
++                    //该uri是上一个Activity返回的
++                    val imageUri = data?.getData();
++                    if(imageUri!=null) {
++                        var inputImage: InputStream
++                        imageView?.setImageBitmap(BitmapFactory.decodeStream(activity?.getContentResolver()?.openInputStream(imageUri)))
++
++                        // 向服务器发送请求
++                        lifecycleScope.launch {
++                            val splited = imageUri.lastPathSegment!!.split("/");
++                            withContext(Dispatchers.IO) {
++                                inputImage =
++                                    activity?.getContentResolver()?.openInputStream(imageUri)!!
++                            }
++                            uploadImage(
++                                BlobDataPart(
++                                    inputImage,
++                                    "file",
++                                    splited[splited.size - 1]
++                                )
++                            )
++                            modifyAvatar(_uploadInfo.url)
++                        }
++                    }
++                } catch (e: Exception) {
++                    e.printStackTrace();
++                }
+ 
++            }
++        }
++    }
+ 
++    suspend fun getInfo(username: String) {
++        val userDataSource = UserDataSource()
++
++        val result: Result<UserInfo>
++
++        withContext(Dispatchers.IO) {
++            result = userDataSource.getUserInfoByName(username)
++        }
++
++        if (result is Result.Success) {
++            _userInfo.value = result.data
++        } else {
++            // TODO：抛出并解析异常
++        }
++    }
++
++    suspend fun modifyAvatar(avatar: String) {
++        val settingsDataSource = SettingsDataSource()
++
++        val result: Result<ModifyAvatarResult>
++
++        withContext(Dispatchers.IO) {
++            result = settingsDataSource.modifyAvatar(avatar)
++        }
++
++        if (result is Result.Success) {
++            _modifyInfo = result.data // 同样的问题
++        } else {
++            // TODO：抛出并解析异常
++        }
++    }
++
++
++    suspend fun uploadImage(file: DataPart) {
++        val fileDataSource = FileDataSource()
++
++        val result: Result<UploadResult>
++
++        withContext(Dispatchers.IO) {
++            result = fileDataSource.uploadFile(file)
++        }
++
++        if (result is Result.Success) {
++            _uploadInfo = result.data
++        } else {
++            // TODO：抛出并解析异常 // 是不是不应该把suspend的那个函数放到IO里 不是 IO就是用来执行suspend用的
++        }
++    }
+ 
+     companion object {
+-        fun newInstance(): SettingsFragment? {
++        fun newInstance(): SettingsFragment {
+             val fragment = SettingsFragment()
+             return fragment
+         }
+Index: app/src/main/java/com/example/pangchat/fragment/data/UserDataSource.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pangchat.fragment.data\n\nimport com.example.pangchat.utils.CookiedFuel\nimport com.github.kittinunf.fuel.gson.jsonBody\nimport com.github.kittinunf.fuel.gson.responseObject\nimport com.github.kittinunf.result.Result as fuelResult\n\n// 后端返回的数据格式\ndata class UserInfo(\n    val success: Boolean,\n    val time: Long,\n    val username: String,\n    val userId: String\n)\n\n\nclass UserDataSource {\n    data class Username(val queryUsername: String)\n\n    fun getUserInfoByName(username: String) : Result<UserInfo> {\n        val up = Username(username)\n        val (_, _, result) = CookiedFuel.post(\"/user/info\").jsonBody(up).responseObject<UserInfo>()\n        if (result is fuelResult.Failure) {\n            return Result.Error(result.getException())\n        } else {\n            return if (result.get().success)\n                Result.Success(result.get())\n            else Result.Error(Exception());\n        }\n\n    }\n\n\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pangchat/fragment/data/UserDataSource.kt	(revision 1610676725c3482fd70f75f0b87ce805b556bef9)
++++ app/src/main/java/com/example/pangchat/fragment/data/UserDataSource.kt	(date 1624344684282)
+@@ -10,7 +10,8 @@
+     val success: Boolean,
+     val time: Long,
+     val username: String,
+-    val userId: String
++    val userId: String,
++    val avatar: String
+ )
+ 
+ 
+@@ -31,5 +32,4 @@
+     }
+ 
+ 
+-
+ }
+\ No newline at end of file
+Index: app/src/main/res/values/strings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><resources>\n    <string name=\"app_name\">PangChat</string>\n    <string name=\"message\">Message</string>\n    <string name=\"chats\">Chats</string>\n    <string name=\"contacts\">Contacts</string>\n    <string name=\"discover\">Discover</string>\n    <string name=\"setting_me\">Me</string>\n\n\n    <string name=\"avatar\">Avatar</string>\n    <string name=\"nickname\">Nickname</string>\n    <string name=\"save\">Save</string>\n\n    <!-- 全局配置 -->\n    <string name=\"BACKEND_URL\">http://183.172.182.59:7000</string>\n    <string name=\"SocketURL\">ws://183.172.182.59:520/ws</string>\n\n\n    <!-- 聊天详情页面 -->\n    <string name=\"chatInfoTitle\">聊天信息</string>\n    <string name=\"chatGroupName\">群组名称</string>\n    <string name=\"chatGroupIcon\">群组头像</string>\n    <string name=\"chatSearch\">查找聊天记录</string>\n    <string name=\"chatPin\">置顶聊天</string>\n    <string name=\"chatMute\">消息免打扰</string>\n    <string name=\"chatLeave\">删除并退出群聊</string>\n    <!-- 聊天消息 -->\n    <string name=\"messageRecalled\">撤回了一条消息</string>\n    <string name=\"messageSendReedit\"> 重新编辑</string>\n\n\n    <!-- 可以使用的昵称信息 -->\n\n    <string name=\"nickname1\">无紫安</string>\n    <string name=\"nickname2\">不易蓉</string>\n    <string name=\"nickname3\">迮南莲</string>\n    <string name=\"nickname4\">焉雨灵</string>\n    <string name=\"nickname5\">景忆灵</string>\n    <string name=\"nickname6\">戢风</string>\n    <string name=\"nickname7\">旗平青</string>\n    <string name=\"nickname8\">盈小真</string>\n    <string name=\"nickname9\">敖觅珍</string>\n    <string name=\"nickname10\">陈绿蕊</string>\n    <string name=\"nickname11\">南门恨竹</string>\n    <string name=\"nickname12\">张简春桃</string>\n\n    <!-- Mock生成的随机中文字符串 -->\n\n    <string name=\"sentence1\"> 里表东两白美它林斯满六。岁的法国上2挺温柔感受到法国人它特瑞官网色弱干涩让他人挺温柔果然威锋网3 </string>\n    <string name=\"sentence2\"> 收程究油有向金产文。 </string>\n    <string name=\"sentence3\"> 干严面里办及精响看方空际新事。 </string>\n    <string name=\"sentence4\"> 军八步么车式需存局米完。 </string>\n    <string name=\"sentence5\"> 提报那把说院明经面我务三你维算。 </string>\n    <string name=\"sentence6\"> 包断千代局实布住合业作高。 </string>\n    <string name=\"sentence7\"> 确用矿称料以己上料教群感。 </string>\n    <string name=\"sentence8\"> 无拉快多但力取三于。 </string>\n    <string name=\"sentence9\"> 周车看真太规列究结此机制个广。 </string>\n    <string name=\"sentence10\"> 法东制打法立生号从式它件质。 </string>\n    <string name=\"sentence11\"> 状拉等确式构万十八率。 </string>\n    <string name=\"sentence12\"> 周场原何究展眼题器工同。 </string>\n\n\n    <!-- Mock生成的随机中文字符串，可用于发现页 -->\n    <string name=\"paragraph1\"> 问具各并料感发适组米习后。头党内情例造应知代改六整已入方放。五能东斗单作红身思边毛越它。 </string>\n    <string name=\"paragraph2\"> 图准政布算现不素月从号文儿确路京资但。快出特天已包员比东确越口史安干此。五即设说马外连内采质广力。 </string>\n    <string name=\"paragraph3\"> 第率长情部到头众金流列满照参内地东。究容治好将一阶活流性才接。非选什声建节第联构称史因体问府传持。 </string>\n    <string name=\"paragraph4\"> 音参可一存问接日相书道众百基存。专半状复可人头定速五期便县列西。现共高今得加今广众计事条。 </string>\n    <string name=\"paragraph5\"> 分同那务行油子做传使存片济本书类花。共土次五气或府做世代关什角。但压何并电例较家到上低产存确准山物。 </string>\n    <string name=\"paragraph6\"> 际正包深五图知应选王适段标复山应。王据下离观热情造两世多心。两油想也济什结转称般身思系元共百织。 </string>\n    <string name=\"paragraph7\"> 转政料出音之已准高各行物事火值成状务。件因流实层命都于同党厂每点。般因极里众地要使被革增越。 </string>\n    <string name=\"paragraph8\"> 道明图候值内素斗光调七划那飞。她较身产同九党南易五了利热身。象界白值况题满七文住流题之从车。 </string>\n    <string name=\"paragraph9\"> 进际因许影受干克压高百交值备音动花车。认收很外日周却机查并引机需立然验区。十里具四认风目标商入听六二放着关。 </string>\n    <string name=\"paragraph10\"> 商称采形象资去书己适家前料者所。队则称向七社间可起必使知安布安农向。需增林日眼做到内目劳许志较边术长表。 </string>\n    <string name=\"paragraph11\"> 安情资好社王装信权后机感义后千土。管不就常科铁量不进交压新感。选两内平真存须维他带说七。 </string>\n    <string name=\"paragraph12\"> 斗变克道我温级率同八做想原切。运它别大把西到位收边许快连与称华。何维价见史特但流世少装油教面。 </string>\n    <!-- Strings related to login -->\n    <string name=\"prompt_email\">Email</string>\n    <string name=\"prompt_password\">Password</string>\n    <string name=\"action_sign_in\">Sign in or register</string>\n    <string name=\"action_sign_in_short\">Sign in</string>\n    <string name=\"welcome\">\"Welcome!\"</string>\n    <string name=\"invalid_username\">Not a valid username</string>\n    <string name=\"invalid_password\">Password must be >5 characters</string>\n    <string name=\"login_failed\">\"Login failed\"</string>\n    <string name=\"logon_failed\">\"Logon failed\"</string>\n\n    <string name=\"title_activity_login\">LoginActivity</string>\n    <!-- TODO: Remove or change this placeholder text -->\n    <string name=\"hello_blank_fragment\">Hello blank fragment</string>\n    <string name=\"title_activity_search\">SearchActivity</string>\n    <!--\n    This string is used for square devices and overridden by hello_world in\n    values-round/strings.xml for round devices.\n    -->\n    <string name=\"hello_world\">Hello Square World!</string>\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/res/values/strings.xml	(revision 1610676725c3482fd70f75f0b87ce805b556bef9)
++++ app/src/main/res/values/strings.xml	(date 1624347586626)
+@@ -12,8 +12,8 @@
+     <string name="save">Save</string>
+ 
+     <!-- 全局配置 -->
+-    <string name="BACKEND_URL">http://183.172.182.59:7000</string>
+-    <string name="SocketURL">ws://183.172.182.59:520/ws</string>
++    <string name="BACKEND_URL">http://183.172.196.207:7000</string>
++    <string name="SocketURL">ws://183.172.196.207:520/ws</string>
+ 
+ 
+     <!-- 聊天详情页面 -->
+Index: app/src/main/java/com/example/pangchat/fragment/SearchFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.pangchat.fragment\n\nimport android.content.Intent\nimport android.os.Bundle\nimport android.view.LayoutInflater\nimport android.view.View\nimport android.view.ViewGroup\nimport android.widget.Button\nimport android.widget.EditText\nimport android.widget.ImageView\nimport androidx.fragment.app.Fragment\nimport androidx.lifecycle.MutableLiveData\nimport androidx.lifecycle.lifecycleScope\nimport androidx.recyclerview.widget.LinearLayoutManager\nimport androidx.recyclerview.widget.RecyclerView\nimport com.example.pangchat.MainActivity\nimport com.example.pangchat.R\nimport com.example.pangchat.afterTextChanged\nimport com.example.pangchat.contact.Contact\nimport com.example.pangchat.contact.ContactAdapter\nimport com.example.pangchat.fragment.data.Result\nimport com.example.pangchat.fragment.data.UserDataSource\nimport com.example.pangchat.fragment.data.UserInfo\nimport kotlinx.coroutines.Dispatchers\nimport kotlinx.coroutines.launch\nimport kotlinx.coroutines.withContext\nimport java.util.*\n\n\n/**\n * A simple [Fragment] subclass.\n * Use the [SearchFragment.newInstance] factory method to\n * create an instance of this fragment.\n */\n\n\nclass SearchFragment : Fragment() {\n    private var backView: ImageView? = null\n    private var editText: EditText ? = null\n    private var buttonSearch: Button ? = null\n    var recyclerView: RecyclerView ? = null\n\n    var contacts = LinkedList<Contact?>()\n\n    // var friendIds: ArrayList<String> ? = null\n    var friendNames: ArrayList<String> ? = null\n\n    var _userInfo = MutableLiveData<UserInfo>()\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n\n    }\n\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\n        editText = getView()?.findViewById(R.id.search_content)\n        backView = getView()?.findViewById(R.id.goback)\n        buttonSearch = getView()?.findViewById(R.id.button_search)\n        recyclerView = getView()?.findViewById(R.id.search_recyclerview)\n\n        recyclerView?.adapter = ContactAdapter(activity, contacts)\n\n        friendNames = activity?.intent?.getStringArrayListExtra(\"friendNames\")\n        // friendIds = activity?.intent?.getStringArrayListExtra(\"friendIds\")\n\n        if (activity?.intent?.getStringExtra(\"search\") == \"friend\") {\n            // buttonSearch?.visibility = View.INVISIBLE;\n\n            editText?.afterTextChanged {\n                val searchContent: String = editText?.text.toString()\n\n                contacts.clear()\n                fuzzyMatch(searchContent)\n\n                if ((searchContent.isNotEmpty()) and (contacts.size != 0)) {\n                    recyclerView?.adapter?.notifyDataSetChanged()\n\n                    val linearLayoutManager = LinearLayoutManager(this.activity)\n                    linearLayoutManager.orientation = LinearLayoutManager.VERTICAL\n                    recyclerView?.layoutManager = linearLayoutManager\n                }\n\n            }\n\n        }\n        else if (activity?.intent?.getStringExtra(\"search\") == \"user\") {\n            buttonSearch?.setOnClickListener(View.OnClickListener {\n                val searchContent: String = editText?.text.toString()\n\n                contacts.clear()\n\n                lifecycleScope.launch {\n                    getUserInfo(searchContent);\n                    contacts.add(\n                        _userInfo.value?.userId?.let { it1 ->\n                            Contact(\n                                it1,\n                                _userInfo.value?.username,\n                                R.drawable.avatar1\n                            )\n                        }\n\n                    )\n                    recyclerView?.adapter?.notifyDataSetChanged()\n                    val linearLayoutManager = LinearLayoutManager(activity)\n                    linearLayoutManager.orientation = LinearLayoutManager.VERTICAL\n                    recyclerView?.layoutManager = linearLayoutManager\n                }\n            })\n        }\n\n        backView?.setOnClickListener(View.OnClickListener {\n            val intent = Intent()\n            activity?.let { it1 -> intent.setClass(it1, MainActivity::class.java) }\n            // intent.putExtra(\"userId\", activity?.intent?.getStringExtra(\"userId\"))\n            // intent.putExtra(\"friendIds\", friendIds)\n            intent.putExtra(\"friendNames\", friendNames)\n            startActivity(intent)\n\n            activity?.finish()\n        })\n\n    }\n\n\n    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,\n                              savedInstanceState: Bundle?): View? {\n        // Inflate the layout for this fragment\n        return inflater.inflate(R.layout.fragment_search, container, false)\n    }\n\n    fun fuzzyMatch(searchContent: String) {\n        for (i in 0 until friendNames?.size!!) {\n            if (friendNames?.get(i)?.contains(searchContent, true) == true) {\n                contacts.add(Contact(friendNames!![i], friendNames!![i], R.drawable.avatar1))\n            }\n        }\n    }\n\n    suspend fun getUserInfo(username: String) {\n        val userDataSource = UserDataSource()\n\n        val result: Result<UserInfo>\n\n        withContext(Dispatchers.IO) {\n            result = userDataSource.getUserInfoByName(username)\n        }\n\n        if (result is Result.Success) {\n            _userInfo.value = result.data\n        } else {\n            // TODO：抛出并解析异常\n        }\n    }\n\n\n\n\n    companion object {\n        fun newInstance(): SearchFragment? {\n            val fragment = SearchFragment()\n            return fragment\n        }\n    }\n\n\n}\n\n//fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {\n//    this.addTextChangedListener(object : TextWatcher {\n//        override fun afterTextChanged(editable: Editable?) {\n//            afterTextChanged.invoke(editable.toString())\n//        }\n//\n//        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}\n//\n//        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}\n//    })\n//}\n//\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/example/pangchat/fragment/SearchFragment.kt	(revision 1610676725c3482fd70f75f0b87ce805b556bef9)
++++ app/src/main/java/com/example/pangchat/fragment/SearchFragment.kt	(date 1624345908092)
+@@ -157,7 +157,7 @@
+ 
+ 
+     companion object {
+-        fun newInstance(): SearchFragment? {
++        fun newInstance(): SearchFragment {
+             val fragment = SearchFragment()
+             return fragment
+         }

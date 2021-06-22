@@ -11,7 +11,7 @@ data class MessageInfo(
         val messageId: String,
         val senderId: String,
         val nickname: String,
-        val avatarIcon: String,
+        val avatar: String,
         val recalled: Boolean,
         val content: String,
         val time: String
@@ -30,16 +30,6 @@ data class MessageResp(
 class MessageRequest {
 
     data class MessageId(val messageId: String)
-    fun getMessage(messageId: String): MessageResult<MessageInfo> {
-        val (_, _, result) = CookiedFuel.post("/message/info").jsonBody(MessageId(messageId)).responseObject<MessageInfo>()
-        if (result is fuelResult.Failure) {
-            return MessageResult.Error(result.getException())
-        } else {
-            return if (result.get().success)
-                MessageResult.Success(result.get())
-            else MessageResult.Error(Exception());
-        }
-    }
 
     data class MessageSend(val chatId: String, val senderId: String, val type: String, val content: String)
     fun sendMessage(chatId: String, senderId: String, type: String, content: String): MessageResult<MessageResp>{
@@ -53,9 +43,20 @@ class MessageRequest {
         }
     }
 
-    data class MessageIdAndUsername(val messageId: String)
     fun recallMessage(messageId: String): MessageResult<MessageResp>{
-        val (_, _, result) = CookiedFuel.post("/message/recall").jsonBody(MessageIdAndUsername(messageId)).responseObject<MessageResp>()
+        val (_, _, result) = CookiedFuel.post("/message/recall").jsonBody(MessageId(messageId)).responseObject<MessageResp>()
+        if (result is fuelResult.Failure) {
+            return MessageResult.Error(result.getException())
+        } else {
+            return if (result.get().success)
+                MessageResult.Success(result.get())
+            else MessageResult.Error(Exception());
+        }
+    }
+
+    data class MessageIdAndUserId(val messageId: String, val userId: String)
+    fun deleteMessage(messageId: String, userId: String): MessageResult<MessageResp>{
+        val (_, _, result) = CookiedFuel.post("/message/delete").jsonBody(MessageIdAndUserId(messageId, userId)).responseObject<MessageResp>()
         if (result is fuelResult.Failure) {
             return MessageResult.Error(result.getException())
         } else {
