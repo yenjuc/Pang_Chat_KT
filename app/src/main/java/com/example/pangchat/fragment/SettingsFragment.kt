@@ -23,6 +23,7 @@ import com.github.kittinunf.fuel.core.BlobDataPart
 import com.github.kittinunf.fuel.core.DataPart
 import com.github.kittinunf.fuel.coroutines.awaitByteArray
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.InputStream
@@ -142,7 +143,7 @@ class SettingsFragment : Fragment() {
                         imageView?.setImageBitmap(BitmapFactory.decodeStream(activity?.getContentResolver()?.openInputStream(imageUri)))
 
                         // 向服务器发送请求
-                        lifecycleScope.launch {
+                        MainScope().launch {
                             val splited = imageUri.lastPathSegment!!.split("/");
                             withContext(Dispatchers.IO) {
                                 inputImage =

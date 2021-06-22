@@ -35,6 +35,7 @@ import com.github.kittinunf.fuel.core.DataPart
 import com.github.kittinunf.fuel.coroutines.awaitByteArray
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.InputStream
@@ -180,7 +181,7 @@ class ChatActivity : AppCompatActivity() {
                     if(videoUri!=null) {
 
                         // 向服务器发送请求
-                        lifecycleScope.launch {
+                        MainScope().launch {
                             val splited = videoUri.lastPathSegment!!.split("/");
                             val inputVideo: InputStream
                             withContext(Dispatchers.IO) {
