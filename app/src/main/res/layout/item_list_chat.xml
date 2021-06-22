@@ -35,17 +35,19 @@
                     android:id="@+id/nickname_text"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:maxWidth="200dp"
                     android:maxLines="1"
-                    android:text="昵称"
+                    android:text="很长很长很长很长很长很长很长很长"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/last_speak_time_text"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="25dp"
                     android:gravity="end"
-                    android:text="2021/01/01" />
+                    android:minWidth="120dp"
+                    android:text="88-88 88:88:88" />
             </LinearLayout>
 
             <View

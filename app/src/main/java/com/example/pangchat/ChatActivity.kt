@@ -7,9 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationListener
 import android.location.LocationManager
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
@@ -20,7 +18,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -34,7 +31,6 @@ import com.example.pangchat.fragment.data.Result
 import com.example.pangchat.fragment.data.UploadResult
 import com.example.pangchat.message.Message
 import com.example.pangchat.message.MessageAdapter
-import com.example.pangchat.message.data.MessageInfo
 import com.example.pangchat.message.data.MessageRequest
 import com.example.pangchat.message.data.MessageResp
 import com.example.pangchat.message.data.MessageResult
@@ -86,22 +82,24 @@ class ChatActivity : AppCompatActivity() {
         lifecycleScope.launch {
             if (chatId != null) {
                 getChatAndMessage(chatId!!)
-                for(message in messages!!){
-                    data!!.add(message)
-                }
-                recyclerView?.adapter?.notifyDataSetChanged()
-                recyclerView?.scrollToPosition(messages!!.size - 1)
-                runOnUiThread {
-                    val chatname = findViewById<TextView>(R.id.chatName)
-                    chatname.text = chat?.getChatName()
-                    // FIXME: 两人聊天应改成对方名称
-                    /*
-                    if(chat?.getIsGroup() == false){
+                if(messages != null){
+                    for(message in messages!!){
+                        data!!.add(message)
+                    }
+                    recyclerView?.adapter?.notifyDataSetChanged()
+                    recyclerView?.scrollToPosition(messages!!.size - 1)
+                    runOnUiThread {
+                        val chatname = findViewById<TextView>(R.id.chatName)
                         chatname.text = chat?.getChatName()
-                    }else{
+                        // FIXME: 两人聊天应改成对方名称
+                        /*
+                        if(chat?.getIsGroup() == false){
+                            chatname.text = chat?.getChatName()
+                        }else{
 
-                        chatname.text = "对方用户名"
-                    }*/
+                            chatname.text = "对方用户名"
+                        }*/
+                    }
                 }
             }
         }
@@ -177,23 +175,6 @@ class ChatActivity : AppCompatActivity() {
                 lifecycleScope.launch {
                     sendMessage(location.latitude.toString() + ";" + location.longitude.toString(), "location")
                 }
-                /*
-                val mapIntent: Intent = Uri.parse(
-                    "geo:" + location.latitude + ", " + location.longitude
-                ).let{
-                        location ->
-                    Intent(Intent.ACTION_VIEW, location)
-                }
-
-                val intentChooser = Intent.createChooser(mapIntent, "选择地图")
-
-                try{
-                    startActivity(intentChooser)
-                }catch (ActivityNotFoundException: Exception){
-                    Log.d("ImplicitIntents", "Can't handle this!")
-                }
-
-                 */
             }else{
                 Toast.makeText(this, "获取当前地理位置失败！请打开GPS或网络后再试一次。", Toast.LENGTH_LONG).show()
             }
@@ -374,4 +355,23 @@ class ChatActivity : AppCompatActivity() {
         return result is MessageResult.Success
     }
 
+    fun deleteMessage(index: Int, messageId: String, userId: String){
+        lifecycleScope.launch {
+            if(deleteMessage(messageId, userId)){
+                data?.get(index)?.addBlocked(userId)
+                recyclerView?.adapter?.notifyDataSetChanged()
+            }
+        }
+    }
+
+    private suspend fun deleteMessage(messageId: String, userId: String): Boolean{
+        val messageRequest = MessageRequest()
+        val result: MessageResult<MessageResp>
+
+        withContext(Dispatchers.IO) {
+            result = messageRequest.deleteMessage(messageId, userId)
+        }
+
+        return result is MessageResult.Success
+    }
 }

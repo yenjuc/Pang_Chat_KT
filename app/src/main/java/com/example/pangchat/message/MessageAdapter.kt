@@ -118,6 +118,10 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
                         viewHolder.messageAction?.visibility = View.GONE
                     }
                     // TODO: 删除消息
+                    viewHolder.messageDelete?.setOnClickListener {
+                        activity.deleteMessage(position, message.getId(), myUserId)
+                        viewHolder.messageAction?.visibility = View.GONE
+                    }
 
 
                     // TODO: 各种特定的跳转
@@ -171,13 +175,12 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
                     }
                     recallMsg += activity.getString(R.string.messageRecalled)
                     viewHolder.recalledInfo?.text = recallMsg
-                    if(message.getType().compareTo("text") != 0){
+                    if(message.getSenderId().compareTo(myUserId) != 0 || message.getType().compareTo("text") != 0){
                         viewHolder.recalledReedit?.visibility = View.GONE
                     }else {
                         viewHolder.recalledReedit?.visibility = View.VISIBLE
                         viewHolder.recalledReedit?.setOnClickListener {
                             Log.d("recalled reedit ", "clicked")
-                            // TODO: 只有文字信息可重新编辑
                             activity.setInput(message.getContent());
                         }
                     }
