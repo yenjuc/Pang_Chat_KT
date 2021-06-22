@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.ChatActivity
 import com.example.pangchat.PersonalActivity
 import com.example.pangchat.R
+import com.example.pangchat.VideoPlayActivity
 import com.example.pangchat.message.data.*
 import java.util.*
 
@@ -81,8 +82,9 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
         if (message != null) {
             // FIXME: 增加 popup
             if(!message.isBlocked(myUserId)){
+
                 if(viewHolder.viewType > 2){
-                    if(!urlToBitmap.keys.contains(message.getAvatar())){
+                    if(urlToBitmap.keys.contains(message.getAvatar())){
                         viewHolder.avatar?.setImageBitmap(urlToBitmap[message.getAvatar()])
                     }
                     /*
@@ -111,6 +113,11 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
                         viewHolder.messageAction?.visibility = View.VISIBLE
                         return@setOnLongClickListener true
                     }
+
+                    // FIXME:
+                    viewHolder.content?.setOnFocusChangeListener { v, hasFocus ->
+                        Log.d("focus", "focus")
+                    }
                     viewHolder.messageCopy?.setOnClickListener{
                         activity.setInput(message.getContent())
                         viewHolder.messageAction?.visibility = View.GONE
@@ -135,7 +142,15 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
                         }
                         // 2: video
                         2 ->{
-
+                            viewHolder.messageBlock?.setOnClickListener {
+                                val intent = Intent(activity, VideoPlayActivity::class.java)
+                                intent.putExtra("videoUrl", message.getContent())
+                                try{
+                                    activity.startActivity(intent)
+                                }catch (ActivityNotFoundException: Exception){
+                                    Log.d("ImplicitIntents", "Can't handle this!")
+                                }
+                            }
                         }
                         // 3: audio
                         3 ->{

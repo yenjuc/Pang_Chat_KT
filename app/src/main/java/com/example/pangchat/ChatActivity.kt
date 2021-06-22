@@ -133,22 +133,16 @@ class ChatActivity : AppCompatActivity() {
 
         val chatInput = findViewById<TextInputEditText>(R.id.chatInput)
 
-        // TODO: set 各种 listener
         val chatMoreAction = findViewById<LinearLayout>(R.id.chatMoreLayout)
-
-        // 假设第一个是发送视频
-
 
         val videoSender = findViewById<ImageView>(R.id.chatVideo)
         videoSender.setOnClickListener{
-            // 修改头像
             val pickIntent : Intent = Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "video/*")
             mediaType = "video"
             startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
         }
-
 
         val imageSender = findViewById<ImageView>(R.id.chatImage)
         imageSender.setOnClickListener{
@@ -274,7 +268,6 @@ class ChatActivity : AppCompatActivity() {
                                 ), uri
                             )
                             // if()
-
                             /*
                             withContext(Dispatchers.IO) {
                                 val result = CookiedFuel.get(_uploadInfo?.value!!.url).awaitByteArray()
@@ -285,7 +278,6 @@ class ChatActivity : AppCompatActivity() {
                                 // MediaRecorder.VideoEncoder
                                 // bit = BitmapFactory.decodeByteArray(result, 0, result.size)
                             }
-
                              */
                             // imageView?.setImageBitmap(bit) // 必须放在IO外面
                         }
@@ -320,7 +312,11 @@ class ChatActivity : AppCompatActivity() {
                 urlToBitmap!![_uploadInfo?.value!!.url] = bit
                 sendMessage(_uploadInfo?.value!!.url, "image")
                 recyclerView?.adapter?.notifyDataSetChanged()
-                // downLoadImageBitmap(_uploadInfo?.value!!.url)
+                recyclerView?.scrollToPosition(data!!.size - 1)
+            }else{
+                sendMessage(_uploadInfo?.value!!.url, "video")
+                recyclerView?.adapter?.notifyDataSetChanged()
+                recyclerView?.scrollToPosition(data!!.size - 1)
             }
         } else {
             // TODO：抛出并解析异常

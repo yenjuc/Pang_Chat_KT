@@ -1,6 +1,7 @@
 package com.example.pangchat.chat
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.util.Log
 import android.util.Log.DEBUG
 import android.view.LayoutInflater
@@ -19,7 +20,7 @@ import com.example.pangchat.R
 import com.example.pangchat.chat.ChatAdapter.ChatViewHolder
 import java.util.*
 
-class ChatAdapter(private val mContext: FragmentActivity?, private val data: LinkedList<Chat?>?) : RecyclerView.Adapter<ChatViewHolder?>() {
+class ChatAdapter(private val mContext: FragmentActivity?, private val data: LinkedList<Chat?>?, private val urlToBitmap: MutableMap<String, Bitmap>) : RecyclerView.Adapter<ChatViewHolder?>() {
 
     inner class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var avatar: ImageView? = itemView.findViewById<ImageView?>(R.id.avatar_icon)
@@ -39,7 +40,10 @@ class ChatAdapter(private val mContext: FragmentActivity?, private val data: Lin
         val chat = data?.get(position)
         if (chat != null) {
             // FIXME:
-            holder.avatar?.setImageResource(R.drawable.avatar2)
+            if(urlToBitmap.keys.contains(chat.getChatAvatar())){
+                holder.avatar?.setImageBitmap(urlToBitmap[chat.getChatAvatar()])
+            }
+
             holder.nickname?.text = chat.getChatName()
             holder.lastTime?.text = chat.getLastUpdateTime()
             holder.lastConx?.text = chat.getLastUpdateConx()
