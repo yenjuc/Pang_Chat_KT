@@ -233,5 +233,4 @@ class DiscoverAdapter(private val activity: MainActivity,private val data: Linke
             }
         }
     }
-
 }
