@@ -13,8 +13,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.pangchat.MainActivity
 import com.example.pangchat.R
+import com.example.pangchat.fragment.data.ModifyNicknameResult
 import com.example.pangchat.fragment.data.ModifyPasswordResult
-import com.example.pangchat.fragment.data.ModifyUsernameResult
 import com.example.pangchat.fragment.data.Result
 import com.example.pangchat.fragment.data.SettingsDataSource
 import com.example.pangchat.websocketClient.webSocketClient
@@ -55,9 +55,9 @@ class ModifyInfoFragment : Fragment() {
             lifecycleScope.launch(){
                 var modifyValue : String ? = null
 
-                if (modifyKey == "username") {
+                if (modifyKey == "nickname") {
                     modifyValue = editText?.getText().toString()
-                    modifyUsername(modifyValue!!)
+                    modifyNickname(modifyValue!!)
                     // TODO： 异常处理
                 }
                 else if (modifyKey == "password") {
@@ -87,23 +87,23 @@ class ModifyInfoFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater?.inflate(R.layout.fragment_modify_info, container, false)
+        return inflater.inflate(R.layout.fragment_modify_info, container, false)
     }
 
 
-    suspend fun modifyUsername(newUsername : String) {
+    suspend fun modifyNickname(newNickname : String) {
         val settingsDataSource = SettingsDataSource()
 
-        val result: Result<ModifyUsernameResult>
+        val result: Result<ModifyNicknameResult>
 
         withContext(Dispatchers.IO) {
-            result = settingsDataSource.modifyUsername(newUsername)
+            result = settingsDataSource.modifyNickname(newNickname)
         }
 
         if (result is Result.Success) {
-            webSocketClient.username = newUsername
+            Toast.makeText(activity, "修改昵称成功", Toast.LENGTH_SHORT).show()
         } else {
-            // TODO：抛出并解析异常
+            Toast.makeText(activity, "修改昵称失败", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -126,7 +126,7 @@ class ModifyInfoFragment : Fragment() {
 
 
     companion object {
-        fun newInstance(): ModifyInfoFragment? {
+        fun newInstance(): ModifyInfoFragment {
             val fragment = ModifyInfoFragment()
             return fragment
         }

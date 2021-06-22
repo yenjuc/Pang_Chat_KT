@@ -16,7 +16,6 @@ import com.example.pangchat.contact.ContactInfo
 import com.example.pangchat.fragment.*
 import com.example.pangchat.fragment.data.Result
 import com.example.pangchat.utils.CookiedFuel
-import com.example.pangchat.websocketClient.MyWebSocketClient
 import com.example.pangchat.websocketClient.webSocketClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.Dispatchers
@@ -72,11 +71,11 @@ class MainActivity : FragmentActivity() {
         MainScope().launch {
             getFriendsInfo()
             // friendIds = _contactInfo.value?.friendsId
-            friendNames?.clear()
-            friendIds?.clear()
+            friendNames.clear()
+            friendIds.clear()
             for (index in 0 until (_contactInfo.value?.friendsInfo?.size!!)) {
-                _contactInfo.value?.friendsInfo!![index].let { friendNames?.add(it.getUsername()) }
-                _contactInfo.value?.friendsInfo!![index].let { friendIds?.add(it.getUserId()) }
+                _contactInfo.value?.friendsInfo!![index].let { friendNames.add(it.getUsername()) }
+                _contactInfo.value?.friendsInfo!![index].let { friendIds.add(it.getUserId()) }
             }
 
             intent.putExtra("friendIds", friendIds)

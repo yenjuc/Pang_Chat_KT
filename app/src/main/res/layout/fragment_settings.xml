@@ -31,7 +31,6 @@
                 android:layout_height="80dp"
                 android:contentDescription="@string/app_name"
                 android:scrollbarAlwaysDrawVerticalTrack="true"
-                android:src="@drawable/avatar1"
                 android:scaleType="fitEnd"/>
 
         </LinearLayout>
@@ -46,7 +45,7 @@
                 android:id="@+id/username_description"
                 android:layout_width="wrap_content"
                 android:layout_height="80dp"
-                android:text="@string/nickname"
+                android:text="Username"
                 android:gravity="center_vertical"/>
 
             <TextView
@@ -54,9 +53,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
                 android:layout_weight="1"
+                android:gravity="center_vertical|right"
+                android:text="" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="6dp">
+
+            <TextView
+                android:id="@+id/nickname_description"
+                android:layout_width="wrap_content"
+                android:layout_height="80dp"
+                android:text="@string/nickname"
+                android:gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/nickname_text"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_weight="1"
                 android:clickable="true"
                 android:gravity="center_vertical|right"
-                android:text="pwf" />
+                android:text="" />
         </LinearLayout>
 
         <LinearLayout

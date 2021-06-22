@@ -2,15 +2,12 @@ package com.example.pangchat
 
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
-import androidx.lifecycle.MutableLiveData
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,7 +21,6 @@ import com.example.pangchat.user.data.CommonResp
 import com.example.pangchat.user.data.UserRequest
 import com.example.pangchat.user.data.UserResult
 import com.example.pangchat.websocketClient.webSocketClient
-
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -58,7 +54,7 @@ class ChatInfoActivity : AppCompatActivity() {
                 runOnUiThread{
                     if(chat != null){
                         chatName?.text = chat!!.getChatName()
-                        members.add(User("-1", "-1", "-1"))
+                        members.add(User("-1", "-1", "-1", "-1"))
                         recyclerView.adapter?.notifyDataSetChanged()
                     }
                 }

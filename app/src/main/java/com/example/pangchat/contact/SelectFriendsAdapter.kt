@@ -35,6 +35,7 @@ class SelectFriendsAdapter(private val mContext: FragmentActivity?, private val 
             holder.itemView.setOnClickListener(View.OnClickListener {
                 holder.button?.isChecked = !holder.button?.isChecked!!
                 if (holder.button?.isChecked == true) {
+                    // 这里传入昵称
                     mContext?.intent?.getStringArrayListExtra("selectedNames")?.add(contact.getNickname())
                     mContext?.intent?.getStringArrayListExtra("selectedIds")?.add(contact.getUserId())
                 }

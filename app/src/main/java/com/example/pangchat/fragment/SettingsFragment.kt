@@ -35,7 +35,8 @@ import java.io.InputStream
  * create an instance of this fragment.
  */
 class SettingsFragment : Fragment() {
-    private var textView: TextView? = null
+    private var textView_username: TextView? = null
+    private var textView_nickname: TextView? = null
     private var imageView: ImageView? = null
     private var button: Button? = null
     private lateinit var avatarUrl: String
@@ -57,15 +58,18 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        textView = getView()?.findViewById<TextView?>(R.id.username_text)
-        textView?.setText(webSocketClient.username)
+        textView_username = getView()?.findViewById<TextView?>(R.id.username_text)
+        textView_username?.text = webSocketClient.username
+
+        textView_nickname = getView()?.findViewById<TextView?>(R.id.nickname_text)
+
         imageView = getView()?.findViewById<ImageView>(R.id.avatar_icon)
 
         button = getView()?.findViewById<Button>(R.id.button_modify)
 
         lifecycleScope.launch{
             webSocketClient.username?.let { getInfo(it) }
-
+            textView_nickname?.text = _userInfo.value!!.nickname
             // 发起下载图片请求
             val bit: Bitmap;
             withContext(Dispatchers.IO) {
@@ -85,7 +89,7 @@ class SettingsFragment : Fragment() {
         })
 
 
-        textView?.setOnClickListener(View.OnClickListener {
+        textView_nickname?.setOnClickListener(View.OnClickListener {
             Toast.makeText(activity, "修改昵称", Toast.LENGTH_LONG).show()
 
             // 进入修改昵称页面
@@ -96,7 +100,7 @@ class SettingsFragment : Fragment() {
             activity?.let { it1 -> intent.setClass(it1, ModifyInfoActivity::class.java) }
             // intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
             // intent.putExtra("username", activity?.intent?.getStringExtra("username"))
-            intent.putExtra("modifyKey", "username")
+            intent.putExtra("modifyKey", "nickname")
 
             startActivity(intent)
 

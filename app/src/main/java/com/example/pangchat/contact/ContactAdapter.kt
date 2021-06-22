@@ -45,7 +45,8 @@ class ContactAdapter(private val mContext: FragmentActivity?, private val data: 
                 // intent.putExtra("myUserId", mContext?.intent?.getStringExtra("userId"))
                 intent.putExtra("friendNames", mContext?.intent?.getStringArrayListExtra("friendNames"))
                 intent.putExtra("userId", contact.getUserId())
-                intent.putExtra("username", contact.getNickname())
+                intent.putExtra("nickname", contact.getNickname())
+                intent.putExtra("username", contact.getUsername())
                 intent.putExtra("avatar", contact.getAvatar())
 
                 try {
