@@ -20,13 +20,18 @@
         <activity android:name=".PersonalActivity"></activity>
         <activity android:name=".SelectFriendsActivity" />
         <activity android:name=".SearchActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity" >
+        </activity>
         <activity
             android:name=".ChatActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity
             android:name=".ChatInfoActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+        <activity
+            android:name=".newPostActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".ModifyInfoActivity" />
         <activity android:name=".ChatnameModifyActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>

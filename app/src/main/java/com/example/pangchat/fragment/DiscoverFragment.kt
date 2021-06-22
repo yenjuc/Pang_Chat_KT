@@ -1,18 +1,21 @@
 package com.example.pangchat
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pangchat.R
 import com.example.pangchat.comment.Comment
 import com.example.pangchat.discover.Discover
 import com.example.pangchat.discover.DiscoverAdapter
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.*
 import kotlin.collections.ArrayList
+import com.example.pangchat.websocketClient.webSocketClient
 
 /**
  * A simple [Fragment] subclass.
@@ -21,8 +24,19 @@ import kotlin.collections.ArrayList
  */
 class DiscoverFragment : Fragment() {
     private var recyclerView: RecyclerView? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        // TODO
+        val postFab = view.findViewById<FloatingActionButton>(R.id.post_fab)
+        postFab.setOnClickListener (View.OnClickListener{
+            val postIntent = Intent()
+            this.activity?.let { it1 -> postIntent.setClass(it1,newPostActivity::class.java) }
+            postIntent.putExtra("userId", webSocketClient.userId!!)
+            try {
+            this.activity?.startActivity(postIntent)
+            } catch (e: Exception) {
+                Log.d("ImplicitIntents", "Can't handle this!")
+            }
+        })
         recyclerView = view.findViewById(R.id.discover_recyclerview)
         val imgs = ArrayList<Int?>()
         imgs.add(R.drawable.image1)
@@ -79,7 +93,7 @@ class DiscoverFragment : Fragment() {
                 ArrayList(imgs.subList(10, 11))))
         val rv = recyclerView
         if (rv != null) {
-            rv.adapter = DiscoverAdapter(discovers)
+            rv.adapter = DiscoverAdapter(activity as MainActivity,discovers)
             rv.layoutManager = LinearLayoutManager(this.activity)
         }
     }
@@ -91,7 +105,9 @@ class DiscoverFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
+
         return inflater?.inflate(R.layout.fragment_discover, container, false)
+
     }
 
     companion object {

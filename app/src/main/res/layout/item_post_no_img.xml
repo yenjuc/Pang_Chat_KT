@@ -4,7 +4,9 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:paddingHorizontal="4dp"
-    android:paddingVertical="4dp">
+    android:paddingVertical="4dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".newPostActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,15 +42,29 @@
                 android:paddingVertical="8dp"
                 android:text="通过通信及社交软件微信和 QQ 促进用户联系，并助其连接数字内容和生活服务，尽在弹指间。 通过高效广告平台，协助品牌和市场营销者触达数以亿计的中国消费者。 通过金融科技及企业服务，促进合作伙伴业务发展，助力实现数字化升级。 我们大力投资于人才队伍和推动科技创新，积极参与互联网行业协同发展。 腾讯于 1998 年11月在中国深圳成立，2004 年6月在香港联合交易所主板上市。  "
                 android:textSize="16sp" />
-
+            <RelativeLayout android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:orientation="horizontal"
+                android:paddingHorizontal="4dp"
+                android:layout_marginBottom="5dp">
             <TextView
+                android:layout_alignParentStart="true"
                 android:id="@+id/post_time"
-                android:layout_width="match_parent"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:paddingVertical="4dp"
                 android:text="5小时前"
                 android:textStyle="italic" />
 
+                <Button
+                    android:layout_alignParentEnd="true"
+                    android:id="@+id/show_more"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="#EEEEEE"
+                    android:drawableEnd="@drawable/ic_baseline_more_horiz_24"></Button>
+            </RelativeLayout>
             <TextView
                 android:id="@+id/post_like"
                 android:layout_width="match_parent"
@@ -61,22 +77,22 @@
                 android:text="余齐齐"
                 android:textColor="#4d88ff"
                 android:textStyle="bold" />
+            <View
+                android:id="@+id/post_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="2dp"
+                android:foreground="@color/grey" />
 
+            <ListView
+                android:id="@+id/comment_listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
         </LinearLayout>
     </LinearLayout>
 
-    <View
-        android:id="@+id/post_divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginHorizontal="8dp"
-        android:layout_marginTop="2dp"
-        android:foreground="@color/grey" />
 
-    <ListView
-        android:id="@+id/comment_listview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
 
 </LinearLayout>
