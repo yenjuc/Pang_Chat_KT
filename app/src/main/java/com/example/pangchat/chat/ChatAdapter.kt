@@ -24,7 +24,7 @@ class ChatAdapter(private val mContext: FragmentActivity?, private val data: Lin
 
     inner class ChatViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var avatar: ImageView? = itemView.findViewById<ImageView?>(R.id.avatar_icon)
-        var nickname: TextView? = itemView.findViewById<TextView?>(R.id.nickname_text)
+        var chatname: TextView? = itemView.findViewById<TextView?>(R.id.nickname_text)
         val lastTime: TextView? = itemView.findViewById<TextView?>(R.id.last_speak_time_text)
         val lastConx: TextView? = itemView.findViewById<TextView?>(R.id.last_speak_text)
     }
@@ -39,12 +39,10 @@ class ChatAdapter(private val mContext: FragmentActivity?, private val data: Lin
         // TODO
         val chat = data?.get(position)
         if (chat != null) {
-            // FIXME:
             if(urlToBitmap.keys.contains(chat.getChatAvatar())){
                 holder.avatar?.setImageBitmap(urlToBitmap[chat.getChatAvatar()])
             }
-
-            holder.nickname?.text = chat.getChatName()
+            holder.chatname?.text = chat.getChatName()
             holder.lastTime?.text = chat.getLastUpdateTime()
             holder.lastConx?.text = chat.getLastUpdateConx()
             holder.itemView.setOnClickListener {

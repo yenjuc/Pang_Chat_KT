@@ -4,6 +4,7 @@ import com.example.pangchat.chat.Chat
 import com.example.pangchat.message.Message
 import com.example.pangchat.user.User
 import com.example.pangchat.utils.CookiedFuel
+import com.example.pangchat.websocketClient.webSocketClient
 import com.github.kittinunf.fuel.gson.jsonBody
 import com.github.kittinunf.fuel.gson.responseObject
 import com.github.kittinunf.result.Result as fuelResult
@@ -39,9 +40,9 @@ data class ChatInfo(
 
 class ChatRequest {
 
-    data class ChatId(val chatId: String)
+    data class ChatIdAndUserId(val chatId: String, val userId: String)
     fun getChatAndMembers(chatId: String): ChatResult<ChatUserInfo> {
-        val (_, _, result) = CookiedFuel.post("/chat/members").jsonBody(ChatId(chatId)).responseObject<ChatUserInfo>()
+        val (_, _, result) = CookiedFuel.post("/chat/members").jsonBody(ChatIdAndUserId(chatId, webSocketClient.userId!!)).responseObject<ChatUserInfo>()
         if (result is fuelResult.Failure) {
             return ChatResult.Error(result.getException())
         } else {
@@ -52,7 +53,7 @@ class ChatRequest {
     }
 
     fun getMessagesOfChat(chatId: String) : ChatResult<ChatMessageInfo> {
-        val (_, _, result) = CookiedFuel.post("/chat/messages").jsonBody(ChatId(chatId)).responseObject<ChatMessageInfo>()
+        val (_, _, result) = CookiedFuel.post("/chat/messages").jsonBody(ChatIdAndUserId(chatId, webSocketClient.userId!!)).responseObject<ChatMessageInfo>()
         if (result is fuelResult.Failure) {
             return ChatResult.Error(result.getException())
         } else {

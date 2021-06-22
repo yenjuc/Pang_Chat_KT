@@ -79,6 +79,7 @@ class ChatActivity : AppCompatActivity() {
         setContentView(R.layout.activity_chat)
         chatId = intent.getStringExtra("chatId")
         recyclerView = findViewById(R.id.chatRecyclerView)
+        val chatinfo = findViewById<ImageView>(R.id.chatInfo)
         data = LinkedList()
         messages = ArrayList()
         recyclerView?.adapter = MessageAdapter(webSocketClient.userId!!, this, data, urlToBitmap)
@@ -98,14 +99,7 @@ class ChatActivity : AppCompatActivity() {
                     runOnUiThread {
                         val chatname = findViewById<TextView>(R.id.chatName)
                         chatname.text = chat?.getChatName()
-                        // FIXME: 两人聊天应改成对方名称
-                        /*
-                        if(chat?.getIsGroup() == false){
-                            chatname.text = chat?.getChatName()
-                        }else{
-
-                            chatname.text = "对方用户名"
-                        }*/
+                        if(chat != null && !chat!!.getIsGroup()) chatinfo.visibility = View.INVISIBLE
                     }
                 }
             }
@@ -115,19 +109,21 @@ class ChatActivity : AppCompatActivity() {
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView?.layoutManager = linearLayoutManager
 
-        // init()
         val back = findViewById<ImageView>(R.id.chatBackward)
         back.setOnClickListener { this.finish() }
 
-        val chatinfo = findViewById<ImageView>(R.id.chatInfo)
         chatinfo.setOnClickListener {
-            val intent = Intent(this, ChatInfoActivity::class.java)
-            intent.putExtra("chatId", chatId)
-            try {
-                startActivity(intent)
-                this.finish()
-            } catch (ActivityNotFoundException: Exception) {
-                Log.d("ImplicitIntents", "Can't handle this!")
+            if(chat != null){
+                if(chat!!.getIsGroup()){
+                    val intent = Intent(this, ChatInfoActivity::class.java)
+                    intent.putExtra("chatId", chatId)
+                    try {
+                        startActivity(intent)
+                        this.finish()
+                    } catch (ActivityNotFoundException: Exception) {
+                        Log.d("ImplicitIntents", "Can't handle this!")
+                    }
+                }
             }
         }
 

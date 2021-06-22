@@ -136,6 +136,7 @@
                 android:background="@color/grey" />
 
             <LinearLayout
+                android:id="@+id/chatAvatarLayout"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/chatinfo_bar_height"
                 android:background="?attr/selectableItemBackground"
@@ -180,7 +181,8 @@
                 android:clickable="true"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingHorizontal="@dimen/chatinfo_bar_padding_horizontal">
+                android:paddingHorizontal="@dimen/chatinfo_bar_padding_horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -206,7 +208,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginHorizontal="8dp"
-                android:background="@color/grey" />
+                android:background="@color/grey"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/chatMuteLayout"
@@ -214,7 +217,8 @@
                 android:layout_height="@dimen/chatinfo_bar_height"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingHorizontal="@dimen/chatinfo_bar_padding_horizontal">
+                android:paddingHorizontal="@dimen/chatinfo_bar_padding_horizontal"
+                android:visibility="gone">
 
                 <Switch
                     android:id="@+id/chatSwitchMute"
@@ -232,7 +236,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginHorizontal="8dp"
-                android:background="@color/grey" />
+                android:background="@color/grey"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/chatPinLayout"
@@ -240,7 +245,8 @@
                 android:layout_height="@dimen/chatinfo_bar_height"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:paddingHorizontal="@dimen/chatinfo_bar_padding_horizontal">
+                android:paddingHorizontal="@dimen/chatinfo_bar_padding_horizontal"
+                android:visibility="gone">
 
                 <Switch
                     android:id="@+id/chatSwitchPin"
@@ -258,7 +264,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginHorizontal="8dp"
-                android:background="@color/grey" />
+                android:background="@color/grey"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/chatLeaveLayout"
