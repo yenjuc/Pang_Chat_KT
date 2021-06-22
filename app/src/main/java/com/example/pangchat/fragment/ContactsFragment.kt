@@ -75,7 +75,6 @@ class ContactsFragment : Fragment() {
         }
 
 
-
         val _linearLayoutManager = LinearLayoutManager(this.activity)
         _linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         newFriendRecyclerView.layoutManager = _linearLayoutManager
