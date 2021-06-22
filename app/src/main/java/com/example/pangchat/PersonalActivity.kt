@@ -33,7 +33,6 @@ class PersonalActivity : FragmentActivity() {
     lateinit var userId: String
     lateinit var username: String
     var avatar: Int = 0
-    // var friendNames: ArrayList<String>? = null
 
     private var _addFriendResult = MutableLiveData<AddFriendResult>()
     private var _isFriendResult = MutableLiveData<IsFriendResult>()
@@ -81,8 +80,6 @@ class PersonalActivity : FragmentActivity() {
                 textView.text = "加好友"
                 messageLayout?.setOnClickListener(View.OnClickListener {
                     Toast.makeText(context, "加好友", Toast.LENGTH_LONG).show()
-                    // TODO: 加好友的操作
-
                     MainScope().launch {
 
                         username.let { it1 -> sendFriendRequest(it1) }

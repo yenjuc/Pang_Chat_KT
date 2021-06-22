@@ -2,7 +2,13 @@ package com.example.pangchat
 
 
 import android.app.Activity
+import android.Manifest
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -10,7 +16,8 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,7 +31,6 @@ import com.example.pangchat.fragment.data.Result
 import com.example.pangchat.fragment.data.UploadResult
 import com.example.pangchat.message.Message
 import com.example.pangchat.message.MessageAdapter
-import com.example.pangchat.message.data.MessageInfo
 import com.example.pangchat.message.data.MessageRequest
 import com.example.pangchat.message.data.MessageResp
 import com.example.pangchat.message.data.MessageResult
@@ -43,10 +49,6 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class ChatActivity : AppCompatActivity() {
-
-    private val _messageInfo = MutableLiveData<MessageInfo>()
-
-    //private var chatInfo: ChatInfo? = null
 
     private var chat: Chat? = null
 
@@ -80,22 +82,24 @@ class ChatActivity : AppCompatActivity() {
         lifecycleScope.launch {
             if (chatId != null) {
                 getChatAndMessage(chatId!!)
-                for(message in messages!!){
-                    data!!.add(message)
-                }
-                recyclerView?.adapter?.notifyDataSetChanged()
-                recyclerView?.scrollToPosition(messages!!.size - 1)
-                runOnUiThread {
-                    val chatname = findViewById<TextView>(R.id.chatName)
-                    chatname.text = chat?.getChatName()
-                    // FIXME: 两人聊天应改成对方名称
-                    /*
-                    if(chat?.getIsGroup() == false){
+                if(messages != null){
+                    for(message in messages!!){
+                        data!!.add(message)
+                    }
+                    recyclerView?.adapter?.notifyDataSetChanged()
+                    recyclerView?.scrollToPosition(messages!!.size - 1)
+                    runOnUiThread {
+                        val chatname = findViewById<TextView>(R.id.chatName)
                         chatname.text = chat?.getChatName()
-                    }else{
+                        // FIXME: 两人聊天应改成对方名称
+                        /*
+                        if(chat?.getIsGroup() == false){
+                            chatname.text = chat?.getChatName()
+                        }else{
 
-                        chatname.text = "对方用户名"
-                    }*/
+                            chatname.text = "对方用户名"
+                        }*/
+                    }
                 }
             }
         }
@@ -145,7 +149,7 @@ class ChatActivity : AppCompatActivity() {
                 Log.d("Debug", "not empty")
                 lifecycleScope.launch {
                     if (chatId != null) {
-                        sendMessage(chatInput.text.toString())
+                        sendMessage(chatInput.text.toString(), "text")
                         recyclerView?.adapter?.notifyDataSetChanged()
                         recyclerView?.scrollToPosition(data!!.size - 1)
                         chatInput.text?.clear()
@@ -159,17 +163,77 @@ class ChatActivity : AppCompatActivity() {
                 }
             }
         }
-    }
 
-    /*
-    override fun onResume() {
-        super.onResume()
-        if(chat != null && !chat!!.getMembers().contains(webSocketClient.userId)){
-            this.finish()
+        val chatLocation = findViewById<ImageView>(R.id.chatLocation)
+        chatLocation.setOnClickListener {
+
+            val location = getLocation()
+            if(location != null){
+                // TODO: 发送当前位置的Message
+
+                Toast.makeText(this, "发送当前位置", Toast.LENGTH_LONG).show()
+                lifecycleScope.launch {
+                    sendMessage(location.latitude.toString() + ";" + location.longitude.toString(), "location")
+                }
+            }else{
+                Toast.makeText(this, "获取当前地理位置失败！请打开GPS或网络后再试一次。", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
-     */
+    override fun onResume() {
+        super.onResume()
+        Log.d("back: ", "resume")
+    }
+
+    private fun getLocation(): Location?{
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (ActivityCompat.checkSelfPermission(                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 1)
+            return null
+        }
+
+        var location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            if (location == null) {
+                Toast.makeText(this, "空位置", Toast.LENGTH_LONG).show()
+                location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER)
+                if (location == null) {
+                    Toast.makeText(this, "网络位置为空", Toast.LENGTH_LONG).show()
+                }
+                else {
+                    Toast.makeText(this, "使用网络位置", Toast.LENGTH_LONG).show()
+                }
+            }
+        // }
+        return location
+    }
+
+
+    @Override
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if(requestCode == 1){
+
+            for(index in permissions.indices){
+                if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "" + "权限" + permissions[index] + "申请成功", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "" + "权限" + permissions[index] + "申请失败", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -255,13 +319,13 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun sendMessage(content: String){
+    private suspend fun sendMessage(content: String, type: String){
         val messageRequest = MessageRequest()
         val result: MessageResult<MessageResp>
 
         withContext(Dispatchers.IO) {
             // FIXME: type
-            result = messageRequest.sendMessage(chatId!!, webSocketClient.userId!!, "text", content)
+            result = messageRequest.sendMessage(chatId!!, webSocketClient.userId!!, type, content)
         }
 
         if (result is MessageResult.Success) {
@@ -291,4 +355,23 @@ class ChatActivity : AppCompatActivity() {
         return result is MessageResult.Success
     }
 
+    fun deleteMessage(index: Int, messageId: String, userId: String){
+        lifecycleScope.launch {
+            if(deleteMessage(messageId, userId)){
+                data?.get(index)?.addBlocked(userId)
+                recyclerView?.adapter?.notifyDataSetChanged()
+            }
+        }
+    }
+
+    private suspend fun deleteMessage(messageId: String, userId: String): Boolean{
+        val messageRequest = MessageRequest()
+        val result: MessageResult<MessageResp>
+
+        withContext(Dispatchers.IO) {
+            result = messageRequest.deleteMessage(messageId, userId)
+        }
+
+        return result is MessageResult.Success
+    }
 }
