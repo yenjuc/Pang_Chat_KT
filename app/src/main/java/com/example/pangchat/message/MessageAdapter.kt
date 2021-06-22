@@ -1,6 +1,7 @@
 package com.example.pangchat.message
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.location.Geocoder
 import android.net.Uri
 import android.util.Log
@@ -17,24 +18,19 @@ import com.example.pangchat.R
 import com.example.pangchat.message.data.*
 import java.util.*
 
-class MessageAdapter(private val myUserId: String, private val activity: ChatActivity, private val data: LinkedList<Message?>?) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
+class MessageAdapter(private val myUserId: String, private val activity: ChatActivity,
+                     private val data: LinkedList<Message?>?, private val bitmaps: LinkedList<Bitmap?>?) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
     override fun getItemViewType(position: Int): Int {
-
-        // FIXME: 假设目前全部都是 text。之后应该要考虑 1. 是接收方还是发出方 2. 哪种类型 3. 是否recalled
-
         if(data?.get(position)?.isBlocked(myUserId) == true){
             return 0
         }
-
         var send: Int = 1
         if(data?.get(position)?.getSenderId()?.compareTo(myUserId) == 0){
             send = 2
         }
-
         if(data?.get(position)?.getRecalled() == true){
             return send
         }
-
         var type: Int = 0
         when(data?.get(position)?.getType()) {
             "text" -> {
@@ -55,12 +51,10 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
         }
 
         return send * 5 - 2 + type
-        // return send * 一种模板总量 + 种类
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view: View?
-        // TODO: 增加更多布局
         val messageLayout = intArrayOf(
             R.layout.item_message_deleted,
             R.layout.item_message_receive_recalled,
@@ -81,7 +75,6 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        // TODO
         val message = data?.get(position)
 
         val viewHolder = holder as MessageViewHolder
@@ -90,6 +83,10 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
             if(!message.isBlocked(myUserId)){
                 if(viewHolder.viewType > 2){
                     // FIXME: avatar 设置
+                    if(bitmaps != null && bitmaps?.size > position && bitmaps?.get(position) != null){
+                        viewHolder.avatar?.setImageBitmap(bitmaps?.get(position))
+                    }
+
                     viewHolder.avatar?.setOnClickListener {
                         val intent = Intent(activity, PersonalActivity::class.java)
                         intent.putExtra("userId", message.getSenderId())
@@ -101,7 +98,6 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
                             Log.d("ImplicitIntents", "Can't handle this!")
                         }
                     }
-
 
                     viewHolder.nickname?.text = message.getUsername()
                     viewHolder.content?.text = message.getContent()
@@ -117,12 +113,10 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
                         activity.recallMessage(position, message.getId())
                         viewHolder.messageAction?.visibility = View.GONE
                     }
-                    // TODO: 删除消息
                     viewHolder.messageDelete?.setOnClickListener {
                         activity.deleteMessage(position, message.getId(), myUserId)
                         viewHolder.messageAction?.visibility = View.GONE
                     }
-
 
                     // TODO: 各种特定的跳转
                     when((viewHolder.viewType - 3) % 5){
@@ -191,14 +185,12 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
 
 
     override fun getItemCount(): Int {
-        // TODO
         if (data != null) {
             return data.size
         }
         return 0
     }
 
-    // TODO: 完成MessageViewHolder类
     class MessageViewHolder(itemView: View, var viewType: Int) : RecyclerView.ViewHolder(itemView) {
         var avatar: ImageView? = null
         var nickname: TextView? = null
@@ -215,7 +207,6 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
         var recalledInfo: TextView? = null
         var recalledReedit: TextView? = null
 
-        // TODO: 添加其他包含的其他控件
         init {
             if(viewType != 0){
                 if(viewType > 2){
