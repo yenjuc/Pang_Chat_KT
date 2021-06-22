@@ -13,16 +13,12 @@ import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.chat.Chat
 import com.example.pangchat.chat.ChatMemberAdapter
 import com.example.pangchat.chat.data.ChatRequest
 import com.example.pangchat.chat.data.ChatResult
 import com.example.pangchat.chat.data.ChatUserInfo
-import com.example.pangchat.message.data.MessageRequest
-import com.example.pangchat.message.data.MessageResp
-import com.example.pangchat.message.data.MessageResult
 import com.example.pangchat.user.User
 import com.example.pangchat.user.data.CommonResp
 import com.example.pangchat.user.data.UserRequest
@@ -40,6 +36,8 @@ class ChatInfoActivity : AppCompatActivity() {
     var chat: Chat? = null
     var members = LinkedList<User?>()
 
+    var chatName: TextView? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_info)
@@ -47,7 +45,7 @@ class ChatInfoActivity : AppCompatActivity() {
         var chatId: String? = intent.getStringExtra("chatId")
 
 
-        val chatName = findViewById<TextView>(R.id.chatName)
+        chatName = findViewById<TextView>(R.id.chatName)
         val recyclerView = findViewById<RecyclerView>(R.id.chatInfoMembersView)
         recyclerView.adapter = ChatMemberAdapter(this, members)
         val gridLayoutManager = GridLayoutManager(this, 5)
@@ -59,7 +57,7 @@ class ChatInfoActivity : AppCompatActivity() {
                 getChatMember(chatId)
                 runOnUiThread{
                     if(chat != null){
-                        chatName.text = chat!!.getChatName()
+                        chatName?.text = chat!!.getChatName()
                         members.add(User("-1", "-1", "-1"))
                         recyclerView.adapter?.notifyDataSetChanged()
                     }
@@ -90,6 +88,28 @@ class ChatInfoActivity : AppCompatActivity() {
                     activityFinish()
                 }
             }
+        }
+
+        val chatName = findViewById<LinearLayout>(R.id.chatNameLayout)
+        chatName.setOnClickListener {
+            if(chatId != null){
+                val intent = Intent(this, ChatnameModifyActivity::class.java)
+                intent.putExtra("chatId", chatId)
+                intent.putExtra("chatName", chat?.getChatName())
+                try {
+                    this.startActivity(intent)
+                } catch (ActivityNotFoundException: Exception) {
+                    Log.d("ImplicitIntents", "Can't handle this!")
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val chatname = intent.getStringExtra("chatName")
+        if(chatname != null){
+            chatName?.text = chatname
         }
     }
 

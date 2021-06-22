@@ -28,6 +28,8 @@
             android:name=".ChatInfoActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity android:name=".ModifyInfoActivity" />
+        <activity android:name=".ChatnameModifyActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

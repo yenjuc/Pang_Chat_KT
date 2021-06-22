@@ -75,4 +75,16 @@ class ChatRequest {
         }
     }
 
+    data class ChatModify(val chatId: String, val key: String, val value: String)
+    fun chatModify(chatId: String, key: String, value: String) : ChatResult<ChatInfo> {
+        val (_, _, result) = CookiedFuel.post("/chat/modify").jsonBody(ChatModify(chatId, key, value)).responseObject<ChatInfo>()
+        if (result is fuelResult.Failure) {
+            return ChatResult.Error(result.getException())
+        } else {
+            return if (result.get().success)
+                ChatResult.Success(result.get())
+            else ChatResult.Error(Exception());
+        }
+    }
+
 }
