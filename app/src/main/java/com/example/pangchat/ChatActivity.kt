@@ -116,7 +116,7 @@ class ChatActivity : AppCompatActivity() {
                 Log.d("Debug", "not empty")
                 lifecycleScope.launch {
                     if (chatId != null) {
-                        sendMessage(chatInput.text.toString())
+                        sendMessage(chatInput.text.toString(), "text")
                         recyclerView?.adapter?.notifyDataSetChanged()
                         recyclerView?.scrollToPosition(data!!.size - 1)
                         chatInput.text?.clear()
@@ -136,6 +136,13 @@ class ChatActivity : AppCompatActivity() {
 
             val location = getLocation()
             if(location != null){
+                // TODO: 发送当前位置的Message
+
+                Toast.makeText(this, "发送当前位置", Toast.LENGTH_LONG).show()
+                lifecycleScope.launch {
+                    sendMessage(location.latitude.toString() + ";" + location.longitude.toString(), "location")
+                }
+                /*
                 val mapIntent: Intent = Uri.parse(
                     "geo:" + location.latitude + ", " + location.longitude
                 ).let{
@@ -150,6 +157,10 @@ class ChatActivity : AppCompatActivity() {
                 }catch (ActivityNotFoundException: Exception){
                     Log.d("ImplicitIntents", "Can't handle this!")
                 }
+
+                 */
+            }else{
+                Toast.makeText(this, "获取当前地理位置失败！请打开GPS或网络后再试一次。", Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -230,13 +241,13 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun sendMessage(content: String){
+    private suspend fun sendMessage(content: String, type: String){
         val messageRequest = MessageRequest()
         val result: MessageResult<MessageResp>
 
         withContext(Dispatchers.IO) {
             // FIXME: type
-            result = messageRequest.sendMessage(chatId!!, webSocketClient.userId!!, "text", content)
+            result = messageRequest.sendMessage(chatId!!, webSocketClient.userId!!, type, content)
         }
 
         if (result is MessageResult.Success) {

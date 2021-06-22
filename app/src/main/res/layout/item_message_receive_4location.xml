@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="4dp"
     android:layout_marginVertical="4dp"
-    android:layoutDirection="rtl"
     android:orientation="horizontal"
     android:paddingHorizontal="6dp"
     android:paddingVertical="4dp">
@@ -35,21 +35,51 @@
             android:textStyle="normal"
             android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/message_content"
+        <LinearLayout
+            android:id="@+id/messageBlock"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/message_bubble_end_margin"
-            android:background="@drawable/send_msg_bg"
+            android:background="@drawable/receive_msg_bg"
             android:clickable="true"
-            android:gravity="center_vertical"
-            android:longClickable="true"
-            android:minHeight="@dimen/message_minHeight"
+            android:gravity="start|end"
+            android:orientation="vertical"
             android:paddingStart="12dp"
-            android:paddingTop="6dp"
+            android:paddingTop="8dp"
             android:paddingEnd="8dp"
-            android:paddingBottom="8dp"
-            android:text="@string/sentence10" />
+            android:paddingBottom="8dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/outline_location_on_grey_48dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="我的位置（点击打开地图）" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/message_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:longClickable="true"
+                android:minHeight="@dimen/message_minHeight"
+                android:text="清华大学紫荆学生公寓9号楼" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/messageAction"

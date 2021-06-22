@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="4dp"
@@ -35,21 +36,55 @@
             android:textStyle="normal"
             android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/message_content"
+        <LinearLayout
+            android:id="@+id/messageBlock"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginEnd="@dimen/message_bubble_end_margin"
             android:background="@drawable/send_msg_bg"
             android:clickable="true"
-            android:gravity="center_vertical"
-            android:longClickable="true"
-            android:minHeight="@dimen/message_minHeight"
+            android:gravity="end"
+            android:orientation="vertical"
             android:paddingStart="12dp"
-            android:paddingTop="6dp"
+            android:paddingLeft="6dp"
+            android:paddingTop="8dp"
             android:paddingEnd="8dp"
-            android:paddingBottom="8dp"
-            android:text="@string/sentence10" />
+            android:paddingBottom="10dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="点击播放音频" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/message_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:longClickable="true"
+                android:minHeight="@dimen/message_minHeight"
+                android:text="清华大学紫荆学生公寓9号楼"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/messageAudio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:layout_marginBottom="12dp"
+                app:srcCompat="@drawable/round_graphic_eq_white_24dp" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/messageAction"
