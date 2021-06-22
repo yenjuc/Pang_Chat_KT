@@ -62,6 +62,9 @@ class MainActivity : FragmentActivity() {
         if (intent.getStringExtra("fragment") == "contact") {
             setCurrentFragment(contactsFragment)
         }
+        else if(intent.getStringExtra("fragment")=="discover"){
+            setCurrentFragment(discoverFragment)
+        }
         else{
             setCurrentFragment(chatsFragment) // 初始的Fragment为chatsFragment
         }
