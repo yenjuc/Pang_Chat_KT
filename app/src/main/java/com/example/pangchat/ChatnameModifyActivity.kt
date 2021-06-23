@@ -2,14 +2,17 @@ package com.example.pangchat
 
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.*
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.pangchat.chat.data.ChatInfo
 import com.example.pangchat.chat.data.ChatRequest
 import com.example.pangchat.chat.data.ChatResult
+import com.example.pangchat.websocketClient.webSocketClient
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,6 +23,8 @@ class ChatnameModifyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chatname_modify)
+
+        webSocketClient.context = this
 
         val back = findViewById<ImageView>(R.id.chatnameModifyBackward)
         back.setOnClickListener {

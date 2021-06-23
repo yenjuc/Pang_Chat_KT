@@ -20,6 +20,7 @@ import com.example.pangchat.chat.Chat
 import com.example.pangchat.chat.data.ChatInfo
 import com.example.pangchat.chat.data.ChatRequest
 import com.example.pangchat.chat.data.ChatResult
+import androidx.lifecycle.lifecycleScope
 import com.example.pangchat.contact.AddFriendResult
 import com.example.pangchat.contact.ContactDataSource
 import com.example.pangchat.contact.IsFriendResult
@@ -98,6 +99,13 @@ class PersonalActivity : FragmentActivity() {
                 deleteLayout?.visibility = View.INVISIBLE
             }
             else if (_isFriendResult.value?.isFriend == true) {
+                messageLayout?.setOnClickListener(View.OnClickListener {
+                    Toast.makeText(context, "发消息", Toast.LENGTH_LONG).show()
+                })
+                deleteLayout?.setOnClickListener(View.OnClickListener {
+                    // 调用删除好友对话框
+                    showNormalDialog()
+                })
                 messageLayout?.setOnClickListener {
                     lifecycleScope.launch {
                         var chat: Chat? = newChat(arrayListOf(userId))

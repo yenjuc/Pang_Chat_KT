@@ -12,7 +12,6 @@ import android.location.Location
 import android.location.LocationManager
 import android.media.MediaRecorder
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -22,6 +21,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
@@ -53,7 +53,7 @@ import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.util.*
-import kotlin.collections.ArrayList
+
 
 
 class ChatActivity : AppCompatActivity() {
@@ -84,8 +84,11 @@ class ChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
+
+        webSocketClient.context = this
+
         chatId = intent.getStringExtra("chatId")
-        recyclerView = findViewById(R.id.chatRecyclerView)
+        recyclerView = findViewById<RecyclerView>(R.id.chatRecyclerView)
         val chatinfo = findViewById<ImageView>(R.id.chatInfo)
         data = LinkedList()
         messages = ArrayList()
@@ -157,27 +160,6 @@ class ChatActivity : AppCompatActivity() {
         }
 
         val voiceSender = findViewById<ImageView>(R.id.chatVoice)
-        /*
-        voiceSender.setOnClickListener {
-            if (ActivityCompat.checkSelfPermission(                this,
-                    Manifest.permission.RECORD_AUDIO
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(this, arrayOf(
-                    Manifest.permission.RECORD_AUDIO,
-                    Manifest.permission.ACCESS_COARSE_LOCATION), 1)
-            }else{
-                try {
-                    val recoder: MediaRecorder = MediaRecorder()
-                    recoder.
-                }
-
-            }
-        }
-
-         */
-
-
 
         val audioSender = findViewById<ImageView>(R.id.chatVoice)
         audioSender.setOnClickListener {

@@ -7,21 +7,19 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.pangchat.discover.data.DiscoverRequest
 import com.example.pangchat.discover.data.DiscoverResult
 import com.example.pangchat.discover.data.sendPostResult
-import com.example.pangchat.message.data.MessageRequest
-import com.example.pangchat.message.data.MessageResp
-import com.example.pangchat.message.data.MessageResult
 import com.example.pangchat.websocketClient.webSocketClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.*
-import kotlin.collections.ArrayList
 
 //FIXME:纯图片存在问题
 class newPostActivity  : AppCompatActivity() {
@@ -35,6 +33,9 @@ class newPostActivity  : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_post)
+
+        webSocketClient.context = this
+
         userId = intent.getStringExtra("userId")
 
         val back = findViewById<ImageView>(R.id.goback)
