@@ -30,7 +30,7 @@ class ContactsFragment : Fragment() {
     private lateinit var currFriendRecyclerView: RecyclerView
 
 
-    private val _contactInfo = MutableLiveData<ContactInfo>()
+    private var _contactInfo = MutableLiveData<ContactInfo>()
 
     lateinit var contacts:LinkedList<Contact?>
     lateinit var requests:LinkedList<Contact?>
@@ -61,7 +61,9 @@ class ContactsFragment : Fragment() {
             contacts.clear()
             for (index in 0 until _contactInfo.value?.friendsInfo?.size!!) {
                 contacts.add(Contact(_contactInfo.value?.friendsInfo!![index].getUserId(),
-                    _contactInfo.value?.friendsInfo!![index].getUsername(), R.drawable.avatar1))
+                    _contactInfo.value?.friendsInfo!![index].getUsername(),
+                    _contactInfo.value?.friendsInfo!![index].getNickname(),
+                    _contactInfo.value?.friendsInfo!![index].getAvatar() ))
             }
             currFriendRecyclerView.adapter?.notifyDataSetChanged()
 
@@ -69,11 +71,12 @@ class ContactsFragment : Fragment() {
             for (index in 0 until _contactInfo.value?.newfriendsInfo?.size!!) {
                 requests.add(Contact(
                     _contactInfo.value?.newfriendsInfo!![index].getUserId(),
-                    _contactInfo.value?.newfriendsInfo!![index].getUsername(), R.drawable.avatar1))
+                    _contactInfo.value?.newfriendsInfo!![index].getUsername(),
+                    _contactInfo.value?.newfriendsInfo!![index].getNickname(),
+                    _contactInfo.value?.newfriendsInfo!![index].getAvatar()))
             }
             newFriendRecyclerView.adapter?.notifyDataSetChanged()
         }
-
 
 
         val _linearLayoutManager = LinearLayoutManager(this.activity)
@@ -90,7 +93,7 @@ class ContactsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater?.inflate(R.layout.fragment_contacts, container, false)
+        return inflater.inflate(R.layout.fragment_contacts, container, false)
     }
 
     // 调用网络请求函数

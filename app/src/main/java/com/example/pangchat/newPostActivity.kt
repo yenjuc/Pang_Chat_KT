@@ -7,15 +7,23 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.example.pangchat.discover.data.DiscoverRequest
+import com.example.pangchat.discover.data.DiscoverResult
+import com.example.pangchat.discover.data.sendPostResult
+import com.example.pangchat.message.data.MessageRequest
+import com.example.pangchat.message.data.MessageResp
+import com.example.pangchat.message.data.MessageResult
+import com.example.pangchat.websocketClient.webSocketClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.collections.ArrayList
 
-
+//FIXME:纯图片存在问题
 class newPostActivity  : AppCompatActivity() {
     private var userId: String? = null
     private var content:String? = null
@@ -78,7 +86,9 @@ class newPostActivity  : AppCompatActivity() {
         post.setBackgroundColor(Color.parseColor("#EEEEEE"))
         post.isEnabled=false
         post.setOnClickListener {
-            //TODO:向后端发送数据
+            lifecycleScope.launch {
+                content?.let { it1 -> sendPost(images!!, it1) }
+            }
             val post_intent = Intent(this, MainActivity::class.java)
             post_intent.putExtra("fragment","discover")
             try {
@@ -154,4 +164,22 @@ class newPostActivity  : AppCompatActivity() {
             InputMethodManager.HIDE_NOT_ALWAYS
         )
     }
+
+    private suspend fun sendPost(images:ArrayList<String>,content: String){
+        val discoverRequest = DiscoverRequest()
+        val result: DiscoverResult<sendPostResult>
+
+        withContext(Dispatchers.IO) {
+            // FIXME: type
+            result = discoverRequest.sendPost(webSocketClient.userId!!, images, content)
+        }
+
+        if (result is DiscoverResult.Success) {
+            Toast.makeText(this, "发送成功", Toast.LENGTH_SHORT).show()
+        } else {
+            Log.d("ERROR",result.toString())
+        }
+    }
+
+
 }

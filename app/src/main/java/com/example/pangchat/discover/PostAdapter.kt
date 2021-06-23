@@ -2,7 +2,6 @@ package com.example.pangchat.discover
 
 import android.content.Context
 import android.graphics.Color
-import android.text.Layout
 import android.text.TextUtils
 import android.util.Log
 import android.view.Gravity
@@ -11,22 +10,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.core.content.ContextCompat.getDrawable
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.core.widget.doOnTextChanged
-import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.pangchat.DiscoverFragment
 import com.example.pangchat.MainActivity
 import com.example.pangchat.R
 import com.example.pangchat.afterTextChanged
 import com.example.pangchat.comment.CommentAdapter
-import com.example.pangchat.newPostActivity
+import com.example.pangchat.websocketClient.webSocketClient
 import com.google.android.material.textfield.TextInputEditText
-import java.security.AccessController.getContext
 import java.util.*
 
 
-class DiscoverAdapter(private val activity: MainActivity,private val data: LinkedList<Discover?>?) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
+class PostAdapter(private val activity: MainActivity, private val fragment: DiscoverFragment, private val data: LinkedList<Post?>?) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
     private var popView:View?=null
     private var MorePopupWindow: PopupWindow? = null
     private var commentPop:PopupWindow? = null
@@ -62,7 +58,7 @@ class DiscoverAdapter(private val activity: MainActivity,private val data: Linke
         return DiscoverViewHolder(view, viewType)
     }
 
-    private fun showComment(){
+    private fun showComment(post:Post){
             if(commentPop==null){
                 commentPop = view_parent?.let {
                     PopupWindow(commentPopView,
@@ -101,6 +97,11 @@ class DiscoverAdapter(private val activity: MainActivity,private val data: Linke
                 send?.setOnClickListener {
                     //发送comment_text
                     closeKeyBoard()
+                    post.getId()?.let { it1 -> comment_text?.let { it2 ->
+                        fragment.commentPostFun(it1,
+                            it2
+                        )
+                    } }
                     comment_edit?.text?.clear()
                     commentPop!!.dismiss()
                 }
@@ -126,30 +127,41 @@ class DiscoverAdapter(private val activity: MainActivity,private val data: Linke
         }
     }
 
-    private fun showMore(moreBtnView:View){
+    private fun showMore(moreBtnView:View,post: Post){
+        val like: TextView? = popView?.findViewById<TextView>(R.id.like)
         if(MorePopupWindow==null){
             MorePopupWindow = PopupWindow(popView,
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
             MorePopupWindow!!.setOutsideTouchable(true);
             MorePopupWindow!!.setTouchable(true);
             MorePopupWindow!!.setInputMethodMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
-            val like: TextView? = popView?.findViewById<TextView>(R.id.like)
             val comment = popView?.findViewById<TextView>(R.id.comment)
             like?.setOnClickListener {
                 // TODO:发送给后端信息
                 if(like.text=="赞")
                 {
-                    like.text = "取消"
+                    post.getId()?.let { it1 -> fragment.likePostFun(it1,like) }
                 }
                 else{
-                    like.text = "赞"
+                    post.getId()?.let { it1 -> fragment.canceLikePostFun(it1,like) }
                 }
+
             }
             comment?.setOnClickListener {
-                showComment()
+                showComment(post)
             }
 
         }
+        if(post.getLikeIds()?.contains(webSocketClient.userId) == true){
+            if (like != null) {
+                like.text ="取消"
+            }
+        }else{
+            if (like != null) {
+                like.text = "赞"
+            }
+        }
+
         if (MorePopupWindow!!.isShowing()) {
             MorePopupWindow!!.dismiss();
         } else {
@@ -165,27 +177,36 @@ class DiscoverAdapter(private val activity: MainActivity,private val data: Linke
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         // TODO
-        val discover = data?.get(position)
+        val post = data?.get(position)
         val viewHolder = holder as DiscoverViewHolder
-        if (discover != null) {
-            viewHolder.avatar?.setImageResource(discover.getAvatarIcon())
-            viewHolder.nickname?.text = discover.getNickname()
-            viewHolder.content?.text = discover.getText()
-            viewHolder.postTime?.text = discover.getPublishedTime()
-            if(discover.getLikes()==null){
+        if (post != null) {
+            //TODO：图片
+//            viewHolder.avatar?.setImageResource(discover.getAvatarIcon())
+            viewHolder.nickname?.text = post.getNickname()
+            viewHolder.content?.text = post.getText()
+            viewHolder.postTime?.text = post.getPublishedTime()
+            if(post.getLikes().isNullOrEmpty()){
                 viewHolder.Likes?.visibility = View.GONE
             }
-            viewHolder.comment?.adapter = CommentAdapter(discover.getComments())
-            viewHolder.Likes?.text = discover.getLikes()?.let { TextUtils.join(",", it) }
+
+            //FIXME:此处应该直接返回comments
+            viewHolder.comment?.adapter = CommentAdapter(fragment,post.getComments())
+            val _linearLayoutManager = LinearLayoutManager(this.activity)
+            _linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+            viewHolder.comment?.layoutManager = _linearLayoutManager
+
+            if(!post.getLikes().isNullOrEmpty()){
+            viewHolder.Likes?.text = post.getLikes()?.let { TextUtils.join(", ", it) }
+            }
             val viewType = getItemViewType(position)
             viewHolder.moreButton?.setOnClickListener(View.OnClickListener {
-                showMore(viewHolder.moreButton!!)
+                showMore(viewHolder.moreButton!!,post)
             })
 
             for (i in 0 until viewType) {
-                val id = discover.getImages()!![i];
+                val id = post.getImages()!![i];
                 if(id !=null){
-                    viewHolder.imgs?.get(i)?.setImageResource(id)
+                    viewHolder.imgs?.get(i)?.setImageResource(id.toInt())
                 }
             }
         }
@@ -207,7 +228,7 @@ class DiscoverAdapter(private val activity: MainActivity,private val data: Linke
         var postTime: TextView?
         var imgs: Array<ImageView?>? = null
         var Likes: TextView?
-        var comment: ListView?
+        var comment:RecyclerView?
         var moreButton: Button? = null
 
         // TODO: 添加其他包含的其他控件
@@ -217,7 +238,7 @@ class DiscoverAdapter(private val activity: MainActivity,private val data: Linke
             content = itemView.findViewById<TextView?>(R.id.post_content)
             postTime = itemView.findViewById<TextView?>(R.id.post_time)
             Likes = itemView.findViewById<TextView?>(R.id.post_like)
-            comment = itemView.findViewById<ListView?>(R.id.comment_listview)
+            comment = itemView.findViewById<RecyclerView?>(R.id.comment_listview)
             moreButton = itemView.findViewById<Button>(R.id.show_more)
             if (imageCount != 0) {
                 val imgView = intArrayOf(
@@ -233,5 +254,4 @@ class DiscoverAdapter(private val activity: MainActivity,private val data: Linke
             }
         }
     }
-
 }

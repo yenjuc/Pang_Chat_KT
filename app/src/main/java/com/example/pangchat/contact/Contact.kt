@@ -1,20 +1,24 @@
 package com.example.pangchat.contact
 
-class Contact(// 昵称
+class Contact(
         private val userId: String,
-        private val nickname: String?, // 头像
-        private val avatar: Int) {
+        private val username: String,
+        private val nickname: String,
+        private val avatar: String) {
 
     fun getUserId(): String {
         return userId
     }
 
+    fun getUsername(): String {
+        return username
+    }
 
-    fun getAvatar(): Int {
+    fun getAvatar(): String {
         return avatar
     }
 
-    fun getNickname(): String? {
+    fun getNickname(): String {
         return nickname
     }
 

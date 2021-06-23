@@ -90,10 +90,16 @@
                 android:text="余齐齐"
                 android:textColor="#4d88ff"
                 android:textStyle="bold" />
-            <ListView
+<!--            <ListView-->
+<!--                android:id="@+id/comment_listview"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent" />-->
+
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/comment_listview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_marginTop="0dp"/>
 
         </LinearLayout>
     </LinearLayout>

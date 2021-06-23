@@ -1,7 +1,11 @@
 package com.example.pangchat
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -22,6 +26,7 @@ import com.example.pangchat.contact.IsFriendResult
 import com.example.pangchat.fragment.data.Result
 import com.example.pangchat.utils.CookiedFuel
 import com.example.pangchat.websocketClient.webSocketClient
+import com.github.kittinunf.fuel.coroutines.awaitByteArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
@@ -30,18 +35,19 @@ import kotlinx.coroutines.withContext
 class PersonalActivity : FragmentActivity() {
 
     var backView: ImageView ? = null
-    var moreView: ImageView ? = null
+    // var moreView: ImageView ? = null
     var avatarView: ImageView ? = null
     var usernameView: TextView ? = null
     var userIdView: TextView ? = null
     var messageLayout : LinearLayout ? = null
+    var deleteLayout: LinearLayout? = null
 
     lateinit var userId: String
     lateinit var username: String
-    var avatar: Int = 0
+    lateinit var avatar: String
 
-    private var _addFriendResult = MutableLiveData<AddFriendResult>()
-    private var _isFriendResult = MutableLiveData<IsFriendResult>()
+    var _addFriendResult = MutableLiveData<AddFriendResult>()
+    var _isFriendResult = MutableLiveData<IsFriendResult>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,28 +59,43 @@ class PersonalActivity : FragmentActivity() {
         val intent = intent
         userId = intent.getStringExtra("userId").toString()
         username = intent.getStringExtra("username").toString()
-        avatar = intent.getIntExtra("avatar", 0)
+        avatar = intent.getStringExtra("avatar").toString()
 
         setContentView(R.layout.activity_personal)
 
         backView = findViewById<ImageView>(R.id.goback)
-        moreView = findViewById<ImageView>(R.id.more)
+        // moreView = findViewById<ImageView>(R.id.more)
         avatarView = findViewById<ImageView>(R.id.avatar_icon)
         usernameView = findViewById<TextView>(R.id.nickname_text)
         userIdView = findViewById<TextView>(R.id.userid_text)
 
         messageLayout = findViewById<LinearLayout>(R.id.layout_message)
+        deleteLayout = findViewById<LinearLayout>(R.id.layout_delete)
+
         var textView = findViewById<TextView>(R.id.newfriend)
 
         val context: Context = this
 
         // friendNames = intent.getStringArrayListExtra("friendNames")
 
+        lifecycleScope.launch{
+            // 发起下载图片请求
+            val bit: Bitmap;
+            withContext(Dispatchers.IO) {
+                val result = CookiedFuel.get(avatar).awaitByteArray();
+                bit = BitmapFactory.decodeByteArray(result, 0, result.size)
+            }
+            avatarView?.setImageBitmap(bit) // 必须放在IO外面
+        }
+
+
         MainScope().launch {
+
             isFriend(userId)
 
             if (webSocketClient.username == username) {
                 messageLayout?.visibility = View.INVISIBLE
+                deleteLayout?.visibility = View.INVISIBLE
             }
             else if (_isFriendResult.value?.isFriend == true) {
                 messageLayout?.setOnClickListener {
@@ -92,6 +113,13 @@ class PersonalActivity : FragmentActivity() {
                         }
                     }
                 }
+                messageLayout?.setOnClickListener(View.OnClickListener {
+                    Toast.makeText(context, "发消息", Toast.LENGTH_LONG).show()
+                })
+                deleteLayout?.setOnClickListener(View.OnClickListener {
+                    // 调用删除好友对话框
+                    showNormalDialog()
+                })
             }
             else {
                 textView.text = "加好友"
@@ -114,7 +142,6 @@ class PersonalActivity : FragmentActivity() {
 
 
 
-
         backView?.setOnClickListener(View.OnClickListener {
             val intent = Intent()
             intent.putExtra("userId", userId)
@@ -123,13 +150,46 @@ class PersonalActivity : FragmentActivity() {
 
         usernameView?.text = username
         userIdView?.text = userId
-        avatarView?.setImageResource(avatar)
         // TODO: 后续可以通过网络请求设置更多信息
 
 
 
 
     }
+
+    private fun showNormalDialog(){
+        val normalDialog = AlertDialog.Builder(this);
+        normalDialog.setIcon(R.drawable.avatar1);
+        // normalDialog.setTitle("我是一个普通Dialog")
+        normalDialog.setMessage("确定要删除好友吗?");
+        normalDialog.setPositiveButton("确定",
+             DialogInterface.OnClickListener() {
+                 dialog: DialogInterface, which: Int ->
+                 // 发送删除好友申请
+                 MainScope().launch {
+                     deleteFriend(friendName = username)
+                     finish()
+                     val intent = Intent(this@PersonalActivity, MainActivity::class.java)
+                     intent.putExtra("fragment", "contact")
+
+                     try {
+                         startActivity(intent)
+                     } catch (ActivityNotFoundException: Exception) {
+                         Log.d("ImplicitIntents", "Can't handle this!")
+                     }
+                 }
+                 dialog.dismiss()
+            })
+        normalDialog.setNegativeButton("取消",
+             DialogInterface.OnClickListener() {
+                dialog: DialogInterface, which: Int ->
+                 dialog.dismiss()
+            });
+        // 显示
+        normalDialog.show();
+    }
+
+
 
     private fun activityFinish(){
         this.finish()
@@ -164,6 +224,23 @@ class PersonalActivity : FragmentActivity() {
 
         if (result is Result.Success) {
             _isFriendResult.value = result.data
+        } else {
+            print("ex")
+            // TODO：抛出并解析异常
+        }
+    }
+
+    suspend fun deleteFriend(friendName: String) {
+        val contactDataSource = ContactDataSource()
+
+        val result: Result<AddFriendResult>
+
+        withContext(Dispatchers.IO) {
+            result = contactDataSource.deleteFriend(friendName)
+        }
+
+        if (result is Result.Success) {
+
         } else {
             print("ex")
             // TODO：抛出并解析异常

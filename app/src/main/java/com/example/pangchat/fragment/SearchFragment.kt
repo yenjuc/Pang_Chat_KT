@@ -18,13 +18,17 @@ import com.example.pangchat.R
 import com.example.pangchat.afterTextChanged
 import com.example.pangchat.contact.Contact
 import com.example.pangchat.contact.ContactAdapter
+import com.example.pangchat.contact.ContactDataSource
+import com.example.pangchat.contact.ContactInfo
 import com.example.pangchat.fragment.data.Result
 import com.example.pangchat.fragment.data.UserDataSource
 import com.example.pangchat.fragment.data.UserInfo
+import com.example.pangchat.user.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
@@ -43,9 +47,11 @@ class SearchFragment : Fragment() {
     var contacts = LinkedList<Contact?>()
 
     // var friendIds: ArrayList<String> ? = null
-    var friendNames: ArrayList<String> ? = null
+    // var friendNames: ArrayList<String> ? = null
+    var friendsInfo = ArrayList<User>()
 
     var _userInfo = MutableLiveData<UserInfo>()
+    val _contactInfo = MutableLiveData<ContactInfo>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,11 +66,20 @@ class SearchFragment : Fragment() {
 
         recyclerView?.adapter = ContactAdapter(activity, contacts)
 
-        friendNames = activity?.intent?.getStringArrayListExtra("friendNames")
+        // friendNames = activity?.intent?.getStringArrayListExtra("friendNames")
         // friendIds = activity?.intent?.getStringArrayListExtra("friendIds")
 
         if (activity?.intent?.getStringExtra("search") == "friend") {
             // buttonSearch?.visibility = View.INVISIBLE;
+
+            lifecycleScope.launch{
+               getContactInfo()
+
+               friendsInfo.clear()
+               for (i in 0 until _contactInfo.value?.friendsInfo?.size!!) {
+                   friendsInfo.add(_contactInfo.value!!.friendsInfo[i])
+               }
+            }
 
             editText?.afterTextChanged {
                 val searchContent: String = editText?.text.toString()
@@ -92,14 +107,12 @@ class SearchFragment : Fragment() {
                 lifecycleScope.launch {
                     getUserInfo(searchContent);
                     contacts.add(
-                        _userInfo.value?.userId?.let { it1 ->
-                            Contact(
-                                it1,
-                                _userInfo.value?.username,
-                                R.drawable.avatar1
-                            )
-                        }
-
+                        Contact(
+                            _userInfo.value?.userId!!,
+                            _userInfo.value?.username!!,
+                            _userInfo.value?.nickname!!,
+                            _userInfo.value?.avatar!!
+                        )
                     )
                     recyclerView?.adapter?.notifyDataSetChanged()
                     val linearLayoutManager = LinearLayoutManager(activity)
@@ -114,7 +127,7 @@ class SearchFragment : Fragment() {
             activity?.let { it1 -> intent.setClass(it1, MainActivity::class.java) }
             // intent.putExtra("userId", activity?.intent?.getStringExtra("userId"))
             // intent.putExtra("friendIds", friendIds)
-            intent.putExtra("friendNames", friendNames)
+            // intent.putExtra("friendNames", friendNames)
             startActivity(intent)
 
             activity?.finish()
@@ -130,10 +143,26 @@ class SearchFragment : Fragment() {
     }
 
     fun fuzzyMatch(searchContent: String) {
-        for (i in 0 until friendNames?.size!!) {
-            if (friendNames?.get(i)?.contains(searchContent, true) == true) {
-                contacts.add(Contact(friendNames!![i], friendNames!![i], R.drawable.avatar1))
+        for (i in 0 until friendsInfo.size) {
+            if (friendsInfo.get(i).getNickname().contains(searchContent, true) == true) {
+                contacts.add(Contact(friendsInfo[i].getUserId(), friendsInfo[i].getUsername(),
+                    friendsInfo[i].getNickname(), friendsInfo[i].getAvatar()))
             }
+        }
+    }
+
+    suspend fun getContactInfo() {
+        val contactDataSource = ContactDataSource()
+        val result: Result<ContactInfo>
+
+        withContext(Dispatchers.IO) {
+            result = contactDataSource.getContactInfo()
+        }
+
+        if (result is Result.Success) {
+            _contactInfo.value = result.data
+        } else {
+            // TODO：抛出并解析异常
         }
     }
 

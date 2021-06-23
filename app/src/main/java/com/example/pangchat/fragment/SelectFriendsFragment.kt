@@ -12,8 +12,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.chat.Chat
@@ -24,14 +24,14 @@ import com.example.pangchat.contact.Contact
 import com.example.pangchat.contact.ContactDataSource
 import com.example.pangchat.contact.ContactInfo
 import com.example.pangchat.contact.SelectFriendsAdapter
-import com.example.pangchat.websocketClient.webSocketClient
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import com.example.pangchat.fragment.data.Result
 import com.example.pangchat.user.data.CommonResp
 import com.example.pangchat.user.data.UserRequest
 import com.example.pangchat.user.data.UserResult
+import com.example.pangchat.websocketClient.webSocketClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -80,7 +80,8 @@ class SelectFriendsFragment : Fragment() {
                         Contact(
                             _contactInfo.value?.friendsInfo!![index].getUserId(),
                             _contactInfo.value?.friendsInfo!![index].getUsername(),
-                            R.drawable.avatar1
+                            _contactInfo.value?.friendsInfo!![index].getNickname(),
+                            _contactInfo.value?.friendsInfo!![index].getAvatar()
                         )
                     )
                 }

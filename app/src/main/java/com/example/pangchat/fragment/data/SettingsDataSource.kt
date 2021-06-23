@@ -5,7 +5,7 @@ import com.github.kittinunf.fuel.gson.jsonBody
 import com.github.kittinunf.fuel.gson.responseObject
 import com.github.kittinunf.result.Result as fuelResult
 
-data class ModifyUsernameResult(
+data class ModifyNicknameResult(
     val success: Boolean,
     val time: Long,
 )
@@ -23,11 +23,11 @@ data class ModifyAvatarResult(
 
 class SettingsDataSource {
 
-    data class UserNewName(val newUsername: String)
+    data class NewNickName(val newNickname: String)
 
-    fun modifyUsername(newUsername: String): Result<ModifyUsernameResult> {
-        val up = UserNewName(newUsername)
-        val (_, _, result) = CookiedFuel.post("/user/modify/name").jsonBody(up).responseObject<ModifyUsernameResult>()
+    fun modifyNickname(newNickname: String): Result<ModifyNicknameResult> {
+        val up = NewNickName(newNickname)
+        val (_, _, result) = CookiedFuel.post("/user/modify/nickname").jsonBody(up).responseObject<ModifyNicknameResult>()
         if (result is fuelResult.Failure) {
             return Result.Error(result.getException())
         } else {

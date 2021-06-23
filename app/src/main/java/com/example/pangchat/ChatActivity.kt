@@ -1,8 +1,8 @@
 package com.example.pangchat
 
 
-import android.app.Activity
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -14,6 +14,7 @@ import android.media.MediaRecorder
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
@@ -48,9 +49,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.IOException
 import java.io.InputStream
 import java.util.*
 import kotlin.collections.ArrayList
+
 
 class ChatActivity : AppCompatActivity() {
 
@@ -70,6 +74,9 @@ class ChatActivity : AppCompatActivity() {
 
     private var _uploadInfo = MutableLiveData<UploadResult>()
 
+    var mRecorder: MediaRecorder? = null
+
+    var isChecked: Boolean = false
 
     // 相册选择回传码
     val GALLERY_REQUEST_CODE = 1
@@ -150,6 +157,24 @@ class ChatActivity : AppCompatActivity() {
         }
 
 
+        val audioSender = findViewById<ImageView>(R.id.chatVoice)
+        audioSender.setOnClickListener {
+//            isChecked = !isChecked
+//            if (isChecked)
+//            {
+//                startRecord()
+//            }
+//            else
+//            {
+//                stopRecord()
+//            }
+            val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
+            startActivityForResult(intent, 0) //通过startActivityForResult获取音频录制的结果的路径
+        }
+
+
+
+
         val chatAction = findViewById<ImageView>(R.id.chatAction)
         chatAction.setOnClickListener {
             if(chatInput.text?.isEmpty() == false){
@@ -178,7 +203,10 @@ class ChatActivity : AppCompatActivity() {
             if(location != null){
                 Toast.makeText(this, "发送当前位置", Toast.LENGTH_LONG).show()
                 lifecycleScope.launch {
-                    sendMessage(location.latitude.toString() + ";" + location.longitude.toString(), "location")
+                    sendMessage(
+                        location.latitude.toString() + ";" + location.longitude.toString(),
+                        "location"
+                    )
                 }
             }else{
                 Toast.makeText(this, "获取当前地理位置失败！请打开GPS或网络后再试一次。", Toast.LENGTH_LONG).show()
@@ -193,14 +221,20 @@ class ChatActivity : AppCompatActivity() {
 
     private fun getLocation(): Location?{
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        if (ActivityCompat.checkSelfPermission(                this,
+        if (ActivityCompat.checkSelfPermission(
+                this,
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 1)
+            ActivityCompat.requestPermissions(
+                this, arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ), 1
+            )
             return null
         }
 
@@ -231,14 +265,61 @@ class ChatActivity : AppCompatActivity() {
 
             for(index in permissions.indices){
                 if (grantResults[index] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "" + "权限" + permissions[index] + "申请成功", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(
+                        this,
+                        "" + "权限" + permissions[index] + "申请成功",
+                        Toast.LENGTH_SHORT
+                    ).show();
                 } else {
-                    Toast.makeText(this, "" + "权限" + permissions[index] + "申请失败", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(
+                        this,
+                        "" + "权限" + permissions[index] + "申请失败",
+                        Toast.LENGTH_SHORT
+                    ).show();
                 }
             }
         }
     }
 
+    fun startRecord() {
+        val REQUEST_CODE_CONTACT = 101;
+        val permissions : Array<String> = Array(3, { "0" })
+        permissions.set(0, Manifest.permission.RECORD_AUDIO)
+        permissions.set(1, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        permissions.set(2, Manifest.permission.READ_EXTERNAL_STORAGE)
+        //验证是否许可权限
+        for (str : String in permissions) {
+            if (this.checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
+                //申请权限
+                this.requestPermissions(permissions, REQUEST_CODE_CONTACT)
+            }
+        }
+
+        mRecorder = MediaRecorder()
+        mRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC)
+        mRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+        mRecorder!!.setOutputFile(newFileName())
+        mRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+        try {
+            mRecorder!!.prepare()
+        } catch (e: IOException) {
+            // Log.e(LOG_TAG, "prepare() failed")
+        }
+        mRecorder!!.start()
+    }
+
+    fun stopRecord() {
+        mRecorder?.stop()
+        mRecorder?.release()
+        mRecorder = null
+    }
+
+    fun newFileName(): String {
+        // var mFileName: String? = Environment.getExternalStorageDirectory().absolutePath
+        val path: File? = getExternalFilesDir(Environment.DIRECTORY_MUSIC)
+        val s: Long = System.currentTimeMillis()
+        return path?.absolutePath + s.toString() + ".3gp"
+    }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
