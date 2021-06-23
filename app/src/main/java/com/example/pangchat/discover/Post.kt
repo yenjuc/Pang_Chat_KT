@@ -13,6 +13,7 @@ class Post(//昵称
     private val postTime: String?,
     private val imagesList: ArrayList<String?>?=null,
     private var likesIdList:ArrayList<String?>? = null,
+    private var Type:String = "image",
 //        private val commentIdList: ArrayList<String?>?=null,
     private val commentList: LinkedList<Comment?>? = null,
     private var likesNicknameList: ArrayList<String?>? =null
@@ -30,6 +31,9 @@ class Post(//昵称
 //    fun getComments(): ArrayList<String?>?{
 //        return commentIdList
 //    }
+    fun getType(): String {
+        return Type
+    }
     fun getComments(): LinkedList<Comment?>?{
         return commentList
     }

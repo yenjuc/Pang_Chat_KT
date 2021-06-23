@@ -68,8 +68,8 @@
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:orientation="vertical"
-                android:layout_marginRight="20dp"
-                android:layout_marginLeft="20dp">
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp">
         <ImageView
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -102,6 +102,7 @@
                     android:id="@+id/add_image_1"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
+                    android:layout_marginLeft="10dp"
                     android:background="#EEEEEE"
                     android:src="@drawable/ic_add1"
                     />
@@ -131,8 +132,8 @@
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:orientation="vertical"
-                android:layout_marginRight="20dp"
-                android:layout_marginLeft="20dp">
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp">
                 <ImageView
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -164,6 +165,7 @@
                     android:id="@+id/add_image_3"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
+                    android:layout_marginLeft="10dp"
                     android:background="#EEEEEE"
                     android:src="@drawable/ic_add1"
                     />
@@ -177,7 +179,26 @@
                     android:background="@color/grey"
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
         </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:minHeight="0dp"
+                android:minWidth="60dp"
+                android:id="@+id/add_video"
+                android:layout_width="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_height="45dp"
+                android:layout_marginEnd="30dp"
+                android:src="@drawable/ic_baseline_video_library_24"
+                android:background="#EEEEEE"
+                android:layout_marginTop="10dp"
+                android:textColor="#FFFFFF"
+                android:text="Post"/>
+        </RelativeLayout>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
