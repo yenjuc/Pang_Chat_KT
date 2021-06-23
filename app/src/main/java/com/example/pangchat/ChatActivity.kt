@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Location
 import android.location.LocationManager
+import android.media.MediaPlayer
 import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Bundle
@@ -49,9 +50,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.IOException
-import java.io.InputStream
+import java.io.*
 import java.util.*
 
 
@@ -76,6 +75,8 @@ class ChatActivity : AppCompatActivity() {
 
     var mRecorder: MediaRecorder? = null
 
+    var mediaPlayer : MediaPlayer? = null
+
     var isChecked: Boolean = false
 
     // 相册选择回传码
@@ -96,6 +97,7 @@ class ChatActivity : AppCompatActivity() {
         lifecycleScope.launch {
             if (chatId != null) {
                 getChatAndMessage(chatId!!)
+                recyclerView?.adapter?.notifyDataSetChanged()
                 if(messages != null){
                     for(message in messages!!){
                         data.add(message)
@@ -158,25 +160,12 @@ class ChatActivity : AppCompatActivity() {
             startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
         }
 
-        val voiceSender = findViewById<ImageView>(R.id.chatVoice)
-
         val audioSender = findViewById<ImageView>(R.id.chatVoice)
         audioSender.setOnClickListener {
-//            isChecked = !isChecked
-//            if (isChecked)
-//            {
-//                startRecord()
-//            }
-//            else
-//            {
-//                stopRecord()
-//            }
             val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
+            mediaType = "audio"
             startActivityForResult(intent, AUDIO_REQUEST_CODE) //通过startActivityForResult获取音频录制的结果的路径
         }
-
-
-
 
         val chatAction = findViewById<ImageView>(R.id.chatAction)
         chatAction.setOnClickListener {
@@ -216,6 +205,90 @@ class ChatActivity : AppCompatActivity() {
             }
         }
     }
+
+    fun prepareMusic(url: String): Boolean{
+        if(url != null){
+            var filename: String = url.substring(url.lastIndexOf('/'))
+            val file: File = File(filesDir, filename)
+            if (!file.exists()) {
+                lifecycleScope.launch {
+                    // 发起下载音频请求
+                    withContext(Dispatchers.IO) {
+                        val result = CookiedFuel.get(url).awaitByteArray();
+                        val inStream: InputStream = ByteArrayInputStream(result)
+                        file.createNewFile()
+                        val outStream: FileOutputStream = FileOutputStream(file)
+                        val b: ByteArray = ByteArray(1024)
+                        var len = 0
+                        len = inStream.read(b)
+                        while (len != -1) {
+                            outStream.write(b, 0, len)
+                            len = inStream.read(b)
+                        }
+                        outStream.close()
+                        inStream.close()
+                    }
+                    runOnUiThread {
+                        if (mediaPlayer == null){
+                            mediaPlayer = MediaPlayer()
+                        }
+
+                        mediaPlayer?.setDataSource(filesDir.toString() + filename)
+                        mediaPlayer?.prepare()
+                    }
+                }
+            }
+            else {
+                if (mediaPlayer == null){
+                    mediaPlayer = MediaPlayer()
+                }
+                mediaPlayer?.setDataSource(filesDir.toString() + filename)
+                mediaPlayer?.prepare()
+
+            }
+            return true
+        }
+        return false
+    }
+
+    /*
+    fun setAudioAndPrepare(path : String){
+        if (mediaPlayer == null){
+            mediaPlayer = MediaPlayer()
+        }else{
+            mediaPlayer?.release()
+            if(mediaPlayer == null){
+                mediaPlayer = MediaPlayer()
+            }
+        }
+
+        mediaPlayer?.setDataSource(filesDir.toString() + path)
+        mediaPlayer?.prepare()
+    }
+
+     */
+
+    fun mediaClick(){
+        if(mediaPlayer != null){
+            if(mediaPlayer?.isPlaying == true){
+                mediaPlayer?.stop()
+            }else{
+                mediaPlayer?.start()
+            }
+        }
+    }
+
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if (mediaPlayer != null){
+            if (mediaPlayer?.isPlaying == true){
+                mediaPlayer?.stop()
+            }
+            mediaPlayer?.release()
+        }
+    }
+
 
     override fun onResume() {
         super.onResume()
@@ -338,7 +411,11 @@ class ChatActivity : AppCompatActivity() {
 
                             // test
                             if ("." in splited[splited.size - 1] == false) {
-                                splited[splited.size - 1] = splited[splited.size - 1] + ".jpg"
+                                if(mediaType.compareTo("image") == 0){
+                                    splited[splited.size - 1] = splited[splited.size - 1] + ".jpg"
+                                }else if(mediaType.compareTo("video") == 0){
+                                    splited[splited.size - 1] = splited[splited.size - 1] + ".mp4"
+                                }
                             }
 
                             val input: InputStream
@@ -411,8 +488,12 @@ class ChatActivity : AppCompatActivity() {
                 sendMessage(_uploadInfo?.value!!.url, "image")
                 recyclerView?.adapter?.notifyDataSetChanged()
                 recyclerView?.scrollToPosition(data.size - 1)
-            }else{
+            }else if(mediaType.compareTo("video") == 0){
                 sendMessage(_uploadInfo?.value!!.url, "video")
+                recyclerView?.adapter?.notifyDataSetChanged()
+                recyclerView?.scrollToPosition(data.size - 1)
+            }else{
+                sendMessage(_uploadInfo?.value!!.url, "audio")
                 recyclerView?.adapter?.notifyDataSetChanged()
                 recyclerView?.scrollToPosition(data.size - 1)
             }

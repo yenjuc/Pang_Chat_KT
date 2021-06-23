@@ -11,12 +11,22 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.ChatActivity
 import com.example.pangchat.PersonalActivity
 import com.example.pangchat.R
 import com.example.pangchat.VideoPlayActivity
 import com.example.pangchat.message.data.*
+import com.example.pangchat.utils.CookiedFuel
+import com.github.kittinunf.fuel.coroutines.awaitByteArray
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 import java.util.*
 
 class MessageAdapter(private val myUserId: String, private val activity: ChatActivity,
@@ -87,12 +97,6 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
                     if(urlToBitmap.keys.contains(message.getAvatar())){
                         viewHolder.avatar?.setImageBitmap(urlToBitmap[message.getAvatar()])
                     }
-                    /*
-                    if(avatarBitmaps != null && avatarBitmaps?.size > position && avatarBitmaps?.get(position) != null){
-                        viewHolder.avatar?.setImageBitmap(avatarBitmaps?.get(position))
-                    }
-
-                     */
                     viewHolder.avatar?.setOnClickListener {
                         val intent = Intent(activity, PersonalActivity::class.java)
                         intent.putExtra("userId", message.getSenderId())
@@ -112,11 +116,6 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
                     viewHolder.content?.setOnLongClickListener {
                         viewHolder.messageAction?.visibility = View.VISIBLE
                         return@setOnLongClickListener true
-                    }
-
-                    // FIXME:
-                    viewHolder.content?.setOnFocusChangeListener { v, hasFocus ->
-                        Log.d("focus", "focus")
                     }
                     viewHolder.messageCopy?.setOnClickListener{
                         activity.setInput(message.getContent())
@@ -153,7 +152,12 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
                         }
                         // 3: audio
                         3 ->{
-
+                            viewHolder.messageBlock?.setOnClickListener {
+                                if(activity.prepareMusic(message.getContent())){
+                                    // activity.setAudioAndPrepare(message.getContent())
+                                    activity.mediaClick()
+                                }
+                            }
                         }
                         // 4: location
                         4 ->{

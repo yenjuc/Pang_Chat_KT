@@ -31,8 +31,6 @@ class MyWebSocketClient(uri: URI) : WebSocketClient(uri) {
     var urlToBitmap: MutableMap<String, Bitmap> = mutableMapOf()
     lateinit var context: Context
 
-    // data class friend(val friendId: String, val friendName: String)
-
 
     override fun onOpen(handshakedata: ServerHandshake?) {
         send(JSON.toJSONString(mapOf("bizType" to "USER_LOGIN", "username" to username, "password" to password)))

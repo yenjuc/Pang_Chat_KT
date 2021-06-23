@@ -32,27 +32,27 @@ class VideoPlayActivity : AppCompatActivity() {
 
         var mediaController: MediaController = MediaController(this)
 
-        var filename: String? = url?.substring(url.lastIndexOf('/'))
-        if (url != null) {
-            lifecycleScope.launch {
-                // 发起下载视频请求
-                withContext(Dispatchers.IO) {
-                    val result = CookiedFuel.get(url).awaitByteArray();
-                    val inStream: InputStream = ByteArrayInputStream(result)
-                    val file: File = File(filesDir, filename)
-                    if (!file.exists()) {
+        if(url != null){
+            var filename: String = url.substring(url.lastIndexOf('/'))
+            val file: File = File(filesDir, filename)
+            if (!file.exists()) {
+                lifecycleScope.launch {
+                    // 发起下载视频请求
+                    withContext(Dispatchers.IO) {
+                        val result = CookiedFuel.get(url).awaitByteArray();
+                        val inStream: InputStream = ByteArrayInputStream(result)
                         file.createNewFile()
-                    }
-                    val outStream: FileOutputStream = FileOutputStream(file)
-                    val b: ByteArray = ByteArray(1024)
-                    var len = 0
-                    len = inStream.read(b)
-                    while (len != -1) {
-                        outStream.write(b, 0, len)
+                        val outStream: FileOutputStream = FileOutputStream(file)
+                        val b: ByteArray = ByteArray(1024)
+                        var len = 0
                         len = inStream.read(b)
+                        while (len != -1) {
+                            outStream.write(b, 0, len)
+                            len = inStream.read(b)
+                        }
+                        outStream.close()
+                        inStream.close()
                     }
-                    inStream.close()
-                    outStream.close()
                     runOnUiThread {
                         videoView.setVideoPath(filesDir.toString() + filename)
                         mediaController.setMediaPlayer(videoView)
@@ -61,7 +61,14 @@ class VideoPlayActivity : AppCompatActivity() {
                     }
                 }
             }
+            else {
+                videoView.setVideoPath(filesDir.toString() + filename)
+                mediaController.setMediaPlayer(videoView)
+                videoView.setMediaController(mediaController)
+                videoView.start()
+            }
         }
+
     }
 
     override fun onResume() {
