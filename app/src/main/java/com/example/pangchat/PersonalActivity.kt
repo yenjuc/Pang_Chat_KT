@@ -16,6 +16,11 @@ import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import com.example.pangchat.chat.Chat
+import com.example.pangchat.chat.data.ChatInfo
+import com.example.pangchat.chat.data.ChatRequest
+import com.example.pangchat.chat.data.ChatResult
+import androidx.lifecycle.lifecycleScope
 import com.example.pangchat.contact.AddFriendResult
 import com.example.pangchat.contact.ContactDataSource
 import com.example.pangchat.contact.IsFriendResult
@@ -53,7 +58,6 @@ class PersonalActivity : FragmentActivity() {
         webSocketClient.context = this
 
         val intent = intent
-        // myUserId = intent.getStringExtra("myUserId")
         userId = intent.getStringExtra("userId").toString()
         username = intent.getStringExtra("username").toString()
         avatar = intent.getStringExtra("avatar").toString()
@@ -102,6 +106,21 @@ class PersonalActivity : FragmentActivity() {
                     // 调用删除好友对话框
                     showNormalDialog()
                 })
+                messageLayout?.setOnClickListener {
+                    lifecycleScope.launch {
+                        var chat: Chat? = newChat(arrayListOf(userId))
+                        if (chat != null) {
+                            Log.d("click chatid: ", chat.getId())
+                            val intent = Intent(this@PersonalActivity, ChatActivity::class.java)
+                            intent.putExtra("chatId", chat.getId())
+                            try {
+                                startActivity(intent)
+                            } catch (ActivityNotFoundException: Exception) {
+                                Log.d("ImplicitIntents", "Can't handle this!")
+                            }
+                        }
+                    }
+                }
             }
             else {
                 textView.text = "加好友"
@@ -121,6 +140,7 @@ class PersonalActivity : FragmentActivity() {
             }
 
         }
+
 
 
 
@@ -173,6 +193,10 @@ class PersonalActivity : FragmentActivity() {
 
 
 
+    private fun activityFinish(){
+        this.finish()
+    }
+
     // 调用网络请求函数
     suspend fun sendFriendRequest(friendName: String) {
         val contactDataSource = ContactDataSource()
@@ -222,6 +246,23 @@ class PersonalActivity : FragmentActivity() {
         } else {
             print("ex")
             // TODO：抛出并解析异常
+        }
+    }
+
+    suspend fun newChat(members: ArrayList<String>): Chat?{
+        val chatRequest = ChatRequest()
+        val result: ChatResult<ChatInfo>
+
+        withContext(Dispatchers.IO) {
+            result = chatRequest.newChat(webSocketClient.userId!!, members)
+        }
+
+        if (result is ChatResult.Success) {
+            Log.d("chat", "new");
+            return result.data.chat
+        } else {
+            // TODO：抛出并解析异常
+            return null
         }
     }
 
