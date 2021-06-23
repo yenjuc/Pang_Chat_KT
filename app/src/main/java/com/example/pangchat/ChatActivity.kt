@@ -60,7 +60,7 @@ class ChatActivity : AppCompatActivity() {
 
     private var chat: Chat? = null
 
-    private var data: LinkedList<Message?>? = null
+    private var data = LinkedList<Message?>()
 
     private var messages: ArrayList<Message>? = null
 
@@ -88,7 +88,6 @@ class ChatActivity : AppCompatActivity() {
         chatId = intent.getStringExtra("chatId")
         recyclerView = findViewById<RecyclerView>(R.id.chatRecyclerView)
         val chatinfo = findViewById<ImageView>(R.id.chatInfo)
-        data = LinkedList()
         messages = ArrayList()
         recyclerView?.adapter = MessageAdapter(webSocketClient.userId!!, this, data, webSocketClient.urlToBitmap)
         // 取得对应聊天的内容
@@ -97,7 +96,7 @@ class ChatActivity : AppCompatActivity() {
                 getChatAndMessage(chatId!!)
                 if(messages != null){
                     for(message in messages!!){
-                        data!!.add(message)
+                        data.add(message)
                         if(!webSocketClient.urlToBitmap.keys.contains(message.getAvatar())){
                             downloadBitmap(message.getAvatar())
                         }
@@ -157,6 +156,7 @@ class ChatActivity : AppCompatActivity() {
             startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
         }
 
+        val voiceSender = findViewById<ImageView>(R.id.chatVoice)
 
         val audioSender = findViewById<ImageView>(R.id.chatVoice)
         audioSender.setOnClickListener {
@@ -184,7 +184,7 @@ class ChatActivity : AppCompatActivity() {
                     if (chatId != null) {
                         sendMessage(chatInput.text.toString(), "text")
                         recyclerView?.adapter?.notifyDataSetChanged()
-                        recyclerView?.scrollToPosition(data!!.size - 1)
+                        recyclerView?.scrollToPosition(data.size - 1)
                         chatInput.text?.clear()
                     }
                 }
@@ -345,21 +345,6 @@ class ChatActivity : AppCompatActivity() {
                                     splited[splited.size - 1]
                                 ), uri
                             )
-                            // if()
-                            /*
-                            withContext(Dispatchers.IO) {
-                                val result = CookiedFuel.get(_uploadInfo?.value!!.url).awaitByteArray()
-                                if(mediaType.compareTo("image") == 0){
-                                    var bit: Bitmap = BitmapFactory.decodeByteArray(result, 0, result.size)
-
-                                }
-                                // MediaRecorder.VideoEncoder
-                                // bit = BitmapFactory.decodeByteArray(result, 0, result.size)
-                            }
-                             */
-                            // imageView?.setImageBitmap(bit) // 必须放在IO外面
-
-
                         }
                     }
                 } catch (e: Exception) {
@@ -392,11 +377,11 @@ class ChatActivity : AppCompatActivity() {
                 webSocketClient.urlToBitmap!![_uploadInfo?.value!!.url] = bit
                 sendMessage(_uploadInfo?.value!!.url, "image")
                 recyclerView?.adapter?.notifyDataSetChanged()
-                recyclerView?.scrollToPosition(data!!.size - 1)
+                recyclerView?.scrollToPosition(data.size - 1)
             }else{
                 sendMessage(_uploadInfo?.value!!.url, "video")
                 recyclerView?.adapter?.notifyDataSetChanged()
-                recyclerView?.scrollToPosition(data!!.size - 1)
+                recyclerView?.scrollToPosition(data.size - 1)
             }
         } else {
             // TODO：抛出并解析异常
@@ -490,5 +475,10 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    public fun addMessageWebSocket(message: Message) {
+        data.add(message)
+        recyclerView?.adapter?.notifyDataSetChanged()
+        recyclerView?.scrollToPosition(data.size - 1)
+    }
 
 }

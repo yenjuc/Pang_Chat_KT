@@ -121,6 +121,13 @@ class PersonalActivity : FragmentActivity() {
                         }
                     }
                 }
+                messageLayout?.setOnClickListener(View.OnClickListener {
+                    Toast.makeText(context, "发消息", Toast.LENGTH_LONG).show()
+                })
+                deleteLayout?.setOnClickListener(View.OnClickListener {
+                    // 调用删除好友对话框
+                    showNormalDialog()
+                })
             }
             else {
                 textView.text = "加好友"
@@ -141,7 +148,6 @@ class PersonalActivity : FragmentActivity() {
             }
 
         }
-
 
 
 

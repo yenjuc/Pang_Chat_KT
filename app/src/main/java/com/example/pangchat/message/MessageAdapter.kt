@@ -131,7 +131,6 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
                         viewHolder.messageAction?.visibility = View.GONE
                     }
 
-                    // TODO: 各种特定的跳转和设置
                     when((viewHolder.viewType - 3) % 5){
                         1 ->{
                             if(urlToBitmap.keys.contains(message.getContent())){
