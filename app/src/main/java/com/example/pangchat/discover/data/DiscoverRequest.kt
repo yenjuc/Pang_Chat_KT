@@ -17,7 +17,7 @@ data class sendPostResult(
 data class postGetAllResult(
     val success: Boolean,
     val time: Long,
-    val posts: LinkedList<Post?>
+    var posts: LinkedList<Post?>
     )
 
 data class postLikeResult(
@@ -52,6 +52,9 @@ class DiscoverRequest {
 
     data class postGetAll(val userId: String)
     fun getAllPosts(userId: String):DiscoverResult<postGetAllResult>{
+        val (_, _, resultqwq) = CookiedFuel.post("/post/getAll").jsonBody(
+            postGetAll(userId)
+        ).responseString()
         val (_, _, result) = CookiedFuel.post("/post/getAll").jsonBody(
             postGetAll(userId)
         ).responseObject<postGetAllResult>()

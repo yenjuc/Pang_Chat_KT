@@ -102,19 +102,23 @@ class SearchFragment : Fragment() {
             buttonSearch?.setOnClickListener(View.OnClickListener {
                 val searchContent: String = editText?.text.toString()
 
-                contacts.clear()
-
                 lifecycleScope.launch {
-                    getUserInfo(searchContent);
-                    contacts.add(
-                        Contact(
-                            _userInfo.value?.userId!!,
-                            _userInfo.value?.username!!,
-                            _userInfo.value?.nickname!!,
-                            _userInfo.value?.avatar!!
+                    getUserInfo(searchContent)
+
+                    contacts.clear()
+
+                    if (_userInfo.value?.success == true) {
+                        contacts.add(
+                            Contact(
+                                _userInfo.value?.userId!!,
+                                _userInfo.value?.username!!,
+                                _userInfo.value?.nickname!!,
+                                _userInfo.value?.avatar!!
+                            )
                         )
-                    )
-                    recyclerView?.adapter?.notifyDataSetChanged()
+                        recyclerView?.adapter?.notifyDataSetChanged()
+                    }
+
                     val linearLayoutManager = LinearLayoutManager(activity)
                     linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
                     recyclerView?.layoutManager = linearLayoutManager

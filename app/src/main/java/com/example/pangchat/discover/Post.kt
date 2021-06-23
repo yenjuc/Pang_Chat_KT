@@ -11,11 +11,11 @@ class Post(//昵称
     private val avatar: String,
     private val textContent: String?,
     private val postTime: String?,
-    private val imagesList: ArrayList<String?>?=null,
+    private var imagesList: ArrayList<String?>?=null,
     private var likesIdList:ArrayList<String?>? = null,
-    private var Type:String = "image",
+    private var type:String = "image",
 //        private val commentIdList: ArrayList<String?>?=null,
-    private val commentList: LinkedList<Comment?>? = null,
+    private var commentList: LinkedList<Comment?>? = null,
     private var likesNicknameList: ArrayList<String?>? =null
         ) {
 
@@ -32,7 +32,7 @@ class Post(//昵称
 //        return commentIdList
 //    }
     fun getType(): String {
-        return Type
+        return type
     }
     fun getComments(): LinkedList<Comment?>?{
         return commentList
@@ -55,7 +55,7 @@ class Post(//昵称
 
     fun getImageCount(): Int {
         if (imagesList != null) {
-            return imagesList.size
+            return imagesList!!.size
         }
         return 0
     }
