@@ -182,18 +182,6 @@ class MainActivity : FragmentActivity() {
             false
         })
 
-//        try {
-//            val field: Field = popupMenu.javaClass.getDeclaredField("mPopup")
-//            field.isAccessible = true
-//            val mHelper = field.get(popupMenu) as MenuPopupHelper
-//            mHelper.setForceShowIcon(true)
-//        } catch (e: IllegalAccessException) {
-//            e.printStackTrace()
-//        } catch (e: NoSuchFieldException) {
-//            e.printStackTrace()
-//        }
-
-
         popupMenu.show()
     }
 
@@ -212,9 +200,5 @@ class MainActivity : FragmentActivity() {
             // TODO：抛出并解析异常
         }
     }
-
-
-
-
 
 }

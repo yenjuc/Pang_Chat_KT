@@ -211,7 +211,7 @@ class ChatActivity : AppCompatActivity() {
             var filename: String = url.substring(url.lastIndexOf('/'))
             val file: File = File(filesDir, filename)
             if (!file.exists()) {
-                lifecycleScope.launch {
+                MainScope().launch {
                     // 发起下载音频请求
                     withContext(Dispatchers.IO) {
                         val result = CookiedFuel.get(url).awaitByteArray();
@@ -231,19 +231,25 @@ class ChatActivity : AppCompatActivity() {
                     runOnUiThread {
                         if (mediaPlayer == null){
                             mediaPlayer = MediaPlayer()
+                        }else{
+                            mediaPlayer?.reset()
                         }
 
                         mediaPlayer?.setDataSource(filesDir.toString() + filename)
                         mediaPlayer?.prepare()
+                        mediaPlayer?.start()
                     }
                 }
             }
             else {
                 if (mediaPlayer == null){
                     mediaPlayer = MediaPlayer()
+                }else{
+                    mediaPlayer?.reset()
                 }
                 mediaPlayer?.setDataSource(filesDir.toString() + filename)
                 mediaPlayer?.prepare()
+                mediaPlayer?.start()
 
             }
             return true
@@ -252,31 +258,17 @@ class ChatActivity : AppCompatActivity() {
     }
 
     /*
-    fun setAudioAndPrepare(path : String){
-        if (mediaPlayer == null){
-            mediaPlayer = MediaPlayer()
-        }else{
-            mediaPlayer?.release()
-            if(mediaPlayer == null){
-                mediaPlayer = MediaPlayer()
-            }
-        }
-
-        mediaPlayer?.setDataSource(filesDir.toString() + path)
-        mediaPlayer?.prepare()
-    }
-
-     */
-
     fun mediaClick(){
         if(mediaPlayer != null){
             if(mediaPlayer?.isPlaying == true){
                 mediaPlayer?.stop()
             }else{
-                mediaPlayer?.start()
+
             }
         }
     }
+
+     */
 
 
     override fun onDestroy() {

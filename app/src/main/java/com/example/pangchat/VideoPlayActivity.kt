@@ -12,6 +12,7 @@ import com.example.pangchat.utils.CookiedFuel
 import com.example.pangchat.websocketClient.webSocketClient
 import com.github.kittinunf.fuel.coroutines.awaitByteArray
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.ByteArrayInputStream
@@ -36,7 +37,7 @@ class VideoPlayActivity : AppCompatActivity() {
             var filename: String = url.substring(url.lastIndexOf('/'))
             val file: File = File(filesDir, filename)
             if (!file.exists()) {
-                lifecycleScope.launch {
+                MainScope().launch {
                     // 发起下载视频请求
                     withContext(Dispatchers.IO) {
                         val result = CookiedFuel.get(url).awaitByteArray();

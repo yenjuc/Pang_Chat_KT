@@ -153,10 +153,8 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
                         // 3: audio
                         3 ->{
                             viewHolder.messageBlock?.setOnClickListener {
-                                if(activity.prepareMusic(message.getContent())){
+                                activity.prepareMusic(message.getContent())
                                     // activity.setAudioAndPrepare(message.getContent())
-                                    activity.mediaClick()
-                                }
                             }
                         }
                         // 4: location

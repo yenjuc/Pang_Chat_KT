@@ -58,9 +58,10 @@ class ChatsFragment : Fragment() {
                         data?.add(chat)
                         if(!webSocketClient.urlToBitmap.keys.contains(chat.getChatAvatar())){
                             downloadBitmap(chat.getChatAvatar())
+                            recyclerView?.adapter?.notifyDataSetChanged()
                         }
                     }
-                    recyclerView?.adapter?.notifyDataSetChanged()
+
                 }
             }
         }

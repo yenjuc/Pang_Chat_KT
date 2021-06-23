@@ -32,8 +32,7 @@
             android:gravity="center"
             android:text="昵称"
             android:textSize="14sp"
-            android:textStyle="normal"
-            android:visibility="gone" />
+            android:textStyle="normal" />
 
         <LinearLayout
             android:id="@+id/messageBlock"
