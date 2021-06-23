@@ -156,6 +156,28 @@ class ChatActivity : AppCompatActivity() {
             startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
         }
 
+        val voiceSender = findViewById<ImageView>(R.id.chatVoice)
+        /*
+        voiceSender.setOnClickListener {
+            if (ActivityCompat.checkSelfPermission(                this,
+                    Manifest.permission.RECORD_AUDIO
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(this, arrayOf(
+                    Manifest.permission.RECORD_AUDIO,
+                    Manifest.permission.ACCESS_COARSE_LOCATION), 1)
+            }else{
+                try {
+                    val recoder: MediaRecorder = MediaRecorder()
+                    recoder.
+                }
+
+            }
+        }
+
+         */
+
+
 
         val audioSender = findViewById<ImageView>(R.id.chatVoice)
         audioSender.setOnClickListener {
