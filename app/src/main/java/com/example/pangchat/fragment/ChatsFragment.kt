@@ -128,4 +128,11 @@ class ChatsFragment : Fragment() {
             return ChatsFragment()
         }
     }
+
+    public fun hasMessage(){
+        lifecycleScope.launch {
+            getUserChats()
+            recyclerView?.adapter?.notifyDataSetChanged()
+        }
+    }
 }

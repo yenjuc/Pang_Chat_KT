@@ -60,7 +60,7 @@ class ChatActivity : AppCompatActivity() {
 
     private var chat: Chat? = null
 
-    private var data: LinkedList<Message?>? = null
+    private var data = LinkedList<Message?>()
 
     private var messages: ArrayList<Message>? = null
 
@@ -90,7 +90,6 @@ class ChatActivity : AppCompatActivity() {
         chatId = intent.getStringExtra("chatId")
         recyclerView = findViewById<RecyclerView>(R.id.chatRecyclerView)
         val chatinfo = findViewById<ImageView>(R.id.chatInfo)
-        data = LinkedList()
         messages = ArrayList()
         recyclerView?.adapter = MessageAdapter(webSocketClient.userId!!, this, data, webSocketClient.urlToBitmap)
         // 取得对应聊天的内容
@@ -99,7 +98,7 @@ class ChatActivity : AppCompatActivity() {
                 getChatAndMessage(chatId!!)
                 if(messages != null){
                     for(message in messages!!){
-                        data!!.add(message)
+                        data.add(message)
                         if(!webSocketClient.urlToBitmap.keys.contains(message.getAvatar())){
                             downloadBitmap(message.getAvatar())
                         }
@@ -187,7 +186,7 @@ class ChatActivity : AppCompatActivity() {
                     if (chatId != null) {
                         sendMessage(chatInput.text.toString(), "text")
                         recyclerView?.adapter?.notifyDataSetChanged()
-                        recyclerView?.scrollToPosition(data!!.size - 1)
+                        recyclerView?.scrollToPosition(data.size - 1)
                         chatInput.text?.clear()
                     }
                 }
@@ -220,7 +219,6 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        Log.d("back: ", "resume")
     }
 
     private fun getLocation(): Location?{
@@ -380,11 +378,11 @@ class ChatActivity : AppCompatActivity() {
                 webSocketClient.urlToBitmap!![_uploadInfo?.value!!.url] = bit
                 sendMessage(_uploadInfo?.value!!.url, "image")
                 recyclerView?.adapter?.notifyDataSetChanged()
-                recyclerView?.scrollToPosition(data!!.size - 1)
+                recyclerView?.scrollToPosition(data.size - 1)
             }else{
                 sendMessage(_uploadInfo?.value!!.url, "video")
                 recyclerView?.adapter?.notifyDataSetChanged()
-                recyclerView?.scrollToPosition(data!!.size - 1)
+                recyclerView?.scrollToPosition(data.size - 1)
             }
         } else {
             // TODO：抛出并解析异常
@@ -478,5 +476,10 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
+    public fun addMessageWebSocket(message: Message) {
+        data.add(message)
+        recyclerView?.adapter?.notifyDataSetChanged()
+        recyclerView?.scrollToPosition(data.size - 1)
+    }
 
 }

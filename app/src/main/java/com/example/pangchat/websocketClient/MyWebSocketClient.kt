@@ -8,12 +8,16 @@ import android.content.Context.NOTIFICATION_SERVICE
 import android.graphics.Bitmap
 import androidx.core.app.NotificationCompat
 import com.alibaba.fastjson.JSON
+import com.example.pangchat.ChatActivity
+import com.example.pangchat.MainActivity
 import com.example.pangchat.R
+import com.example.pangchat.message.Message
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake
 import java.net.URI
+import java.sql.Time
 
 // 全局变量，所有组件共享此websocket client
 lateinit var webSocketURI: URI
@@ -54,9 +58,18 @@ class MyWebSocketClient(uri: URI) : WebSocketClient(uri) {
                 sendSimpleNotification("新好友提醒", "$name 请求添加你为好友")
             }
             else if (obj.get("bizType") == "MESSAGE_SEND") {
-                val name: String = obj.get("senderName") as String
-                val Id: String = obj.get("senderId") as String
-                sendSimpleNotification("新消息提醒", "$name 发送了一条消息")
+                val id: String = obj.get("id") as String
+                val senderId: String = obj.get("senderId") as String
+                val username: String = obj.get("username") as String
+                val avatar: String = obj.get("avatar") as String
+                val content: String = obj.get("content") as String
+                val type: String = obj.get("type") as String
+                val timeStp: String = obj.get("timeStp") as String
+                if(context is ChatActivity){
+                    (context as ChatActivity).addMessageWebSocket(Message(id, senderId, username,
+                        avatar, arrayListOf(),false, content, type, timeStp))
+                }
+                sendSimpleNotification("新消息提醒", "$username 发送了一条消息")
             }
 
         }
