@@ -20,7 +20,6 @@ import com.example.pangchat.chat.Chat
 import com.example.pangchat.chat.data.ChatInfo
 import com.example.pangchat.chat.data.ChatRequest
 import com.example.pangchat.chat.data.ChatResult
-import androidx.lifecycle.lifecycleScope
 import com.example.pangchat.contact.AddFriendResult
 import com.example.pangchat.contact.ContactDataSource
 import com.example.pangchat.contact.IsFriendResult
@@ -46,6 +45,7 @@ class PersonalActivity : FragmentActivity() {
     lateinit var userId: String
     lateinit var username: String
     lateinit var avatar: String
+
 
     var _addFriendResult = MutableLiveData<AddFriendResult>()
     var _isFriendResult = MutableLiveData<IsFriendResult>()
@@ -95,8 +95,8 @@ class PersonalActivity : FragmentActivity() {
             isFriend(userId)
 
             if (webSocketClient.username == username) {
-                messageLayout?.visibility = View.INVISIBLE
-                deleteLayout?.visibility = View.INVISIBLE
+                messageLayout?.visibility = View.GONE
+                deleteLayout?.visibility = View.GONE
             }
             else if (_isFriendResult.value?.isFriend == true) {
                 messageLayout?.setOnClickListener(View.OnClickListener {
@@ -124,6 +124,7 @@ class PersonalActivity : FragmentActivity() {
             }
             else {
                 textView.text = "加好友"
+                deleteLayout?.visibility = View.GONE
                 messageLayout?.setOnClickListener(View.OnClickListener {
                     Toast.makeText(context, "加好友", Toast.LENGTH_LONG).show()
                     MainScope().launch {
@@ -157,6 +158,11 @@ class PersonalActivity : FragmentActivity() {
 
 
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        webSocketClient.context = this
     }
 
     private fun showNormalDialog(){

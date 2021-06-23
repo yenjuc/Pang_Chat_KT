@@ -24,8 +24,6 @@ class ChatnameModifyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chatname_modify)
 
-        webSocketClient.context = this
-
         val back = findViewById<ImageView>(R.id.chatnameModifyBackward)
         back.setOnClickListener {
             this.finish()
@@ -55,6 +53,11 @@ class ChatnameModifyActivity : AppCompatActivity() {
                 Toast.makeText(this, "不可将群聊名置为空", Toast.LENGTH_LONG).show()
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        webSocketClient.context = this
     }
 
     private fun modify(chatId: String, value: String){

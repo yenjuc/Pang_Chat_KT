@@ -26,8 +26,6 @@ class VideoPlayActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_play)
 
-        webSocketClient.context = this
-
         var videoView: VideoView = findViewById(R.id.videoView)
 
         var url: String? = intent.getStringExtra("videoUrl")
@@ -65,4 +63,10 @@ class VideoPlayActivity : AppCompatActivity() {
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        webSocketClient.context = this
+    }
+
 }

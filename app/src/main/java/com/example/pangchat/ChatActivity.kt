@@ -85,8 +85,6 @@ class ChatActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
-        webSocketClient.context = this
-
         chatId = intent.getStringExtra("chatId")
         recyclerView = findViewById<RecyclerView>(R.id.chatRecyclerView)
         val chatinfo = findViewById<ImageView>(R.id.chatInfo)
@@ -219,7 +217,7 @@ class ChatActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        Log.d("back: ", "resume")
+        webSocketClient.context = this
     }
 
     private fun getLocation(): Location?{

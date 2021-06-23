@@ -3,7 +3,6 @@ package com.example.pangchat
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -12,18 +11,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.lifecycleScope
 import com.example.pangchat.contact.ContactDataSource
 import com.example.pangchat.contact.ContactInfo
-import com.example.pangchat.discover.data.DiscoverRequest
-import com.example.pangchat.discover.data.DiscoverResult
-import com.example.pangchat.discover.data.postLikeResult
-import com.example.pangchat.discover.data.sendPostResult
 import com.example.pangchat.fragment.*
 import com.example.pangchat.fragment.data.Result
-import com.example.pangchat.message.data.MessageRequest
-import com.example.pangchat.message.data.MessageResp
-import com.example.pangchat.message.data.MessageResult
 import com.example.pangchat.utils.CookiedFuel
 import com.example.pangchat.websocketClient.webSocketClient
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -52,7 +43,7 @@ class MainActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
 
         CookiedFuel.basePath = resources.getString(R.string.BACKEND_URL);
-        webSocketClient.context = this
+
 
         // val intent = intent
         // userId = intent.getStringExtra("userId")
@@ -152,6 +143,11 @@ class MainActivity : FragmentActivity() {
             false
         }
         )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        webSocketClient.context = this
     }
 
     private fun setCurrentFragment(fragment: Fragment?) {

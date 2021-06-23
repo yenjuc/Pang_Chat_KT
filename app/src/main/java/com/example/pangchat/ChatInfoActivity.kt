@@ -39,8 +39,6 @@ class ChatInfoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_info)
 
-        webSocketClient.context = this
-
         var chatId: String? = intent.getStringExtra("chatId")
 
 
@@ -118,6 +116,7 @@ class ChatInfoActivity : AppCompatActivity() {
         if(chatname != null){
             chatName?.text = chatname
         }
+        webSocketClient.context = this
     }
 
     private suspend fun activityFinish(){

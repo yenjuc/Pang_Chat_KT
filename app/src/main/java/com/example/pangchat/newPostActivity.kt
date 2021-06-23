@@ -34,8 +34,6 @@ class newPostActivity  : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_post)
 
-        webSocketClient.context = this
-
         userId = intent.getStringExtra("userId")
 
         val back = findViewById<ImageView>(R.id.goback)
@@ -156,6 +154,11 @@ class newPostActivity  : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        webSocketClient.context = this
     }
 
     fun closeKeyBoard() {

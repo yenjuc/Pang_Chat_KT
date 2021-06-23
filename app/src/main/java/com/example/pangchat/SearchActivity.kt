@@ -14,7 +14,6 @@ class SearchActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
 
         CookiedFuel.basePath = resources.getString(R.string.BACKEND_URL);
-        webSocketClient.context = this
 
         setContentView(R.layout.activity_search)
 
@@ -24,7 +23,10 @@ class SearchActivity : FragmentActivity() {
         }
 
 
+    }
 
-
+    override fun onResume() {
+        super.onResume()
+        webSocketClient.context = this
     }
 }

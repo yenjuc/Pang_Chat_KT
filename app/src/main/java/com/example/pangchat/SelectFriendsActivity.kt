@@ -16,7 +16,6 @@ class SelectFriendsActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
 
         CookiedFuel.basePath = resources.getString(R.string.BACKEND_URL);
-        webSocketClient.context = this
 
         val intent = intent
         // val userId = intent.getStringExtra("userId")
@@ -31,4 +30,10 @@ class SelectFriendsActivity : FragmentActivity() {
 
 
     }
+
+    override fun onResume() {
+        super.onResume()
+        webSocketClient.context = this
+    }
+
 }

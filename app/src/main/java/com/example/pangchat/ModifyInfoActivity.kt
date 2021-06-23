@@ -12,8 +12,7 @@ class ModifyInfoActivity : FragmentActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        CookiedFuel.basePath = resources.getString(R.string.BACKEND_URL);
-        webSocketClient.context = this
+        CookiedFuel.basePath = resources.getString(R.string.BACKEND_URL)
 
         val intent = intent
         // val userId = intent.getStringExtra("userId")
@@ -26,6 +25,11 @@ class ModifyInfoActivity : FragmentActivity(){
         val modifyInfoFragment: Fragment = ModifyInfoFragment()
         supportFragmentManager.beginTransaction().replace(R.id.fragment, modifyInfoFragment).commit()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        webSocketClient.context = this
     }
 
 
