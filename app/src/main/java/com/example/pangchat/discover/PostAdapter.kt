@@ -126,36 +126,40 @@ class PostAdapter(private val activity: MainActivity, private val fragment: Disc
     }
 
     private fun showMore(moreBtnView:View,post: Post){
-        val like: TextView? = popView?.findViewById<TextView>(R.id.like)
+
+        val likeText: TextView? = popView?.findViewById<TextView>(R.id.like)
+        val like =popView?.findViewById<LinearLayout>(R.id.like_layout)
         if(MorePopupWindow==null){
             MorePopupWindow = PopupWindow(popView,
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
             MorePopupWindow!!.setOutsideTouchable(true);
             MorePopupWindow!!.setTouchable(true);
             MorePopupWindow!!.setInputMethodMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
-            val comment = popView?.findViewById<TextView>(R.id.comment)
-            like?.setOnClickListener {
-                if(like.text=="赞")
-                {
-                    post.getId()?.let { it1 -> fragment.likePostFun(it1,like) }
-                }
-                else{
-                    post.getId()?.let { it1 -> fragment.canceLikePostFun(it1,like) }
-                }
+//            val comment = popView?.findViewById<TextView>(R.id.comment)
 
-            }
-            comment?.setOnClickListener {
-                showComment(post)
+        }
+        val comment =popView?.findViewById<LinearLayout>(R.id.comment_layout)
+        like?.setOnClickListener {
+            if (likeText != null) {
+                if(likeText.text=="赞") {
+                    post.getId()?.let { it1 -> fragment.likePostFun(it1,likeText) }
+                } else{
+                    post.getId()?.let { it1 -> fragment.canceLikePostFun(it1,likeText) }
+                }
             }
 
         }
+        comment?.setOnClickListener {
+            showComment(post)
+        }
+
         if(post.getLikeIds()?.contains(webSocketClient.userId) == true){
-            if (like != null) {
-                like.text ="取消"
+            if (likeText != null) {
+                likeText.text ="取消"
             }
         }else{
-            if (like != null) {
-                like.text = "赞"
+            if (likeText != null) {
+                likeText.text = "赞"
             }
         }
 
