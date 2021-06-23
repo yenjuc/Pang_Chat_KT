@@ -36,10 +36,10 @@ data class cancelLikeResult(
 )
 
 class DiscoverRequest {
-    data class postSend(val senderId: String, val images: ArrayList<String>, val content: String)
-    fun sendPost(senderId: String, images: ArrayList<String>, content: String):DiscoverResult<sendPostResult>{
+    data class postSend(val senderId: String, val images: ArrayList<String>, val content: String,val Type:String)
+    fun sendPost(senderId: String, images: ArrayList<String>, content: String,type:String):DiscoverResult<sendPostResult>{
         val (_, _, result) = CookiedFuel.post("/post/new").jsonBody(
-            postSend(senderId, images, content)
+            postSend(senderId, images, content,type)
         ).responseObject<sendPostResult>()
         if (result is Result.Failure) {
             return DiscoverResult.Error(result.getException())

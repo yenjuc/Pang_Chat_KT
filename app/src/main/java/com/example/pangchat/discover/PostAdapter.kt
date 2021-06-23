@@ -1,6 +1,7 @@
 package com.example.pangchat.discover
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.text.TextUtils
 import android.util.Log
@@ -12,10 +13,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pangchat.DiscoverFragment
-import com.example.pangchat.MainActivity
-import com.example.pangchat.R
-import com.example.pangchat.afterTextChanged
+import com.example.pangchat.*
 import com.example.pangchat.comment.CommentAdapter
 import com.example.pangchat.websocketClient.webSocketClient
 import com.google.android.material.textfield.TextInputEditText
@@ -182,6 +180,11 @@ class PostAdapter(private val activity: MainActivity, private val fragment: Disc
         if (post != null) {
             //TODO：图片
 //            viewHolder.avatar?.setImageResource(discover.getAvatarIcon())
+            if( webSocketClient.urlToBitmap.keys.contains(post.getAvatarIcon())){
+                viewHolder.avatar?.setImageBitmap(webSocketClient.urlToBitmap[post.getAvatarIcon()])
+            }else{
+                fragment.downLoadImageBitmap(post.getAvatarIcon())
+            }
             viewHolder.nickname?.text = post.getNickname()
             viewHolder.content?.text = post.getText()
             viewHolder.postTime?.text = post.getPublishedTime()
@@ -204,10 +207,24 @@ class PostAdapter(private val activity: MainActivity, private val fragment: Disc
             })
 
             for (i in 0 until viewType) {
-                val id = post.getImages()!![i];
-                if(id !=null){
-                    viewHolder.imgs?.get(i)?.setImageResource(id.toInt())
+                val url = post.getImages()!![i];
+                if(url !=null&&post.getType().equals("image")){
+                    if( webSocketClient.urlToBitmap.keys.contains(url)){
+                        viewHolder.imgs?.get(i)?.setImageBitmap(webSocketClient.urlToBitmap[url])
+                    }else{
+                        fragment.downLoadImageBitmap(url)
+                    }
                 }
+                if(url!=null&&post.getType().equals("video")){
+                    val intent = Intent(activity, VideoPlayActivity::class.java)
+                    intent.putExtra("videoUrl", url)
+                    try{
+                        activity.startActivity(intent)
+                    }catch (ActivityNotFoundException: Exception){
+                        Log.d("ImplicitIntents", "Can't handle this!")
+                    }
+                }
+
             }
         }
     }

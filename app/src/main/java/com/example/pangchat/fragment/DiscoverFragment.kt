@@ -1,6 +1,8 @@
 package com.example.pangchat
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,8 +17,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.discover.Post
 import com.example.pangchat.discover.PostAdapter
 import com.example.pangchat.discover.data.*
+import com.example.pangchat.utils.CookiedFuel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.example.pangchat.websocketClient.webSocketClient
+import com.github.kittinunf.fuel.coroutines.awaitByteArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -190,6 +194,21 @@ class DiscoverFragment : Fragment() {
          */
         fun newInstance(): DiscoverFragment? {
             return DiscoverFragment()
+        }
+    }
+
+    public fun downLoadImageBitmap(url: String){
+        lifecycleScope.launch {
+            downloadBitmap(url)
+            recyclerView?.adapter?.notifyDataSetChanged()
+        }
+    }
+
+    suspend fun downloadBitmap(url: String){
+        withContext(Dispatchers.IO){
+            val result = CookiedFuel.get(url).awaitByteArray();
+            val bit: Bitmap = BitmapFactory.decodeByteArray(result, 0, result.size)
+            webSocketClient.urlToBitmap!!.put(url, bit)
         }
     }
 }
