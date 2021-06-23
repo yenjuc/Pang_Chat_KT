@@ -1,30 +1,16 @@
 package com.example.pangchat
 
 
-import android.Manifest
-import android.app.DownloadManager
-import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
-import android.widget.*
+import android.widget.MediaController
+import android.widget.VideoView
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.pangchat.chat.data.ChatInfo
-import com.example.pangchat.chat.data.ChatRequest
-import com.example.pangchat.chat.data.ChatResult
 import com.example.pangchat.utils.CookiedFuel
 import com.example.pangchat.websocketClient.webSocketClient
 import com.github.kittinunf.fuel.coroutines.awaitByteArray
-import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,7 +18,6 @@ import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.util.*
 
 class VideoPlayActivity : AppCompatActivity() {
 
@@ -40,6 +25,9 @@ class VideoPlayActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_play)
+
+        webSocketClient.context = this
+
         var videoView: VideoView = findViewById(R.id.videoView)
 
         var url: String? = intent.getStringExtra("videoUrl")

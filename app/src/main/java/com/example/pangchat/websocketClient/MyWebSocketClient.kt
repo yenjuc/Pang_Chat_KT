@@ -25,7 +25,7 @@ class MyWebSocketClient(uri: URI) : WebSocketClient(uri) {
     var password:String?=null
     lateinit var context: Context
 
-    data class friend(val friendId: String, val friendName: String)
+    // data class friend(val friendId: String, val friendName: String)
 
 
     override fun onOpen(handshakedata: ServerHandshake?) {
@@ -50,8 +50,13 @@ class MyWebSocketClient(uri: URI) : WebSocketClient(uri) {
                 val name: String = obj.get("friendName") as String
                 val Id: String = obj.get("friendId") as String
                 sendSimpleNotification("新好友提醒", "$name 请求添加你为好友")
-
             }
+            else if (obj.get("bizType") == "MESSAGE_SEND") {
+                val name: String = obj.get("senderName") as String
+                val Id: String = obj.get("senderId") as String
+                sendSimpleNotification("新消息提醒", "$name 发送了一条消息")
+            }
+
         }
 
 

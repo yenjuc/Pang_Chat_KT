@@ -4,6 +4,7 @@ package com.example.pangchat
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -37,6 +38,8 @@ class ChatInfoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_info)
+
+        webSocketClient.context = this
 
         var chatId: String? = intent.getStringExtra("chatId")
 
