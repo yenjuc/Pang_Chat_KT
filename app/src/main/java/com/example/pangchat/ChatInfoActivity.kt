@@ -2,6 +2,8 @@ package com.example.pangchat
 
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -21,7 +23,9 @@ import com.example.pangchat.user.User
 import com.example.pangchat.user.data.CommonResp
 import com.example.pangchat.user.data.UserRequest
 import com.example.pangchat.user.data.UserResult
+import com.example.pangchat.utils.CookiedFuel
 import com.example.pangchat.websocketClient.webSocketClient
+import com.github.kittinunf.fuel.coroutines.awaitByteArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -44,7 +48,7 @@ class ChatInfoActivity : AppCompatActivity() {
 
         chatName = findViewById<TextView>(R.id.chatName)
         val recyclerView = findViewById<RecyclerView>(R.id.chatInfoMembersView)
-        recyclerView.adapter = ChatMemberAdapter(this, members)
+        recyclerView.adapter = ChatMemberAdapter(this, members, webSocketClient.urlToBitmap)
         val gridLayoutManager = GridLayoutManager(this, 5)
         recyclerView.layoutManager = gridLayoutManager
 
@@ -52,6 +56,15 @@ class ChatInfoActivity : AppCompatActivity() {
             Log.d("chatId", chatId)
             lifecycleScope.launch {
                 getChatMember(chatId)
+                recyclerView?.adapter?.notifyDataSetChanged()
+                if(members != null){
+                    for(member in members){
+                        if(!webSocketClient.urlToBitmap.keys.contains(member?.getAvatar())){
+                            downloadImage(member!!.getAvatar(), recyclerView)
+                        }
+                    }
+                }
+
                 runOnUiThread{
                     if(chat != null){
                         chatName?.text = chat!!.getChatName()
@@ -69,6 +82,7 @@ class ChatInfoActivity : AppCompatActivity() {
                 }
             }
         }
+
 
         val back = findViewById<ImageView>(R.id.chatInfoBackward)
         back.setOnClickListener {
@@ -169,6 +183,21 @@ class ChatInfoActivity : AppCompatActivity() {
             this.finish()
         } catch (ActivityNotFoundException: Exception) {
             Log.d("ImplicitIntents", "Can't handle this!")
+        }
+    }
+
+    public fun downloadImage(url: String, recyclerView: RecyclerView){
+        lifecycleScope.launch {
+            downloadBitmap(url)
+            recyclerView.adapter?.notifyDataSetChanged()
+        }
+    }
+
+    suspend fun downloadBitmap(url: String){
+        withContext(Dispatchers.IO){
+            val result = CookiedFuel.get(url).awaitByteArray();
+            val bit: Bitmap = BitmapFactory.decodeByteArray(result, 0, result.size)
+            webSocketClient.urlToBitmap!!.put(url, bit)
         }
     }
 

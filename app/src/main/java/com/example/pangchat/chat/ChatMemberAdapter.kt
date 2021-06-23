@@ -1,6 +1,7 @@
 package com.example.pangchat.chat
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +19,7 @@ import com.example.pangchat.user.User
 import java.lang.reflect.Member
 import java.util.*
 
-class ChatMemberAdapter(private val activity: ChatInfoActivity, private val data: LinkedList<User?>) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
+class ChatMemberAdapter(private val activity: ChatInfoActivity, private val data: LinkedList<User?>, private val urlToBitmap: MutableMap<String, Bitmap>) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
     override fun getItemViewType(position: Int): Int {
         return if(position < data.size - 1){
             0
@@ -41,8 +42,11 @@ class ChatMemberAdapter(private val activity: ChatInfoActivity, private val data
         if (user != null) {
             if (viewHolder.viewType == 0) {
                 viewHolder.username.text = user.getUsername()
-                // FIXME: icon
-                viewHolder.avatar.setImageResource(R.drawable.avatar2)
+
+                if(urlToBitmap.keys.contains(user.getAvatar())){
+                    viewHolder.avatar.setImageBitmap(urlToBitmap[user.getAvatar()])
+                }
+
                 viewHolder.block.setOnClickListener {
                     val intent = Intent(activity, PersonalActivity::class.java)
                     intent.putExtra("userId", user.getUserId())
