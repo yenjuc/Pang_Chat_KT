@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.R
 import com.example.pangchat.contact.SelectFriendsAdapter.SelectFriendsViewHolder
 import com.example.pangchat.utils.CookiedFuel
+import com.example.pangchat.websocketClient.webSocketClient
 import com.github.kittinunf.fuel.coroutines.awaitByteArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,15 +40,16 @@ class SelectFriendsAdapter(private val mContext: FragmentActivity?, private val 
         val contact = data?.get(position)
         if (contact != null) {
 
-            // holder.avatar?.setImageResource(contact.getAvatar())
             mContext?.lifecycleScope?.launch{
-                // 发起下载图片请求
-                val bit: Bitmap;
-                withContext(Dispatchers.IO) {
-                    val result = CookiedFuel.get(contact.getAvatar()).awaitByteArray();
-                    bit = BitmapFactory.decodeByteArray(result, 0, result.size)
+                if(!webSocketClient.urlToBitmap.keys.contains(contact.getAvatar())){
+                    // 发起下载图片请求
+                    val bit: Bitmap;
+                    withContext(Dispatchers.IO) {
+                        val result = CookiedFuel.get(contact.getAvatar()).awaitByteArray();
+                        bit = BitmapFactory.decodeByteArray(result, 0, result.size)
+                    }
                 }
-                holder.avatar?.setImageBitmap(bit) // 必须放在IO外面
+                holder.avatar?.setImageBitmap(webSocketClient.urlToBitmap[contact.getAvatar()]) // 必须放在IO外面
             }
 
             holder.nickname?.text = contact.getNickname()

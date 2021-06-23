@@ -70,13 +70,16 @@ class SettingsFragment : Fragment() {
         lifecycleScope.launch{
             webSocketClient.username?.let { getInfo(it) }
             textView_nickname?.text = _userInfo.value!!.nickname
-            // 发起下载图片请求
-            val bit: Bitmap;
-            withContext(Dispatchers.IO) {
-                val result = CookiedFuel.get(_userInfo.value!!.avatar).awaitByteArray();
-                bit = BitmapFactory.decodeByteArray(result, 0, result.size)
+            if(webSocketClient.urlToBitmap.containsKey(_userInfo.value!!.avatar)){
+                // 发起下载图片请求
+                val bit: Bitmap;
+                withContext(Dispatchers.IO) {
+                    val result = CookiedFuel.get(_userInfo.value!!.avatar).awaitByteArray();
+                    bit = BitmapFactory.decodeByteArray(result, 0, result.size)
+                    webSocketClient.urlToBitmap[_userInfo.value!!.avatar] = bit
+                }
             }
-            imageView?.setImageBitmap(bit) // 必须放在IO外面
+            imageView?.setImageBitmap(webSocketClient.urlToBitmap[_userInfo.value!!.avatar]) // 必须放在IO外面
         }
 
         imageView?.setOnClickListener(View.OnClickListener {

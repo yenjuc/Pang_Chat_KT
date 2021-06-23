@@ -81,12 +81,15 @@ class PersonalActivity : FragmentActivity() {
 
         lifecycleScope.launch{
             // 发起下载图片请求
-            val bit: Bitmap;
-            withContext(Dispatchers.IO) {
-                val result = CookiedFuel.get(avatar).awaitByteArray();
-                bit = BitmapFactory.decodeByteArray(result, 0, result.size)
+            if(!webSocketClient.urlToBitmap.keys.contains(avatar)){
+                val bit: Bitmap;
+                withContext(Dispatchers.IO) {
+                    val result = CookiedFuel.get(avatar).awaitByteArray();
+                    bit = BitmapFactory.decodeByteArray(result, 0, result.size)
+                    webSocketClient.urlToBitmap.put(avatar, bit)
+                }
             }
-            avatarView?.setImageBitmap(bit) // 必须放在IO外面
+            avatarView?.setImageBitmap(webSocketClient.urlToBitmap[avatar]) // 必须放在IO外面
         }
 
 

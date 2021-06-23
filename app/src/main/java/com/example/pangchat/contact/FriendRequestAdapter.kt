@@ -19,6 +19,7 @@ import com.example.pangchat.MainActivity
 import com.example.pangchat.R
 import com.example.pangchat.fragment.data.Result
 import com.example.pangchat.utils.CookiedFuel
+import com.example.pangchat.websocketClient.webSocketClient
 import com.github.kittinunf.fuel.coroutines.awaitByteArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,13 +51,16 @@ class FriendRequestAdapter(private val mContext: FragmentActivity?, private val 
 
             // holder.avatar.setImageResource(contact.getAvatar())
             mContext?.lifecycleScope?.launch{
-                // 发起下载图片请求
-                val bit: Bitmap;
-                withContext(Dispatchers.IO) {
-                    val result = CookiedFuel.get(contact.getAvatar()).awaitByteArray();
-                    bit = BitmapFactory.decodeByteArray(result, 0, result.size)
+                if(!webSocketClient.urlToBitmap.keys.contains(contact.getAvatar())){
+                    // 发起下载图片请求
+                    val bit: Bitmap;
+                    withContext(Dispatchers.IO) {
+                        val result = CookiedFuel.get(contact.getAvatar()).awaitByteArray();
+                        bit = BitmapFactory.decodeByteArray(result, 0, result.size)
+                        webSocketClient.urlToBitmap[contact.getAvatar()] = bit
+                    }
                 }
-                holder.avatar.setImageBitmap(bit) // 必须放在IO外面
+                holder.avatar.setImageBitmap(webSocketClient.urlToBitmap[contact.getAvatar()]) // 必须放在IO外面
             }
 
             holder.nickname.text = contact.getNickname()
