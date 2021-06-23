@@ -12,8 +12,8 @@
     <string name="save">Save</string>
 
     <!-- 全局配置 -->
-    <string name="BACKEND_URL">http://183.173.179.55:7000</string>
-    <string name="SocketURL">ws://183.173.179.55:520/ws</string>
+    <string name="BACKEND_URL">http://183.173.184.222:7000</string>
+    <string name="SocketURL">ws://183.173.184.222:520/ws</string>
 
     <!-- 聊天详情页面 -->
     <string name="chatInfoTitle">聊天信息</string>
@@ -73,15 +73,13 @@
     <string name="paragraph11"> 安情资好社王装信权后机感义后千土。管不就常科铁量不进交压新感。选两内平真存须维他带说七。 </string>
     <string name="paragraph12"> 斗变克道我温级率同八做想原切。运它别大把西到位收边许快连与称华。何维价见史特但流世少装油教面。 </string>
     <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome!"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
-    <string name="logon_failed">"Logon failed"</string>
+
+    <string name="welcome">"欢迎进入!"</string>
+    <string name="invalid_username">不是有效用户名</string>
+    <string name="invalid_password">密码长度必须超过5个字符</string>
+    <string name="login_failed">登录失败!</string>
+    <string name="logon_failed">注册失败!</string>
 
     <string name="title_activity_login">LoginActivity</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -93,6 +91,7 @@
     -->
     <string name="hello_world">Hello Square World!</string>
     <string name="username">Username</string>
-    <string name="sign_in">Sign in</string>
-    <string name="register">register</string>
+    <string name="sign_in">登录</string>
+    <string name="register">注册</string>
+    <string name="action_sign_in_short">登录</string>
 </resources>

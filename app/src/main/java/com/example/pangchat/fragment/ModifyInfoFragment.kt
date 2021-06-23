@@ -50,23 +50,26 @@ class ModifyInfoFragment : Fragment() {
         }
 
         button?.setOnClickListener(View.OnClickListener{
-            Toast.makeText(activity, "提交修改", Toast.LENGTH_LONG).show()
+            Toast.makeText(activity, "修改中", Toast.LENGTH_LONG).show()
 
             lifecycleScope.launch(){
                 var modifyValue : String ? = null
 
                 if (modifyKey == "nickname") {
                     modifyValue = editText?.getText().toString()
-                    modifyNickname(modifyValue!!)
-                    // TODO： 异常处理
+                    modifyNickname(modifyValue)
                 }
                 else if (modifyKey == "password") {
-                    // TODO: 检查两次输入的新密码是否相同
-
                     val oldPassword : String = editText?.getText().toString()
                     modifyValue = editText_1?.getText().toString()
-                    modifyPassword(oldPassword, modifyValue)
-                    // TODO: 异常处理
+                    val modifyValueConfirm = editText_2?.getText().toString()
+                    if (modifyValue != modifyValueConfirm) {
+                        Toast.makeText(activity, "新密码两次输入不一致！", Toast.LENGTH_LONG).show()
+                    }
+                    else
+                    {
+                        modifyPassword(oldPassword, modifyValue)
+                    }
                 }
 
 
@@ -100,7 +103,7 @@ class ModifyInfoFragment : Fragment() {
             result = settingsDataSource.modifyNickname(newNickname)
         }
 
-        if (result is Result.Success) {
+        if (result is Result.Success && result.data.success) {
             Toast.makeText(activity, "修改昵称成功", Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(activity, "修改昵称失败", Toast.LENGTH_SHORT).show()
@@ -116,10 +119,11 @@ class ModifyInfoFragment : Fragment() {
             result = settingsDataSource.modifyPassword(oldPassword, newPassword)
         }
 
-        if (result is Result.Success) {
+        if (result is Result.Success && result.data.success) {
             webSocketClient.password = newPassword
+            Toast.makeText(activity, "修改密码成功", Toast.LENGTH_SHORT).show()
         } else {
-            // TODO：抛出并解析异常
+            Toast.makeText(activity, "修改密码失败", Toast.LENGTH_SHORT).show()
         }
     }
 

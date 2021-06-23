@@ -71,11 +71,15 @@ class MainActivity : FragmentActivity() {
         MainScope().launch {
             getFriendsInfo()
             // friendIds = _contactInfo.value?.friendsId
+
             friendNames.clear()
             friendIds.clear()
-            for (index in 0 until (_contactInfo.value?.friendsInfo?.size!!)) {
-                _contactInfo.value?.friendsInfo!![index].let { friendNames.add(it.getUsername()) }
-                _contactInfo.value?.friendsInfo!![index].let { friendIds.add(it.getUserId()) }
+
+            if (_contactInfo.value?.success == true) {
+                for (index in 0 until (_contactInfo.value?.friendsInfo?.size!!)) {
+                    _contactInfo.value?.friendsInfo!![index].let { friendNames.add(it.getUsername()) }
+                    _contactInfo.value?.friendsInfo!![index].let { friendIds.add(it.getUserId()) }
+                }
             }
 
             intent.putExtra("friendIds", friendIds)
@@ -87,20 +91,7 @@ class MainActivity : FragmentActivity() {
 
         searchView?.setOnClickListener(View.OnClickListener {
 
-            // 用于测试
-//            val manager: NotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-//            val channelId: String = "pangchat";
-//            val channel = NotificationChannel(channelId,"pangchat",NotificationManager.IMPORTANCE_DEFAULT);
-//            manager.createNotificationChannel(channel);
-//            val notification: Notification = NotificationCompat.Builder(this,channelId)
-//                    .setContentTitle("通知标题")
-//                    .setContentText("通知正文")
-//                    .setWhen(System.currentTimeMillis())
-//                    .setSmallIcon(R.drawable.avatar1)
-//                    .build();
-//            manager.notify(1,notification);
-
-            Toast.makeText(this, "进入搜索", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "搜索现有联系人", Toast.LENGTH_LONG).show()
 
             // 表示这个页面是搜索现有的联系人
             intent.putExtra("search", "friend")
@@ -109,13 +100,12 @@ class MainActivity : FragmentActivity() {
             intent.setClass(this@MainActivity, SearchActivity::class.java)
 
             startActivity(intent)
+            this.finish()
         })
 
         menuView = findViewById<ImageView>(R.id.menu)
 
         menuView?.setOnClickListener(View.OnClickListener {
-            Toast.makeText(this, "显示菜单", Toast.LENGTH_LONG).show()
-
             showPopupMenu(this, menuView!!)
         })
 
@@ -173,7 +163,7 @@ class MainActivity : FragmentActivity() {
                     // intent.putExtra("userId", userId)
 
                     startActivity(intent)
-                    // this.finish()
+                    this.finish()
                     return@OnMenuItemClickListener true
                 }
                 R.id.newfriend -> {
@@ -185,7 +175,7 @@ class MainActivity : FragmentActivity() {
                     intent.setClass(this@MainActivity, SearchActivity::class.java)
 
                     startActivity(intent)
-                    // this.finish()
+                    this.finish()
                     return@OnMenuItemClickListener true
                 }
             }
