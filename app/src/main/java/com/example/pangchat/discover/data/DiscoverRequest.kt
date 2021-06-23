@@ -5,6 +5,8 @@ import com.example.pangchat.utils.CookiedFuel
 import com.github.kittinunf.fuel.gson.jsonBody
 import com.github.kittinunf.fuel.gson.responseObject
 import com.github.kittinunf.result.Result
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 data class sendPostResult(
@@ -15,10 +17,15 @@ data class sendPostResult(
 data class postGetAllResult(
     val success: Boolean,
     val time: Long,
-    val posts: ArrayList<Post?>
+    val posts: LinkedList<Post?>
     )
 
 data class postLikeResult(
+    val success: Boolean,
+    val time: Long,
+)
+
+data class postCommentResult(
     val success: Boolean,
     val time: Long,
 )
@@ -85,5 +92,18 @@ class DiscoverRequest {
         }
     }
 
+    data class postComment(val postId: String,val senderId: String,val content: String)
+    fun commentPost(postId: String,senderId: String,content: String):DiscoverResult<postCommentResult>{
+        val (_, _, result) = CookiedFuel.post("/post/comment").jsonBody(
+            postComment(postId,senderId,content)
+        ).responseObject<postCommentResult>()
+        if (result is Result.Failure) {
+            return DiscoverResult.Error(result.getException())
+        } else {
+            return if (result.get().success)
+                DiscoverResult.Success(result.get())
+            else DiscoverResult.Error(Exception());
+        }
+    }
 
 }

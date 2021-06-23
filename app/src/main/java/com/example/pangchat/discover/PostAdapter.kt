@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.DiscoverFragment
 import com.example.pangchat.MainActivity
@@ -18,10 +19,10 @@ import com.example.pangchat.afterTextChanged
 import com.example.pangchat.comment.CommentAdapter
 import com.example.pangchat.websocketClient.webSocketClient
 import com.google.android.material.textfield.TextInputEditText
-import kotlin.collections.ArrayList
+import java.util.*
 
 
-class PostAdapter(private val activity: MainActivity,private val fragment: DiscoverFragment, private val data: ArrayList<Post?>?) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
+class PostAdapter(private val activity: MainActivity, private val fragment: DiscoverFragment, private val data: LinkedList<Post?>?) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
     private var popView:View?=null
     private var MorePopupWindow: PopupWindow? = null
     private var commentPop:PopupWindow? = null
@@ -57,7 +58,7 @@ class PostAdapter(private val activity: MainActivity,private val fragment: Disco
         return DiscoverViewHolder(view, viewType)
     }
 
-    private fun showComment(){
+    private fun showComment(post:Post){
             if(commentPop==null){
                 commentPop = view_parent?.let {
                     PopupWindow(commentPopView,
@@ -96,6 +97,11 @@ class PostAdapter(private val activity: MainActivity,private val fragment: Disco
                 send?.setOnClickListener {
                     //发送comment_text
                     closeKeyBoard()
+                    post.getId()?.let { it1 -> comment_text?.let { it2 ->
+                        fragment.commentPostFun(it1,
+                            it2
+                        )
+                    } }
                     comment_edit?.text?.clear()
                     commentPop!!.dismiss()
                 }
@@ -142,7 +148,7 @@ class PostAdapter(private val activity: MainActivity,private val fragment: Disco
 
             }
             comment?.setOnClickListener {
-                showComment()
+                showComment(post)
             }
 
         }
@@ -184,7 +190,11 @@ class PostAdapter(private val activity: MainActivity,private val fragment: Disco
             }
 
             //FIXME:此处应该直接返回comments
-            viewHolder.comment?.adapter = CommentAdapter(null)
+            viewHolder.comment?.adapter = CommentAdapter(fragment,post.getComments())
+            val _linearLayoutManager = LinearLayoutManager(this.activity)
+            _linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+            viewHolder.comment?.layoutManager = _linearLayoutManager
+
             if(!post.getLikes().isNullOrEmpty()){
             viewHolder.Likes?.text = post.getLikes()?.let { TextUtils.join(", ", it) }
             }
@@ -218,7 +228,7 @@ class PostAdapter(private val activity: MainActivity,private val fragment: Disco
         var postTime: TextView?
         var imgs: Array<ImageView?>? = null
         var Likes: TextView?
-        var comment: ListView?
+        var comment:RecyclerView?
         var moreButton: Button? = null
 
         // TODO: 添加其他包含的其他控件
@@ -228,7 +238,7 @@ class PostAdapter(private val activity: MainActivity,private val fragment: Disco
             content = itemView.findViewById<TextView?>(R.id.post_content)
             postTime = itemView.findViewById<TextView?>(R.id.post_time)
             Likes = itemView.findViewById<TextView?>(R.id.post_like)
-            comment = itemView.findViewById<ListView?>(R.id.comment_listview)
+            comment = itemView.findViewById<RecyclerView?>(R.id.comment_listview)
             moreButton = itemView.findViewById<Button>(R.id.show_more)
             if (imageCount != 0) {
                 val imgView = intArrayOf(

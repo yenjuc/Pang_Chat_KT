@@ -1,19 +1,21 @@
 package com.example.pangchat.discover
 
 import com.example.pangchat.comment.Comment
+import java.util.*
 import kotlin.collections.ArrayList
 
 class Post(//昵称
-        private val id:String?,
-        private val senderId:String?,
-        private val nickname: String?, 
-        private val avatar: String,
-        private val textContent: String?,
-        private val postTime: String?,
-        private val imagesList: ArrayList<String?>?=null,
-        private var likesIdList:ArrayList<String?>? = null,
-        private val commentIdList: ArrayList<String?>?=null,
-        private var likesNicknameList: ArrayList<String?>? =null
+    private val id:String?,
+    private val senderId:String?,
+    private val nickname: String?,
+    private val avatar: String,
+    private val textContent: String?,
+    private val postTime: String?,
+    private val imagesList: ArrayList<String?>?=null,
+    private var likesIdList:ArrayList<String?>? = null,
+//        private val commentIdList: ArrayList<String?>?=null,
+    private val commentList: LinkedList<Comment?>? = null,
+    private var likesNicknameList: ArrayList<String?>? =null
         ) {
 
     fun getId():String?{
@@ -25,8 +27,11 @@ class Post(//昵称
     fun getNickname(): String? {
         return nickname
     }
-    fun getComments(): ArrayList<String?>?{
-        return commentIdList
+//    fun getComments(): ArrayList<String?>?{
+//        return commentIdList
+//    }
+    fun getComments(): LinkedList<Comment?>?{
+        return commentList
     }
     fun getAvatarIcon(): String {
         return avatar
