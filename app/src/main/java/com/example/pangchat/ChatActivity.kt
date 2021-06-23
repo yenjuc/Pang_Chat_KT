@@ -79,6 +79,7 @@ class ChatActivity : AppCompatActivity() {
         setContentView(R.layout.activity_chat)
         chatId = intent.getStringExtra("chatId")
         recyclerView = findViewById(R.id.chatRecyclerView)
+        val chatinfo = findViewById<ImageView>(R.id.chatInfo)
         data = LinkedList()
         messages = ArrayList()
         recyclerView?.adapter = MessageAdapter(webSocketClient.userId!!, this, data, urlToBitmap)
@@ -98,14 +99,7 @@ class ChatActivity : AppCompatActivity() {
                     runOnUiThread {
                         val chatname = findViewById<TextView>(R.id.chatName)
                         chatname.text = chat?.getChatName()
-                        // FIXME: 两人聊天应改成对方名称
-                        /*
-                        if(chat?.getIsGroup() == false){
-                            chatname.text = chat?.getChatName()
-                        }else{
-
-                            chatname.text = "对方用户名"
-                        }*/
+                        if(chat != null && !chat!!.getIsGroup()) chatinfo.visibility = View.INVISIBLE
                     }
                 }
             }
@@ -115,40 +109,36 @@ class ChatActivity : AppCompatActivity() {
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView?.layoutManager = linearLayoutManager
 
-        // init()
         val back = findViewById<ImageView>(R.id.chatBackward)
         back.setOnClickListener { this.finish() }
 
-        val chatinfo = findViewById<ImageView>(R.id.chatInfo)
         chatinfo.setOnClickListener {
-            val intent = Intent(this, ChatInfoActivity::class.java)
-            intent.putExtra("chatId", chatId)
-            try {
-                startActivity(intent)
-                this.finish()
-            } catch (ActivityNotFoundException: Exception) {
-                Log.d("ImplicitIntents", "Can't handle this!")
+            if(chat != null){
+                if(chat!!.getIsGroup()){
+                    val intent = Intent(this, ChatInfoActivity::class.java)
+                    intent.putExtra("chatId", chatId)
+                    try {
+                        startActivity(intent)
+                        this.finish()
+                    } catch (ActivityNotFoundException: Exception) {
+                        Log.d("ImplicitIntents", "Can't handle this!")
+                    }
+                }
             }
         }
 
         val chatInput = findViewById<TextInputEditText>(R.id.chatInput)
 
-        // TODO: set 各种 listener
         val chatMoreAction = findViewById<LinearLayout>(R.id.chatMoreLayout)
-
-        // 假设第一个是发送视频
-
 
         val videoSender = findViewById<ImageView>(R.id.chatVideo)
         videoSender.setOnClickListener{
-            // 修改头像
             val pickIntent : Intent = Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "video/*")
             mediaType = "video"
             startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
         }
-
 
         val imageSender = findViewById<ImageView>(R.id.chatImage)
         imageSender.setOnClickListener{
@@ -274,7 +264,6 @@ class ChatActivity : AppCompatActivity() {
                                 ), uri
                             )
                             // if()
-
                             /*
                             withContext(Dispatchers.IO) {
                                 val result = CookiedFuel.get(_uploadInfo?.value!!.url).awaitByteArray()
@@ -285,7 +274,6 @@ class ChatActivity : AppCompatActivity() {
                                 // MediaRecorder.VideoEncoder
                                 // bit = BitmapFactory.decodeByteArray(result, 0, result.size)
                             }
-
                              */
                             // imageView?.setImageBitmap(bit) // 必须放在IO外面
                         }
@@ -320,7 +308,11 @@ class ChatActivity : AppCompatActivity() {
                 urlToBitmap!![_uploadInfo?.value!!.url] = bit
                 sendMessage(_uploadInfo?.value!!.url, "image")
                 recyclerView?.adapter?.notifyDataSetChanged()
-                // downLoadImageBitmap(_uploadInfo?.value!!.url)
+                recyclerView?.scrollToPosition(data!!.size - 1)
+            }else{
+                sendMessage(_uploadInfo?.value!!.url, "video")
+                recyclerView?.adapter?.notifyDataSetChanged()
+                recyclerView?.scrollToPosition(data!!.size - 1)
             }
         } else {
             // TODO：抛出并解析异常

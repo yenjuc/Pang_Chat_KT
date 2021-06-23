@@ -60,6 +60,14 @@ class ChatInfoActivity : AppCompatActivity() {
                         chatName?.text = chat!!.getChatName()
                         members.add(User("-1", "-1", "-1"))
                         recyclerView.adapter?.notifyDataSetChanged()
+                        if(!chat!!.getIsGroup()){
+                            val chatNameLayout: LinearLayout = findViewById(R.id.chatNameLayout)
+                            chatNameLayout.visibility = View.GONE
+                            val chatAvatarLayout: LinearLayout = findViewById(R.id.chatAvatarLayout)
+                            chatAvatarLayout.visibility = View.GONE
+                            val chatLeaveLayout: LinearLayout = findViewById(R.id.chatLeaveLayout)
+                            chatLeaveLayout.visibility = View.GONE
+                        }
                     }
                 }
             }
@@ -114,16 +122,6 @@ class ChatInfoActivity : AppCompatActivity() {
     }
 
     private suspend fun activityFinish(){
-        /*
-        val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("fragment", "chats")
-        try {
-            startActivity(intent)
-        } catch (ActivityNotFoundException: Exception) {
-            Log.d("ImplicitIntents", "Can't handle this!")
-        }
-
-         */
         this.finish()
     }
 
