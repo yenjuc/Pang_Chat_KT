@@ -60,7 +60,6 @@
                 android:layout_height="35dp"
                 android:gravity="bottom"
                 android:maxLines="1"
-                android:text="@string/sentence1"
                 android:textSize="15sp" />
 
         </LinearLayout>

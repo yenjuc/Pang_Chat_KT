@@ -51,7 +51,6 @@
             android:paddingTop="6dp"
             android:paddingEnd="8dp"
             android:paddingBottom="8dp"
-            android:text="@string/sentence10"
             android:visibility="gone" />
 
         <ImageView

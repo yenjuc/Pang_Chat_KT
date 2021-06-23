@@ -50,8 +50,7 @@
             android:paddingStart="12dp"
             android:paddingTop="6dp"
             android:paddingEnd="8dp"
-            android:paddingBottom="8dp"
-            android:text="@string/sentence10" />
+            android:paddingBottom="8dp" />
 
         <LinearLayout
             android:id="@+id/messageAction"
