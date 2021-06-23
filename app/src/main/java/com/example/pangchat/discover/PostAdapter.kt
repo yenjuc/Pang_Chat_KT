@@ -20,7 +20,7 @@ import com.google.android.material.textfield.TextInputEditText
 import java.util.*
 
 
-class PostAdapter(private val activity: MainActivity, private val fragment: DiscoverFragment, private val data: LinkedList<Post?>?) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
+class PostAdapter(private val activity: MainActivity, private val fragment: DiscoverFragment, var data: LinkedList<Post?>?) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
     private var popView:View?=null
     private var MorePopupWindow: PopupWindow? = null
     private var commentPop:PopupWindow? = null
@@ -135,7 +135,6 @@ class PostAdapter(private val activity: MainActivity, private val fragment: Disc
             MorePopupWindow!!.setInputMethodMode(PopupWindow.INPUT_METHOD_NOT_NEEDED);
             val comment = popView?.findViewById<TextView>(R.id.comment)
             like?.setOnClickListener {
-                // TODO:发送给后端信息
                 if(like.text=="赞")
                 {
                     post.getId()?.let { it1 -> fragment.likePostFun(it1,like) }
@@ -174,12 +173,12 @@ class PostAdapter(private val activity: MainActivity, private val fragment: Disc
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        System.out.println("before bind" + System.currentTimeMillis())
         // TODO
         val post = data?.get(position)
         val viewHolder = holder as DiscoverViewHolder
         if (post != null) {
-            //TODO：图片
-//            viewHolder.avatar?.setImageResource(discover.getAvatarIcon())
+
             if( webSocketClient.urlToBitmap.keys.contains(post.getAvatarIcon())){
                 viewHolder.avatar?.setImageBitmap(webSocketClient.urlToBitmap[post.getAvatarIcon()])
             }else{
@@ -192,7 +191,6 @@ class PostAdapter(private val activity: MainActivity, private val fragment: Disc
                 viewHolder.Likes?.visibility = View.GONE
             }
 
-            //FIXME:此处应该直接返回comments
             viewHolder.comment?.adapter = CommentAdapter(fragment,post.getComments())
             val _linearLayoutManager = LinearLayoutManager(this.activity)
             _linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
@@ -200,6 +198,7 @@ class PostAdapter(private val activity: MainActivity, private val fragment: Disc
 
             if(!post.getLikes().isNullOrEmpty()){
             viewHolder.Likes?.text = post.getLikes()?.let { TextUtils.join(", ", it) }
+            viewHolder.Likes?.visibility = View.VISIBLE
             }
             val viewType = getItemViewType(position)
             viewHolder.moreButton?.setOnClickListener(View.OnClickListener {
@@ -216,12 +215,16 @@ class PostAdapter(private val activity: MainActivity, private val fragment: Disc
                     }
                 }
                 if(url!=null&&post.getType().equals("video")){
-                    val intent = Intent(activity, VideoPlayActivity::class.java)
-                    intent.putExtra("videoUrl", url)
-                    try{
-                        activity.startActivity(intent)
-                    }catch (ActivityNotFoundException: Exception){
-                        Log.d("ImplicitIntents", "Can't handle this!")
+                    viewHolder.imgs?.get(i)?.setImageResource(R.drawable.round_play_circle_outline_grey_48dp)
+                    viewHolder.imgs?.get(i)?.setBackgroundColor(android.graphics.Color.parseColor("#A4A4A4"));
+                    viewHolder.imgs?.get(i)?.setOnClickListener {
+                        val intent = Intent(activity, VideoPlayActivity::class.java)
+                        intent.putExtra("videoUrl", url)
+                        try {
+                            activity.startActivity(intent)
+                        } catch (ActivityNotFoundException: Exception) {
+                            Log.d("ImplicitIntents", "Can't handle this!")
+                        }
                     }
                 }
 
@@ -232,7 +235,7 @@ class PostAdapter(private val activity: MainActivity, private val fragment: Disc
     override fun getItemCount(): Int {
         // TODO
         if (data != null) {
-            return data.size
+            return data!!.size
         }
         return 0
     }

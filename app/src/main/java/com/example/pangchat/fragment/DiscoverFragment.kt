@@ -58,7 +58,7 @@ class DiscoverFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            posts = getAllPost()
+            (recyclerView!!.adapter as PostAdapter).data = getAllPost()
 
             if (recyclerView != null) {
                 recyclerView!!.adapter?.notifyDataSetChanged()
@@ -100,7 +100,7 @@ class DiscoverFragment : Fragment() {
     fun likePostFun(postId: String,like: TextView?){
         lifecycleScope.launch {
             if(likePost(postId)){
-                getAllPost()
+                (recyclerView!!.adapter as PostAdapter).data = getAllPost()
                 if (like != null) {
                     like.text="取消"
                 }
@@ -113,7 +113,7 @@ class DiscoverFragment : Fragment() {
     fun canceLikePostFun(postId: String,like: TextView?){
         lifecycleScope.launch {
             if(cancelLikePost(postId)){
-                getAllPost()
+                (recyclerView!!.adapter as PostAdapter).data = getAllPost()
                 if (like != null) {
                     like.text="赞"
                 }
@@ -125,7 +125,7 @@ class DiscoverFragment : Fragment() {
     fun commentPostFun(postId: String,content: String){
         lifecycleScope.launch {
             if(postComment(postId,content)){
-                getAllPost()
+                (recyclerView!!.adapter as PostAdapter).data = getAllPost()
                 recyclerView?.adapter?.notifyDataSetChanged()
             }
         }
@@ -206,8 +206,11 @@ class DiscoverFragment : Fragment() {
 
     suspend fun downloadBitmap(url: String){
         withContext(Dispatchers.IO){
-            val result = CookiedFuel.get(url).awaitByteArray();
+            System.out.println("before get" + System.currentTimeMillis())
+            val result = CookiedFuel.get(url).awaitByteArray()
+            System.out.println("after get" + System.currentTimeMillis())
             val bit: Bitmap = BitmapFactory.decodeByteArray(result, 0, result.size)
+            System.out.println("after bitmap" + System.currentTimeMillis())
             webSocketClient.urlToBitmap!!.put(url, bit)
         }
     }
