@@ -1,14 +1,22 @@
 package com.example.pangchat
 
 
+import android.Manifest
+import android.app.DownloadManager
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.widget.*
+import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.pangchat.chat.data.ChatInfo
 import com.example.pangchat.chat.data.ChatRequest
@@ -20,9 +28,15 @@ import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.util.*
 
 class VideoPlayActivity : AppCompatActivity() {
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_play)
@@ -32,87 +46,35 @@ class VideoPlayActivity : AppCompatActivity() {
 
         var mediaController: MediaController = MediaController(this)
 
-        /*
-        if(url != null) {
+        var filename: String? = url?.substring(url.lastIndexOf('/'))
+        if (url != null) {
             lifecycleScope.launch {
                 // 发起下载视频请求
-                val byteArray = ByteArray
                 withContext(Dispatchers.IO) {
                     val result = CookiedFuel.get(url).awaitByteArray();
-                    bit = BitmapFactory.decodeByteArray(result, 0, result.size)
+                    val inStream: InputStream = ByteArrayInputStream(result)
+                    val file: File = File(filesDir, filename)
+                    if (!file.exists()) {
+                        file.createNewFile()
+                    }
+                    val outStream: FileOutputStream = FileOutputStream(file)
+                    val b: ByteArray = ByteArray(1024)
+                    var len = 0
+                    len = inStream.read(b)
+                    while (len != -1) {
+                        outStream.write(b, 0, len)
+                        len = inStream.read(b)
+                    }
+                    inStream.close()
+                    outStream.close()
+                    runOnUiThread {
+                        videoView.setVideoPath(filesDir.toString() + filename)
+                        mediaController.setMediaPlayer(videoView)
+                        videoView.setMediaController(mediaController)
+                        videoView.start()
+                    }
                 }
-
             }
         }
-
-         */
-
-
-        if(url != null){
-            videoView.setVideoURI(Uri.parse("http://183.172.182.59:7000/test/1624397853917_4864.mp4"))
-            // videoView.set
-        }
-        mediaController.setMediaPlayer(videoView)
-        videoView.setMediaController(mediaController)
-        videoView.start()
-        /*
-        val back = findViewById<ImageView>(R.id.chatnameModifyBackward)
-        back.setOnClickListener {
-            this.finish()
-        }
-
-        val chatname: String? = intent.getStringExtra("chatName")
-        val input = findViewById<TextInputEditText>(R.id.chatnameInput)
-        if(chatname != null){
-            input.setText(chatname)
-        }
-
-        var chatId: String? = intent.getStringExtra("chatId")
-        val btn = findViewById<Button>(R.id.chatnameModifyBtn)
-        btn.setOnClickListener {
-            if(input.text?.length != 0){
-                modify(chatId!!, input.text.toString())
-                val intent = Intent(this, ChatInfoActivity::class.java)
-                intent.putExtra("chatId", chatId)
-                intent.putExtra("chatName", input.text.toString())
-                try {
-                    startActivity(intent)
-                    this.finish()
-                } catch (ActivityNotFoundException: Exception) {
-                    Log.d("ImplicitIntents", "Can't handle this!")
-                }
-            }else{
-                Toast.makeText(this, "不可将群聊名置为空", Toast.LENGTH_LONG).show()
-            }
-        }
-        */
     }
-
-    /*
-    private fun modify(chatId: String, value: String){
-        lifecycleScope.launch {
-            modifyChatname(chatId, value)
-        }
-    }
-
-    private suspend fun modifyChatname(chatId: String, value: String): Boolean{
-        val chatRequest = ChatRequest()
-        val result: ChatResult<ChatInfo>
-
-        withContext(Dispatchers.IO) {
-            result = chatRequest.chatModify(chatId, "chatName",value)
-        }
-
-        if (result is ChatResult.Success) {
-            Log.d("chat", "success")
-        } else {
-            // TODO：抛出并解析异常
-        }
-
-        return result is ChatResult.Success
-    }
-
-     */
-
-
 }
