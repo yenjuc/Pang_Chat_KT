@@ -122,7 +122,20 @@ class PersonalActivity : FragmentActivity() {
                     }
                 }
                 messageLayout?.setOnClickListener(View.OnClickListener {
-                    Toast.makeText(context, "发消息", Toast.LENGTH_LONG).show()
+
+                        lifecycleScope.launch {
+                            var chat: Chat? = newChat(arrayListOf(userId))
+                            if (chat != null) {
+                                Log.d("click chatid: ", chat.getId())
+                                val intent = Intent(this@PersonalActivity, ChatActivity::class.java)
+                                intent.putExtra("chatId", chat.getId())
+                                try {
+                                    startActivity(intent)
+                                } catch (ActivityNotFoundException: Exception) {
+                                    Log.d("ImplicitIntents", "Can't handle this!")
+                                }
+                            }
+                        }
                 })
                 deleteLayout?.setOnClickListener(View.OnClickListener {
                     // 调用删除好友对话框
