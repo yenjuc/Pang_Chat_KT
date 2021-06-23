@@ -62,6 +62,19 @@ class ContactDataSource {
         }
     }
 
+    fun deleteFriend(friendName: String): Result<AddFriendResult> {
+        val param = NewFriend(friendName)
+        val (_, _, result) = CookiedFuel.post("/friend/delete").jsonBody(param).responseObject<AddFriendResult>()
+
+        if (result.get().success) {
+            return Result.Success(result.get())
+        }
+        else {
+            return Result.Error(Exception())
+        }
+    }
+
+
     data class NewFriendId(val friendId: String)
 
     fun acceptNewFriend(friendId: String): Result<AddFriendResult> {

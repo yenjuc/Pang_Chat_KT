@@ -10,8 +10,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:contentDescription="@string/app_name"
-        android:layout_weight="1"
-        android:src="@drawable/avatar1" />
+        android:layout_weight="1" />
 
     <TextView
         android:id="@+id/nickname_text"
@@ -19,7 +18,6 @@
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:paddingHorizontal="16dp"
-        android:text="昵称"
         android:layout_weight="10"
         android:textAppearance="@style/TextAppearance.AppCompat.Display4"
         android:textSize="18sp"

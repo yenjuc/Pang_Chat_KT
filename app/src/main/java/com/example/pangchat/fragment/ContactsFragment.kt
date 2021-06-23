@@ -63,7 +63,7 @@ class ContactsFragment : Fragment() {
                 contacts.add(Contact(_contactInfo.value?.friendsInfo!![index].getUserId(),
                     _contactInfo.value?.friendsInfo!![index].getUsername(),
                     _contactInfo.value?.friendsInfo!![index].getNickname(),
-                    R.drawable.avatar1 ))
+                    _contactInfo.value?.friendsInfo!![index].getAvatar() ))
             }
             currFriendRecyclerView.adapter?.notifyDataSetChanged()
 
@@ -73,7 +73,7 @@ class ContactsFragment : Fragment() {
                     _contactInfo.value?.newfriendsInfo!![index].getUserId(),
                     _contactInfo.value?.newfriendsInfo!![index].getUsername(),
                     _contactInfo.value?.newfriendsInfo!![index].getNickname(),
-                    R.drawable.avatar1))
+                    _contactInfo.value?.newfriendsInfo!![index].getAvatar()))
             }
             newFriendRecyclerView.adapter?.notifyDataSetChanged()
         }

@@ -107,15 +107,12 @@ class SearchFragment : Fragment() {
                 lifecycleScope.launch {
                     getUserInfo(searchContent);
                     contacts.add(
-                        _userInfo.value?.userId?.let { it1 ->
-                            Contact(
-                                it1,
-                                _userInfo.value?.username!!,
-                                _userInfo.value?.nickname!!,
-                                R.drawable.avatar1
-                            )
-                        }
-
+                        Contact(
+                            _userInfo.value?.userId!!,
+                            _userInfo.value?.username!!,
+                            _userInfo.value?.nickname!!,
+                            _userInfo.value?.avatar!!
+                        )
                     )
                     recyclerView?.adapter?.notifyDataSetChanged()
                     val linearLayoutManager = LinearLayoutManager(activity)
@@ -149,7 +146,7 @@ class SearchFragment : Fragment() {
         for (i in 0 until friendsInfo.size) {
             if (friendsInfo.get(i).getNickname().contains(searchContent, true) == true) {
                 contacts.add(Contact(friendsInfo[i].getUserId(), friendsInfo[i].getUsername(),
-                    friendsInfo[i].getNickname(), R.drawable.avatar1))
+                    friendsInfo[i].getNickname(), friendsInfo[i].getAvatar()))
             }
         }
     }

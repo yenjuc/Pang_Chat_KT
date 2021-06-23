@@ -4,7 +4,7 @@ class Contact(
         private val userId: String,
         private val username: String,
         private val nickname: String,
-        private val avatar: Int) {
+        private val avatar: String) {
 
     fun getUserId(): String {
         return userId
@@ -14,7 +14,7 @@ class Contact(
         return username
     }
 
-    fun getAvatar(): Int {
+    fun getAvatar(): String {
         return avatar
     }
 

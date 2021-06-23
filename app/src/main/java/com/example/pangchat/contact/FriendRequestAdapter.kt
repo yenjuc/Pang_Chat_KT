@@ -1,6 +1,8 @@
 package com.example.pangchat.contact
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.MainActivity
 import com.example.pangchat.R
 import com.example.pangchat.fragment.data.Result
+import com.example.pangchat.utils.CookiedFuel
+import com.github.kittinunf.fuel.coroutines.awaitByteArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -34,16 +38,27 @@ class FriendRequestAdapter(private val mContext: FragmentActivity?, private val 
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendRequestViewHolder {
-        // TODO
+
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_recycle_new_friends, parent, false)
         return FriendRequestViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: FriendRequestViewHolder, position: Int) {
-        // TODO
+
         val contact = data?.get(position)
         if (contact != null) {
-            holder.avatar.setImageResource(contact.getAvatar())
+
+            // holder.avatar.setImageResource(contact.getAvatar())
+            mContext?.lifecycleScope?.launch{
+                // 发起下载图片请求
+                val bit: Bitmap;
+                withContext(Dispatchers.IO) {
+                    val result = CookiedFuel.get(contact.getAvatar()).awaitByteArray();
+                    bit = BitmapFactory.decodeByteArray(result, 0, result.size)
+                }
+                holder.avatar.setImageBitmap(bit) // 必须放在IO外面
+            }
+
             holder.nickname.text = contact.getNickname()
             holder.acceptButton.setOnClickListener(View.OnClickListener {
                 // 接受好友申请 -- 发送请求给数据库，成功后重新推进联系人页面

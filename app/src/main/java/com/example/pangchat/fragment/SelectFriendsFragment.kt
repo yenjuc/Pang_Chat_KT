@@ -81,7 +81,7 @@ class SelectFriendsFragment : Fragment() {
                             _contactInfo.value?.friendsInfo!![index].getUserId(),
                             _contactInfo.value?.friendsInfo!![index].getUsername(),
                             _contactInfo.value?.friendsInfo!![index].getNickname(),
-                            R.drawable.avatar1
+                            _contactInfo.value?.friendsInfo!![index].getAvatar()
                         )
                     )
                 }
