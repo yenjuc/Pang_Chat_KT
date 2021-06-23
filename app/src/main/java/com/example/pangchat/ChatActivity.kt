@@ -589,10 +589,12 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    public fun addMessageWebSocket(message: Message) {
-        data.add(message)
-        recyclerView?.adapter?.notifyDataSetChanged()
-        recyclerView?.scrollToPosition(data.size - 1)
+    public fun addMessageWebSocket(chat: String, message: Message) {
+        if(chatId != null && chatId == chat){
+            data.add(message)
+            recyclerView?.adapter?.notifyDataSetChanged()
+            recyclerView?.scrollToPosition(data.size - 1)
+        }
     }
 
 }

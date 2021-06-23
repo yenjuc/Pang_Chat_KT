@@ -57,6 +57,7 @@ class MyWebSocketClient(uri: URI) : WebSocketClient(uri) {
             }
             // 有新的消息接收
             else if (obj.get("bizType") == "MESSAGE_SEND") {
+                val chatId: String = obj.get("chatId") as String
                 val id: String = obj.get("id") as String
                 val senderId: String = obj.get("senderId") as String
                 val username: String = obj.get("username") as String
@@ -65,7 +66,7 @@ class MyWebSocketClient(uri: URI) : WebSocketClient(uri) {
                 val type: String = obj.get("type") as String
                 val timeStp: String = obj.get("timeStp") as String
                 if(context is ChatActivity){
-                    (context as ChatActivity).addMessageWebSocket(Message(id, senderId, username,
+                    (context as ChatActivity).addMessageWebSocket(chatId, Message(id, senderId, username,
                         avatar, arrayListOf(),false, content, type, timeStp))
                 }
                 sendSimpleNotification("新消息提醒", "$username 发送了一条消息")

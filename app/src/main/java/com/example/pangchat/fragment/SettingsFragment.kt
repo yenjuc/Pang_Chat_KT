@@ -70,7 +70,7 @@ class SettingsFragment : Fragment() {
         lifecycleScope.launch{
             webSocketClient.username?.let { getInfo(it) }
             textView_nickname?.text = _userInfo.value!!.nickname
-            if(webSocketClient.urlToBitmap.containsKey(_userInfo.value!!.avatar)){
+            if(!webSocketClient.urlToBitmap.containsKey(_userInfo.value!!.avatar)){
                 // 发起下载图片请求
                 val bit: Bitmap;
                 withContext(Dispatchers.IO) {
