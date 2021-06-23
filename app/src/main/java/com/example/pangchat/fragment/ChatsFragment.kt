@@ -34,14 +34,14 @@ class ChatsFragment : Fragment() {
     private var chatAdapter: ChatAdapter? = null
     private var data: LinkedList<Chat?>? = null
     private var recyclerView: RecyclerView? = null
-    private var urlToBitmap: MutableMap<String, Bitmap> = mutableMapOf()
+    // private var urlToBitmap: MutableMap<String, Bitmap> = mutableMapOf()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         recyclerView = view.findViewById<RecyclerView?>(R.id.chat_recyclerview)
 
 
         data = LinkedList()
-        chatAdapter = ChatAdapter(activity, data, urlToBitmap)
+        chatAdapter = ChatAdapter(activity, data, webSocketClient.urlToBitmap)
         recyclerView?.adapter = chatAdapter
 
 
@@ -56,7 +56,7 @@ class ChatsFragment : Fragment() {
                 if(chats != null){
                     for (chat in chats) {
                         data?.add(chat)
-                        if(!urlToBitmap.keys.contains(chat.getChatAvatar())){
+                        if(!webSocketClient.urlToBitmap.keys.contains(chat.getChatAvatar())){
                             downloadBitmap(chat.getChatAvatar())
                         }
                     }
@@ -78,7 +78,7 @@ class ChatsFragment : Fragment() {
             if(chats != null){
                 for(chat in chats){
                     data?.add(chat)
-                    if(!urlToBitmap.keys.contains(chat.getChatAvatar())){
+                    if(!webSocketClient.urlToBitmap.keys.contains(chat.getChatAvatar())){
                         downloadBitmap(chat.getChatAvatar())
                     }
                 }
@@ -112,7 +112,7 @@ class ChatsFragment : Fragment() {
         withContext(Dispatchers.IO){
             val result = CookiedFuel.get(url).awaitByteArray();
             val bit: Bitmap = BitmapFactory.decodeByteArray(result, 0, result.size)
-            urlToBitmap!!.put(url, bit)
+            webSocketClient.urlToBitmap!!.put(url, bit)
         }
     }
 

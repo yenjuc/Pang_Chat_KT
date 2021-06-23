@@ -60,7 +60,7 @@ class ChatActivity : AppCompatActivity() {
 
     private var messages: ArrayList<Message>? = null
 
-    private var urlToBitmap: MutableMap<String, Bitmap> = mutableMapOf()
+    // private var urlToBitmap: MutableMap<String, Bitmap> = mutableMapOf()
 
     private var mediaType : String = "image"
 
@@ -82,7 +82,7 @@ class ChatActivity : AppCompatActivity() {
         val chatinfo = findViewById<ImageView>(R.id.chatInfo)
         data = LinkedList()
         messages = ArrayList()
-        recyclerView?.adapter = MessageAdapter(webSocketClient.userId!!, this, data, urlToBitmap)
+        recyclerView?.adapter = MessageAdapter(webSocketClient.userId!!, this, data, webSocketClient.urlToBitmap)
         // 取得对应聊天的内容
         lifecycleScope.launch {
             if (chatId != null) {
@@ -90,7 +90,7 @@ class ChatActivity : AppCompatActivity() {
                 if(messages != null){
                     for(message in messages!!){
                         data!!.add(message)
-                        if(!urlToBitmap.keys.contains(message.getAvatar())){
+                        if(!webSocketClient.urlToBitmap.keys.contains(message.getAvatar())){
                             downloadBitmap(message.getAvatar())
                         }
                     }
@@ -263,19 +263,6 @@ class ChatActivity : AppCompatActivity() {
                                     splited[splited.size - 1]
                                 ), uri
                             )
-                            // if()
-                            /*
-                            withContext(Dispatchers.IO) {
-                                val result = CookiedFuel.get(_uploadInfo?.value!!.url).awaitByteArray()
-                                if(mediaType.compareTo("image") == 0){
-                                    var bit: Bitmap = BitmapFactory.decodeByteArray(result, 0, result.size)
-
-                                }
-                                // MediaRecorder.VideoEncoder
-                                // bit = BitmapFactory.decodeByteArray(result, 0, result.size)
-                            }
-                             */
-                            // imageView?.setImageBitmap(bit) // 必须放在IO外面
                         }
                     }
                 } catch (e: Exception) {
@@ -305,7 +292,7 @@ class ChatActivity : AppCompatActivity() {
             _uploadInfo.value = result.data
             if(mediaType.compareTo("image") == 0){
                 var bit: Bitmap = BitmapFactory.decodeStream(contentResolver?.openInputStream(uri))
-                urlToBitmap!![_uploadInfo?.value!!.url] = bit
+                webSocketClient.urlToBitmap!![_uploadInfo?.value!!.url] = bit
                 sendMessage(_uploadInfo?.value!!.url, "image")
                 recyclerView?.adapter?.notifyDataSetChanged()
                 recyclerView?.scrollToPosition(data!!.size - 1)
@@ -402,7 +389,7 @@ class ChatActivity : AppCompatActivity() {
         withContext(Dispatchers.IO){
             val result = CookiedFuel.get(url).awaitByteArray();
             val bit: Bitmap = BitmapFactory.decodeByteArray(result, 0, result.size)
-            urlToBitmap!!.put(url, bit)
+            webSocketClient.urlToBitmap!!.put(url, bit)
         }
     }
 

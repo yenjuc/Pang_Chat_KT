@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
+import android.graphics.Bitmap
 import androidx.core.app.NotificationCompat
 import com.alibaba.fastjson.JSON
 import com.example.pangchat.R
@@ -23,6 +24,7 @@ class MyWebSocketClient(uri: URI) : WebSocketClient(uri) {
     var userId:String? = null
     var username:String?=null
     var password:String?=null
+    var urlToBitmap: MutableMap<String, Bitmap> = mutableMapOf()
     lateinit var context: Context
 
     data class friend(val friendId: String, val friendName: String)
