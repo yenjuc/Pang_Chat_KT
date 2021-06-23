@@ -79,6 +79,8 @@ class ChatActivity : AppCompatActivity() {
     var isChecked: Boolean = false
 
     // 相册选择回传码
+    val AUDIO_REQUEST_CODE = 0
+
     val GALLERY_REQUEST_CODE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -170,7 +172,7 @@ class ChatActivity : AppCompatActivity() {
 //                stopRecord()
 //            }
             val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
-            startActivityForResult(intent, 0) //通过startActivityForResult获取音频录制的结果的路径
+            startActivityForResult(intent, AUDIO_REQUEST_CODE) //通过startActivityForResult获取音频录制的结果的路径
         }
 
 
@@ -332,7 +334,13 @@ class ChatActivity : AppCompatActivity() {
                     if(uri!=null) {
                         // 向服务器发送请求
                         MainScope().launch {
-                            val splited = uri.lastPathSegment!!.split("/");
+                            var splited = uri.lastPathSegment!!.split("/").toMutableList();
+
+                            // test
+                            if ("." in splited[splited.size - 1] == false) {
+                                splited[splited.size - 1] = splited[splited.size - 1] + ".jpg"
+                            }
+
                             val input: InputStream
                             withContext(Dispatchers.IO) {
                                 input = getContentResolver()?.openInputStream(uri)!!
@@ -350,7 +358,32 @@ class ChatActivity : AppCompatActivity() {
                 } catch (e: Exception) {
                     e.printStackTrace();
                 }
+            }
+            else if (requestCode == AUDIO_REQUEST_CODE) {
+                try {
+                    //该uri是上一个Activity返回的
+                    val uri = data?.data;
+                    if(uri!=null) {
+                        // 向服务器发送请求
+                        MainScope().launch {
+                            val splited = uri.lastPathSegment!!.split("/") + ".mp3";
+                            val input: InputStream
+                            withContext(Dispatchers.IO) {
+                                input = getContentResolver()?.openInputStream(uri)!!
+                            }
 
+                            uploadFile(
+                                BlobDataPart(
+                                    input,
+                                    "file",
+                                    splited[splited.size - 1]
+                                ), uri
+                            )
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace();
+                }
             }
         }
     }
