@@ -1,5 +1,7 @@
 package com.example.pangchat
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,7 +16,9 @@ import com.example.pangchat.chat.ChatAdapter
 import com.example.pangchat.user.data.UserChats
 import com.example.pangchat.user.data.UserRequest
 import com.example.pangchat.user.data.UserResult
+import com.example.pangchat.utils.CookiedFuel
 import com.example.pangchat.websocketClient.webSocketClient
+import com.github.kittinunf.fuel.coroutines.awaitByteArray
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -30,13 +34,14 @@ class ChatsFragment : Fragment() {
     private var chatAdapter: ChatAdapter? = null
     private var data: LinkedList<Chat?>? = null
     private var recyclerView: RecyclerView? = null
+    private var urlToBitmap: MutableMap<String, Bitmap> = mutableMapOf()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         recyclerView = view.findViewById<RecyclerView?>(R.id.chat_recyclerview)
 
 
         data = LinkedList()
-        chatAdapter = ChatAdapter(activity, data)
+        chatAdapter = ChatAdapter(activity, data, urlToBitmap)
         recyclerView?.adapter = chatAdapter
 
 
@@ -51,6 +56,9 @@ class ChatsFragment : Fragment() {
                 if(chats != null){
                     for (chat in chats) {
                         data?.add(chat)
+                        if(!urlToBitmap.keys.contains(chat.getChatAvatar())){
+                            downloadBitmap(chat.getChatAvatar())
+                        }
                     }
                     recyclerView?.adapter?.notifyDataSetChanged()
                 }
@@ -70,6 +78,9 @@ class ChatsFragment : Fragment() {
             if(chats != null){
                 for(chat in chats){
                     data?.add(chat)
+                    if(!urlToBitmap.keys.contains(chat.getChatAvatar())){
+                        downloadBitmap(chat.getChatAvatar())
+                    }
                 }
             }
             recyclerView?.adapter?.notifyDataSetChanged()
@@ -95,6 +106,14 @@ class ChatsFragment : Fragment() {
         }
         return null
         // TODO: 解析异常
+    }
+
+    suspend fun downloadBitmap(url: String){
+        withContext(Dispatchers.IO){
+            val result = CookiedFuel.get(url).awaitByteArray();
+            val bit: Bitmap = BitmapFactory.decodeByteArray(result, 0, result.size)
+            urlToBitmap!!.put(url, bit)
+        }
     }
 
     companion object {

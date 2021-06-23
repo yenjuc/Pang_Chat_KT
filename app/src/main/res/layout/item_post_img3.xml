@@ -123,10 +123,15 @@
                 android:layout_marginHorizontal="8dp"
                 android:layout_marginTop="2dp"
                 android:foreground="@color/grey" />
-            <ListView
+<!--            <ListView-->
+<!--                android:id="@+id/comment_listview"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent" />-->
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/comment_listview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:layout_marginTop="0dp"/>
         </LinearLayout>
     </LinearLayout>
 

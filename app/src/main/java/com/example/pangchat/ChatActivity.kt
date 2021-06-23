@@ -11,6 +11,8 @@ import android.graphics.BitmapFactory
 import android.location.Location
 import android.location.LocationManager
 import android.media.MediaRecorder
+import android.net.Uri
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -20,7 +22,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
@@ -63,13 +64,15 @@ class ChatActivity : AppCompatActivity() {
 
     private var messages: ArrayList<Message>? = null
 
-    private var bitmaps: LinkedList<Bitmap?> ?= null
+    private var urlToBitmap: MutableMap<String, Bitmap> = mutableMapOf()
+
+    private var mediaType : String = "image"
 
     private var chatId: String? = null
 
     private var recyclerView: RecyclerView? = null
 
-    private var _uploadInfo: MutableLiveData<UploadResult> ?= null
+    private var _uploadInfo = MutableLiveData<UploadResult>()
 
     var mRecorder: MediaRecorder? = null
 
@@ -78,20 +81,15 @@ class ChatActivity : AppCompatActivity() {
     // 相册选择回传码
     val GALLERY_REQUEST_CODE = 1
 
-    //private lateinit var messages:LinkedList<Message?>
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
-
-        // TODO: 看看是否可拉取完再载入
-
         chatId = intent.getStringExtra("chatId")
         recyclerView = findViewById(R.id.chatRecyclerView)
+        val chatinfo = findViewById<ImageView>(R.id.chatInfo)
         data = LinkedList()
         messages = ArrayList()
-        bitmaps = LinkedList()
-        recyclerView?.adapter = MessageAdapter(webSocketClient.userId!!, this, data, bitmaps)
+        recyclerView?.adapter = MessageAdapter(webSocketClient.userId!!, this, data, urlToBitmap)
         // 取得对应聊天的内容
         lifecycleScope.launch {
             if (chatId != null) {
@@ -99,22 +97,16 @@ class ChatActivity : AppCompatActivity() {
                 if(messages != null){
                     for(message in messages!!){
                         data!!.add(message)
-                        // TODO: 建立映射
-                        downloadBitmap(message.getAvatar())
+                        if(!urlToBitmap.keys.contains(message.getAvatar())){
+                            downloadBitmap(message.getAvatar())
+                        }
                     }
                     recyclerView?.adapter?.notifyDataSetChanged()
                     recyclerView?.scrollToPosition(messages!!.size - 1)
                     runOnUiThread {
                         val chatname = findViewById<TextView>(R.id.chatName)
                         chatname.text = chat?.getChatName()
-                        // FIXME: 两人聊天应改成对方名称
-                        /*
-                        if(chat?.getIsGroup() == false){
-                            chatname.text = chat?.getChatName()
-                        }else{
-
-                            chatname.text = "对方用户名"
-                        }*/
+                        if(chat != null && !chat!!.getIsGroup()) chatinfo.visibility = View.INVISIBLE
                     }
                 }
             }
@@ -124,35 +116,43 @@ class ChatActivity : AppCompatActivity() {
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView?.layoutManager = linearLayoutManager
 
-        // init()
         val back = findViewById<ImageView>(R.id.chatBackward)
         back.setOnClickListener { this.finish() }
 
-        val chatinfo = findViewById<ImageView>(R.id.chatInfo)
         chatinfo.setOnClickListener {
-            val intent = Intent(this, ChatInfoActivity::class.java)
-            intent.putExtra("chatId", chatId)
-            try {
-                startActivity(intent)
-                this.finish()
-            } catch (ActivityNotFoundException: Exception) {
-                Log.d("ImplicitIntents", "Can't handle this!")
+            if(chat != null){
+                if(chat!!.getIsGroup()){
+                    val intent = Intent(this, ChatInfoActivity::class.java)
+                    intent.putExtra("chatId", chatId)
+                    try {
+                        startActivity(intent)
+                        this.finish()
+                    } catch (ActivityNotFoundException: Exception) {
+                        Log.d("ImplicitIntents", "Can't handle this!")
+                    }
+                }
             }
         }
 
         val chatInput = findViewById<TextInputEditText>(R.id.chatInput)
 
-        // TODO: set 各种 listener
         val chatMoreAction = findViewById<LinearLayout>(R.id.chatMoreLayout)
 
         val videoSender = findViewById<ImageView>(R.id.chatVideo)
         videoSender.setOnClickListener{
-            // 修改头像
-            val pickIntent : Intent = Intent(
-                Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            );
-            pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "video/*");
+            val pickIntent : Intent = Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "video/*")
+            mediaType = "video"
+            startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
+        }
+
+        val imageSender = findViewById<ImageView>(R.id.chatImage)
+        imageSender.setOnClickListener{
+            val pickIntent : Intent = Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+            mediaType = "image"
             startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
         }
 
@@ -327,29 +327,35 @@ class ChatActivity : AppCompatActivity() {
             if (requestCode == GALLERY_REQUEST_CODE){
                 try {
                     //该uri是上一个Activity返回的
-                    val videoUri = data?.getData();
-                    if(videoUri!=null) {
-
+                    val uri = data?.data;
+                    if(uri!=null) {
                         // 向服务器发送请求
                         MainScope().launch {
-                            val splited = videoUri.lastPathSegment!!.split("/");
-                            val inputVideo: InputStream
+                            val splited = uri.lastPathSegment!!.split("/");
+                            val input: InputStream
                             withContext(Dispatchers.IO) {
-                                inputVideo = getContentResolver()?.openInputStream(videoUri)!!
+                                input = getContentResolver()?.openInputStream(uri)!!
                             }
 
-                            uploadVideo(
+                            uploadFile(
                                 BlobDataPart(
-                                    inputVideo,
+                                    input,
                                     "file",
                                     splited[splited.size - 1]
-                                )
+                                ), uri
                             )
-
+                            // if()
+                            /*
                             withContext(Dispatchers.IO) {
-                                val result = CookiedFuel.get(_uploadInfo?.value!!.url).awaitByteArray();
+                                val result = CookiedFuel.get(_uploadInfo?.value!!.url).awaitByteArray()
+                                if(mediaType.compareTo("image") == 0){
+                                    var bit: Bitmap = BitmapFactory.decodeByteArray(result, 0, result.size)
+
+                                }
+                                // MediaRecorder.VideoEncoder
                                 // bit = BitmapFactory.decodeByteArray(result, 0, result.size)
                             }
+                             */
                             // imageView?.setImageBitmap(bit) // 必须放在IO外面
 
 
@@ -369,7 +375,7 @@ class ChatActivity : AppCompatActivity() {
         chatInput.setText(text)
     }
 
-    suspend fun uploadVideo(file: DataPart) {
+    suspend fun uploadFile(file: DataPart, uri: Uri) {
         val fileDataSource = FileDataSource()
 
         val result: Result<UploadResult>
@@ -379,13 +385,22 @@ class ChatActivity : AppCompatActivity() {
         }
 
         if (result is Result.Success) {
-            // _uploadInfo = result.data
+            _uploadInfo.value = result.data
+            if(mediaType.compareTo("image") == 0){
+                var bit: Bitmap = BitmapFactory.decodeStream(contentResolver?.openInputStream(uri))
+                urlToBitmap!![_uploadInfo?.value!!.url] = bit
+                sendMessage(_uploadInfo?.value!!.url, "image")
+                recyclerView?.adapter?.notifyDataSetChanged()
+                recyclerView?.scrollToPosition(data!!.size - 1)
+            }else{
+                sendMessage(_uploadInfo?.value!!.url, "video")
+                recyclerView?.adapter?.notifyDataSetChanged()
+                recyclerView?.scrollToPosition(data!!.size - 1)
+            }
         } else {
             // TODO：抛出并解析异常
         }
     }
-
-
 
     private suspend fun getChatAndMessage(chatId: String){
         val chatRequest = ChatRequest()
@@ -458,12 +473,21 @@ class ChatActivity : AppCompatActivity() {
 
         return result is MessageResult.Success
     }
-    
+
+    public fun downLoadImageBitmap(url: String){
+        lifecycleScope.launch {
+            downloadBitmap(url)
+            recyclerView?.adapter?.notifyDataSetChanged()
+        }
+    }
+
     suspend fun downloadBitmap(url: String){
         withContext(Dispatchers.IO){
             val result = CookiedFuel.get(url).awaitByteArray();
             val bit: Bitmap = BitmapFactory.decodeByteArray(result, 0, result.size)
-            bitmaps?.add(bit)
+            urlToBitmap!!.put(url, bit)
         }
     }
+
+
 }

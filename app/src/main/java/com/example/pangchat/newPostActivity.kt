@@ -23,7 +23,7 @@ import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.collections.ArrayList
 
-
+//FIXME:纯图片存在问题
 class newPostActivity  : AppCompatActivity() {
     private var userId: String? = null
     private var content:String? = null

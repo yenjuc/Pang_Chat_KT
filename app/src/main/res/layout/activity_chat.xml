@@ -40,6 +40,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
+            android:maxLength="12"
+            android:maxLines="1"
             android:paddingVertical="10dp"
             android:text="聊天室名称"
             android:textColor="@color/grey"
@@ -150,7 +152,7 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/chatPhoto"
+                android:id="@+id/chatImage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

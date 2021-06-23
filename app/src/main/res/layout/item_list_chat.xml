@@ -35,7 +35,7 @@
                     android:id="@+id/nickname_text"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:maxWidth="200dp"
+                    android:maxLength="12"
                     android:maxLines="1"
                     android:text="很长很长很长很长很长很长很长很长"
                     android:textSize="18sp"

@@ -15,11 +15,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.ChatActivity
 import com.example.pangchat.PersonalActivity
 import com.example.pangchat.R
+import com.example.pangchat.VideoPlayActivity
 import com.example.pangchat.message.data.*
 import java.util.*
 
 class MessageAdapter(private val myUserId: String, private val activity: ChatActivity,
-                     private val data: LinkedList<Message?>?, private val bitmaps: LinkedList<Bitmap?>?) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
+                     private val data: LinkedList<Message?>?, private val urlToBitmap: MutableMap<String, Bitmap>) : RecyclerView.Adapter<RecyclerView.ViewHolder?>() {
     override fun getItemViewType(position: Int): Int {
         if(data?.get(position)?.isBlocked(myUserId) == true){
             return 0
@@ -81,12 +82,17 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
         if (message != null) {
             // FIXME: 增加 popup
             if(!message.isBlocked(myUserId)){
+
                 if(viewHolder.viewType > 2){
-                    // FIXME: avatar 设置
-                    if(bitmaps != null && bitmaps?.size > position && bitmaps?.get(position) != null){
-                        viewHolder.avatar?.setImageBitmap(bitmaps?.get(position))
+                    if(urlToBitmap.keys.contains(message.getAvatar())){
+                        viewHolder.avatar?.setImageBitmap(urlToBitmap[message.getAvatar()])
+                    }
+                    /*
+                    if(avatarBitmaps != null && avatarBitmaps?.size > position && avatarBitmaps?.get(position) != null){
+                        viewHolder.avatar?.setImageBitmap(avatarBitmaps?.get(position))
                     }
 
+                     */
                     viewHolder.avatar?.setOnClickListener {
                         val intent = Intent(activity, PersonalActivity::class.java)
                         intent.putExtra("userId", message.getSenderId())
@@ -101,9 +107,16 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
 
                     viewHolder.nickname?.text = message.getUsername()
                     viewHolder.content?.text = message.getContent()
+
+                    // FIXME: popup
                     viewHolder.content?.setOnLongClickListener {
                         viewHolder.messageAction?.visibility = View.VISIBLE
                         return@setOnLongClickListener true
+                    }
+
+                    // FIXME:
+                    viewHolder.content?.setOnFocusChangeListener { v, hasFocus ->
+                        Log.d("focus", "focus")
                     }
                     viewHolder.messageCopy?.setOnClickListener{
                         activity.setInput(message.getContent())
@@ -118,11 +131,26 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
                         viewHolder.messageAction?.visibility = View.GONE
                     }
 
-                    // TODO: 各种特定的跳转
+                    // TODO: 各种特定的跳转和设置
                     when((viewHolder.viewType - 3) % 5){
+                        1 ->{
+                            if(urlToBitmap.keys.contains(message.getContent())){
+                                viewHolder.messageImage?.setImageBitmap(urlToBitmap[message.getContent()])
+                            }else{
+                                activity.downLoadImageBitmap(message.getContent())
+                            }
+                        }
                         // 2: video
                         2 ->{
-
+                            viewHolder.messageBlock?.setOnClickListener {
+                                val intent = Intent(activity, VideoPlayActivity::class.java)
+                                intent.putExtra("videoUrl", message.getContent())
+                                try{
+                                    activity.startActivity(intent)
+                                }catch (ActivityNotFoundException: Exception){
+                                    Log.d("ImplicitIntents", "Can't handle this!")
+                                }
+                            }
                         }
                         // 3: audio
                         3 ->{
