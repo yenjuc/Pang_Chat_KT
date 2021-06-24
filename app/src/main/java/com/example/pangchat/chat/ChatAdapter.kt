@@ -30,13 +30,11 @@ class ChatAdapter(private val mContext: FragmentActivity?, private val data: Lin
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
-        // TODO
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_list_chat, parent, false)
         return ChatViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
-        // TODO
         val chat = data?.get(position)
         if (chat != null) {
             if(urlToBitmap.keys.contains(chat.getChatAvatar())){

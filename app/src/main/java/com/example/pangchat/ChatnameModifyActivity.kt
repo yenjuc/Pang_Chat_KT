@@ -15,10 +15,13 @@ import com.example.pangchat.chat.data.ChatResult
 import com.example.pangchat.websocketClient.webSocketClient
 import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class ChatnameModifyActivity : AppCompatActivity() {
+
+    private var chatname: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +32,7 @@ class ChatnameModifyActivity : AppCompatActivity() {
             this.finish()
         }
 
-        val chatname: String? = intent.getStringExtra("chatName")
+        chatname = intent.getStringExtra("chatName")
         val input = findViewById<TextInputEditText>(R.id.chatnameInput)
         if(chatname != null){
             input.setText(chatname)
@@ -38,20 +41,12 @@ class ChatnameModifyActivity : AppCompatActivity() {
         var chatId: String? = intent.getStringExtra("chatId")
         val btn = findViewById<Button>(R.id.chatnameModifyBtn)
         btn.setOnClickListener {
-            if(input.text?.length != 0){
-                modify(chatId!!, input.text.toString())
-                val intent = Intent(this, ChatInfoActivity::class.java)
-                intent.putExtra("chatId", chatId)
-                intent.putExtra("chatName", input.text.toString())
-                try {
-                    startActivity(intent)
-                    this.finish()
-                } catch (ActivityNotFoundException: Exception) {
-                    Log.d("ImplicitIntents", "Can't handle this!")
-                }
-            }else{
-                Toast.makeText(this, "不可将群聊名置为空", Toast.LENGTH_LONG).show()
-            }
+            modify(chatId!!, input.text.toString())
+            var intent = Intent()
+            intent.putExtra("chatId", chatId)
+            intent.putExtra("chatName", input.text.toString())
+            setResult(RESULT_OK, intent)
+            this.finish()
         }
     }
 
@@ -61,7 +56,7 @@ class ChatnameModifyActivity : AppCompatActivity() {
     }
 
     private fun modify(chatId: String, value: String){
-        lifecycleScope.launch {
+        MainScope().launch {
             modifyChatname(chatId, value)
         }
     }
@@ -76,6 +71,7 @@ class ChatnameModifyActivity : AppCompatActivity() {
 
         if (result is ChatResult.Success) {
             Log.d("chat", "success")
+            chatname = value
         } else {
             // TODO：抛出并解析异常
         }
