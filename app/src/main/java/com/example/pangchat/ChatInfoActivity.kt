@@ -88,7 +88,9 @@ class ChatInfoActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 members.clear()
                 getChatMember(chatId!!)
-                recyclerView?.adapter?.notifyDataSetChanged()
+                runOnUiThread {
+                    recyclerView?.adapter?.notifyDataSetChanged()
+                }
                 if(members != null){
                     for(member in members){
                         if(!webSocketClient.urlToBitmap.keys.contains(member?.getAvatar())){
