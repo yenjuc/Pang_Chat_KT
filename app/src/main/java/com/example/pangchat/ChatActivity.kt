@@ -514,19 +514,19 @@ class ChatActivity : AppCompatActivity() {
 
     fun recallMessage(index: Int, messageId: String){
         lifecycleScope.launch {
-            if(recallMessage(messageId)){
+            if(recallMessage(chatId!!, messageId)){
                 data?.get(index)?.setRecalled()
                 recyclerView?.adapter?.notifyDataSetChanged()
             }
         }
     }
 
-    private suspend fun recallMessage(messageId: String) : Boolean{
+    private suspend fun recallMessage(chatId: String, messageId: String) : Boolean{
         val messageRequest = MessageRequest()
         val result: MessageResult<MessageResp>
 
         withContext(Dispatchers.IO) {
-            result = messageRequest.recallMessage(messageId)
+            result = messageRequest.recallMessage(chatId, messageId)
         }
 
         return result is MessageResult.Success
@@ -572,6 +572,17 @@ class ChatActivity : AppCompatActivity() {
             data.add(message)
             recyclerView?.adapter?.notifyDataSetChanged()
             recyclerView?.scrollToPosition(data.size - 1)
+        }
+    }
+
+    fun messageRecalled(chat: String, messageId: String){
+        if(chatId != null && chatId == chat){
+            for(index in data.indices){
+                if(data[index]?.getId() == messageId){
+                    data[index]?.setRecalled()
+                    recyclerView?.adapter?.notifyDataSetChanged()
+                }
+            }
         }
     }
 

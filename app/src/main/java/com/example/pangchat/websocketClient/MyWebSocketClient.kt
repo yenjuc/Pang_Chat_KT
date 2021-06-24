@@ -76,6 +76,14 @@ class MyWebSocketClient(uri: URI) : WebSocketClient(uri) {
                 val Id: String = obj.get("userId") as String
                 sendSimpleNotification("好友通过提醒", "你已和 $name 成为好友，快去聊天吧！")
             }
+            else if (obj.get("bizType") == "MESSAGE_RECALL"){
+                val chatId: String = obj.get("chatId") as String
+                val messageId: String = obj.get("messageId") as String
+                if(context is ChatActivity){
+                    (context as ChatActivity).messageRecalled(chatId, messageId)
+                }
+                sendSimpleNotification("消息撤回提醒", "[有消息被撤回]")
+            }
         }
 
 

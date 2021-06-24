@@ -42,9 +42,9 @@ class MessageRequest {
             else MessageResult.Error(Exception());
         }
     }
-
-    fun recallMessage(messageId: String): MessageResult<MessageResp>{
-        val (_, _, result) = CookiedFuel.post("/message/recall").jsonBody(MessageId(messageId)).responseObject<MessageResp>()
+    data class ChatAndMessageId(val chatId: String, val messageId: String)
+    fun recallMessage(chatId: String, messageId: String): MessageResult<MessageResp>{
+        val (_, _, result) = CookiedFuel.post("/message/recall").jsonBody(ChatAndMessageId(chatId, messageId)).responseObject<MessageResp>()
         if (result is fuelResult.Failure) {
             return MessageResult.Error(result.getException())
         } else {
