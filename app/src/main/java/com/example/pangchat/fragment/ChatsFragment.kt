@@ -108,6 +108,11 @@ class ChatsFragment : Fragment() {
             if(chats != null){
                 for(chat in chats){
                     data?.add(chat)
+                }
+                activity?.runOnUiThread {
+                    recyclerView?.adapter?.notifyDataSetChanged()
+                }
+                for(chat in chats){
                     if(!webSocketClient.urlToBitmap.keys.contains(chat.getChatAvatar())){
                         downloadBitmap(chat.getChatAvatar())
                     }
