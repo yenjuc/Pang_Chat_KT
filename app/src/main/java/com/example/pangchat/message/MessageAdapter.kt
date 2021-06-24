@@ -116,6 +116,10 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
                         viewHolder.messageAction?.visibility = View.VISIBLE
                         return@setOnLongClickListener true
                     }
+                    viewHolder.messageBlock?.setOnLongClickListener {
+                        viewHolder.messageAction?.visibility = View.VISIBLE
+                        return@setOnLongClickListener true
+                    }
                     viewHolder.messageCopy?.setOnClickListener{
                         activity.setInput(message.getContent())
                         viewHolder.messageAction?.visibility = View.GONE
@@ -246,10 +250,9 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
                     messageCopy = itemView.findViewById(R.id.messageCopy)
                     messageRecall = itemView.findViewById(R.id.messageRecall)
                     messageDelete = itemView.findViewById(R.id.messageDelete)
+                    messageBlock = itemView.findViewById(R.id.messageBlock)
                     if ((viewType - 3) % 5 == 1){
                         messageImage = itemView.findViewById(R.id.messageImage)
-                    }else if((viewType - 3) % 5 > 1){
-                        messageBlock = itemView.findViewById(R.id.messageBlock)
                     }
                 }else{
                     recalledInfo = itemView.findViewById(R.id.recalledInfo)

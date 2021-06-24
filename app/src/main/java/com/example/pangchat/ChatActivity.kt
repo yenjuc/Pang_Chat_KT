@@ -145,31 +145,6 @@ class ChatActivity : AppCompatActivity() {
 
         val chatMoreAction = findViewById<LinearLayout>(R.id.chatMoreLayout)
 
-        val videoSender = findViewById<ImageView>(R.id.chatVideo)
-        videoSender.setOnClickListener{
-            val pickIntent : Intent = Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "video/*")
-            mediaType = "video"
-            startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
-        }
-
-        val imageSender = findViewById<ImageView>(R.id.chatImage)
-        imageSender.setOnClickListener{
-            val pickIntent : Intent = Intent(Intent.ACTION_PICK,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
-            mediaType = "image"
-            startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
-        }
-
-        val audioSender = findViewById<ImageView>(R.id.chatVoice)
-        audioSender.setOnClickListener {
-            val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
-            mediaType = "audio"
-            startActivityForResult(intent, AUDIO_REQUEST_CODE) //通过startActivityForResult获取音频录制的结果的路径
-        }
-
         val chatAction = findViewById<ImageView>(R.id.chatAction)
         chatAction.setOnClickListener {
             if(chatInput.text?.isEmpty() == false){
@@ -187,15 +162,49 @@ class ChatActivity : AppCompatActivity() {
             }else{
                 if(chatMoreAction.visibility == View.VISIBLE){
                     chatMoreAction.visibility = View.GONE
+                    runOnUiThread {
+                        recyclerView?.scrollToPosition(data.size - 1)
+                    }
                 }else if(chatMoreAction.visibility == View.GONE) {
                     chatMoreAction.visibility = View.VISIBLE
+                    runOnUiThread {
+                        recyclerView?.scrollToPosition(data.size - 1)
+                    }
                 }
             }
         }
 
+        val videoSender = findViewById<ImageView>(R.id.chatVideo)
+        videoSender.setOnClickListener{
+            chatMoreAction.visibility = View.GONE
+            val pickIntent : Intent = Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "video/*")
+            mediaType = "video"
+            startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
+        }
+
+        val imageSender = findViewById<ImageView>(R.id.chatImage)
+        imageSender.setOnClickListener{
+            chatMoreAction.visibility = View.GONE
+            val pickIntent : Intent = Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+            mediaType = "image"
+            startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
+        }
+
+        val audioSender = findViewById<ImageView>(R.id.chatVoice)
+        audioSender.setOnClickListener {
+            chatMoreAction.visibility = View.GONE
+            val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
+            mediaType = "audio"
+            startActivityForResult(intent, AUDIO_REQUEST_CODE) //通过startActivityForResult获取音频录制的结果的路径
+        }
+
         val chatLocation = findViewById<ImageView>(R.id.chatLocation)
         chatLocation.setOnClickListener {
-
+            chatMoreAction.visibility = View.GONE
             val location = getLocation()
             if(location != null){
                 Toast.makeText(this, "发送当前位置", Toast.LENGTH_LONG).show()
@@ -204,6 +213,10 @@ class ChatActivity : AppCompatActivity() {
                         location.latitude.toString() + ";" + location.longitude.toString(),
                         "location"
                     )
+                    runOnUiThread {
+                        recyclerView?.adapter?.notifyDataSetChanged()
+                        recyclerView?.scrollToPosition(data.size - 1)
+                    }
                 }
             }else{
                 Toast.makeText(this, "获取当前地理位置失败！请打开GPS或网络后再试一次。", Toast.LENGTH_LONG).show()
