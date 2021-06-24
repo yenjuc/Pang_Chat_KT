@@ -9,6 +9,7 @@ import android.graphics.Bitmap
 import androidx.core.app.NotificationCompat
 import com.alibaba.fastjson.JSON
 import com.example.pangchat.ChatActivity
+import com.example.pangchat.ChatsFragment
 import com.example.pangchat.MainActivity
 import com.example.pangchat.R
 import com.example.pangchat.message.Message
@@ -69,6 +70,9 @@ class MyWebSocketClient(uri: URI) : WebSocketClient(uri) {
                     (context as ChatActivity).addMessageWebSocket(chatId, Message(id, senderId, username,
                         avatar, arrayListOf(),false, content, type, timeStp))
                 }
+                else if(context is MainActivity){
+                    ((context as MainActivity).chatsFragment as ChatsFragment).updateChats()
+                }
                 sendSimpleNotification("新消息提醒", "$username 发送了一条消息")
             }
             else if (obj.get("bizType") == "USER_ACCEPT_FRIEND") {
@@ -81,6 +85,9 @@ class MyWebSocketClient(uri: URI) : WebSocketClient(uri) {
                 val messageId: String = obj.get("messageId") as String
                 if(context is ChatActivity){
                     (context as ChatActivity).messageRecalled(chatId, messageId)
+                }
+                else if(context is MainActivity){
+                    ((context as MainActivity).chatsFragment as ChatsFragment).updateChats()
                 }
                 sendSimpleNotification("消息撤回提醒", "[有消息被撤回]")
             }

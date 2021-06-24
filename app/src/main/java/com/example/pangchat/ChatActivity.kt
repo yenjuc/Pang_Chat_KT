@@ -97,7 +97,10 @@ class ChatActivity : AppCompatActivity() {
         lifecycleScope.launch {
             if (chatId != null) {
                 getChatAndMessage(chatId!!)
-                recyclerView?.adapter?.notifyDataSetChanged()
+                runOnUiThread {
+                    recyclerView?.adapter?.notifyDataSetChanged()
+                }
+
                 if(messages != null){
                     for(message in messages!!){
                         data.add(message)
@@ -105,9 +108,9 @@ class ChatActivity : AppCompatActivity() {
                             downloadBitmap(message.getAvatar())
                         }
                     }
-                    recyclerView?.adapter?.notifyDataSetChanged()
-                    recyclerView?.scrollToPosition(messages!!.size - 1)
                     runOnUiThread {
+                        recyclerView?.adapter?.notifyDataSetChanged()
+                        recyclerView?.scrollToPosition(messages!!.size - 1)
                         val chatname = findViewById<TextView>(R.id.chatName)
                         chatname.text = chat?.getChatName()
                         if(chat != null && !chat!!.getIsGroup()) chatinfo.visibility = View.INVISIBLE
@@ -174,9 +177,11 @@ class ChatActivity : AppCompatActivity() {
                 lifecycleScope.launch {
                     if (chatId != null) {
                         sendMessage(chatInput.text.toString(), "text")
-                        recyclerView?.adapter?.notifyDataSetChanged()
-                        recyclerView?.scrollToPosition(data.size - 1)
-                        chatInput.text?.clear()
+                        runOnUiThread {
+                            recyclerView?.adapter?.notifyDataSetChanged()
+                            recyclerView?.scrollToPosition(data.size - 1)
+                            chatInput.text?.clear()
+                        }
                     }
                 }
             }else{
@@ -335,39 +340,6 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    fun startRecord() {
-        val REQUEST_CODE_CONTACT = 101;
-        val permissions : Array<String> = Array(3, { "0" })
-        permissions.set(0, Manifest.permission.RECORD_AUDIO)
-        permissions.set(1, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        permissions.set(2, Manifest.permission.READ_EXTERNAL_STORAGE)
-        //验证是否许可权限
-        for (str : String in permissions) {
-            if (this.checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
-                //申请权限
-                this.requestPermissions(permissions, REQUEST_CODE_CONTACT)
-            }
-        }
-
-        mRecorder = MediaRecorder()
-        mRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC)
-        mRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-        mRecorder!!.setOutputFile(newFileName())
-        mRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-        try {
-            mRecorder!!.prepare()
-        } catch (e: IOException) {
-            // Log.e(LOG_TAG, "prepare() failed")
-        }
-        mRecorder!!.start()
-    }
-
-    fun stopRecord() {
-        mRecorder?.stop()
-        mRecorder?.release()
-        mRecorder = null
-    }
-
     fun newFileName(): String {
         // var mFileName: String? = Environment.getExternalStorageDirectory().absolutePath
         val path: File? = getExternalFilesDir(Environment.DIRECTORY_MUSIC)
@@ -464,16 +436,22 @@ class ChatActivity : AppCompatActivity() {
                 var bit: Bitmap = BitmapFactory.decodeStream(contentResolver?.openInputStream(uri))
                 webSocketClient.urlToBitmap!![_uploadInfo?.value!!.url] = bit
                 sendMessage(_uploadInfo?.value!!.url, "image")
-                recyclerView?.adapter?.notifyDataSetChanged()
-                recyclerView?.scrollToPosition(data.size - 1)
+                runOnUiThread {
+                    recyclerView?.adapter?.notifyDataSetChanged()
+                    recyclerView?.scrollToPosition(data.size - 1)
+                }
             }else if(mediaType.compareTo("video") == 0){
                 sendMessage(_uploadInfo?.value!!.url, "video")
-                recyclerView?.adapter?.notifyDataSetChanged()
-                recyclerView?.scrollToPosition(data.size - 1)
+                runOnUiThread {
+                    recyclerView?.adapter?.notifyDataSetChanged()
+                    recyclerView?.scrollToPosition(data.size - 1)
+                }
             }else{
                 sendMessage(_uploadInfo?.value!!.url, "audio")
-                recyclerView?.adapter?.notifyDataSetChanged()
-                recyclerView?.scrollToPosition(data.size - 1)
+                runOnUiThread {
+                    recyclerView?.adapter?.notifyDataSetChanged()
+                    recyclerView?.scrollToPosition(data.size - 1)
+                }
             }
         } else {
             // TODO：抛出并解析异常
@@ -516,7 +494,9 @@ class ChatActivity : AppCompatActivity() {
         lifecycleScope.launch {
             if(recallMessage(chatId!!, messageId)){
                 data?.get(index)?.setRecalled()
-                recyclerView?.adapter?.notifyDataSetChanged()
+                runOnUiThread {
+                    recyclerView?.adapter?.notifyDataSetChanged()
+                }
             }
         }
     }
@@ -536,7 +516,9 @@ class ChatActivity : AppCompatActivity() {
         lifecycleScope.launch {
             if(deleteMessage(messageId, userId)){
                 data?.get(index)?.addBlocked(userId)
-                recyclerView?.adapter?.notifyDataSetChanged()
+                runOnUiThread {
+                    recyclerView?.adapter?.notifyDataSetChanged()
+                }
             }
         }
     }
@@ -570,8 +552,10 @@ class ChatActivity : AppCompatActivity() {
     public fun addMessageWebSocket(chat: String, message: Message) {
         if(chatId != null && chatId == chat){
             data.add(message)
-            recyclerView?.adapter?.notifyDataSetChanged()
-            recyclerView?.scrollToPosition(data.size - 1)
+            runOnUiThread {
+                recyclerView?.adapter?.notifyDataSetChanged()
+                recyclerView?.scrollToPosition(data.size - 1)
+            }
         }
     }
 
@@ -580,7 +564,9 @@ class ChatActivity : AppCompatActivity() {
             for(index in data.indices){
                 if(data[index]?.getId() == messageId){
                     data[index]?.setRecalled()
-                    recyclerView?.adapter?.notifyDataSetChanged()
+                    runOnUiThread {
+                        recyclerView?.adapter?.notifyDataSetChanged()
+                    }
                 }
             }
         }

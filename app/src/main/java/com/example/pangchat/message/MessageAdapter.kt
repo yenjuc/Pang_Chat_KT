@@ -112,7 +112,6 @@ class MessageAdapter(private val myUserId: String, private val activity: ChatAct
                     viewHolder.nickname?.text = message.getUsername()
                     viewHolder.content?.text = message.getContent()
 
-                    // FIXME: popup
                     viewHolder.content?.setOnLongClickListener {
                         viewHolder.messageAction?.visibility = View.VISIBLE
                         return@setOnLongClickListener true

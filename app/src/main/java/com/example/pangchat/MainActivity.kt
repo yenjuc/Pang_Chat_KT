@@ -38,6 +38,10 @@ class MainActivity : FragmentActivity() {
     var friendIds = ArrayList<String>()
     var friendNames = ArrayList<String>()
 
+    val chatsFragment: Fragment = ChatsFragment()
+    val contactsFragment: Fragment = ContactsFragment()
+    val discoverFragment: Fragment = DiscoverFragment()
+    val settingsFragment: Fragment = SettingsFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,12 +55,6 @@ class MainActivity : FragmentActivity() {
 
         setContentView(R.layout.activity_main)
         // ButterKnife.bind(this)
-
-        val chatsFragment: Fragment = ChatsFragment()
-        val contactsFragment: Fragment = ContactsFragment()
-        val discoverFragment: Fragment = DiscoverFragment()
-        val settingsFragment: Fragment = SettingsFragment()
-
 
         if (intent.getStringExtra("fragment") == "contact") {
             setCurrentFragment(contactsFragment)
