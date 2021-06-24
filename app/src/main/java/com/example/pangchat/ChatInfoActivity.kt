@@ -1,61 +1,83 @@
 package com.example.pangchat
 
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.pangchat.chat.Chat
 import com.example.pangchat.chat.ChatMemberAdapter
+import com.example.pangchat.chat.data.ChatInfo
 import com.example.pangchat.chat.data.ChatRequest
 import com.example.pangchat.chat.data.ChatResult
 import com.example.pangchat.chat.data.ChatUserInfo
+import com.example.pangchat.fragment.data.FileDataSource
+import com.example.pangchat.fragment.data.Result
+import com.example.pangchat.fragment.data.UploadResult
 import com.example.pangchat.user.User
 import com.example.pangchat.user.data.CommonResp
 import com.example.pangchat.user.data.UserRequest
 import com.example.pangchat.user.data.UserResult
 import com.example.pangchat.utils.CookiedFuel
 import com.example.pangchat.websocketClient.webSocketClient
+import com.github.kittinunf.fuel.core.BlobDataPart
+import com.github.kittinunf.fuel.core.DataPart
 import com.github.kittinunf.fuel.coroutines.awaitByteArray
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.InputStream
 import java.util.*
 import kotlin.collections.ArrayList
 
 class ChatInfoActivity : AppCompatActivity() {
 
     var chat: Chat? = null
+    var chatId: String? = null
     var members = LinkedList<User?>()
 
     var chatName: TextView? = null
+    var chatAvatar: ImageView ?= null
+
+    var _uploadInfo = MutableLiveData<UploadResult>()
+
+    // 拍照回传码
+    val CAMERA_REQUEST_CODE = 0;
+    // 相册选择回传码
+    val GALLERY_REQUEST_CODE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_info)
 
-        var chatId: String? = intent.getStringExtra("chatId")
-
-
+        chatId = intent.getStringExtra("chatId")
         chatName = findViewById<TextView>(R.id.chatName)
+        chatAvatar = findViewById(R.id.chatInfoChatAvatar)
         val recyclerView = findViewById<RecyclerView>(R.id.chatInfoMembersView)
         recyclerView.adapter = ChatMemberAdapter(this, members, webSocketClient.urlToBitmap)
         val gridLayoutManager = GridLayoutManager(this, 5)
         recyclerView.layoutManager = gridLayoutManager
 
+        val chatNameLayout: LinearLayout = findViewById(R.id.chatNameLayout)
+        val chatAvatarLayout: LinearLayout = findViewById(R.id.chatAvatarLayout)
+        val chatLeaveLayout: LinearLayout = findViewById(R.id.chatLeaveLayout)
+
         if (chatId != null) {
-            Log.d("chatId", chatId)
             lifecycleScope.launch {
-                getChatMember(chatId)
+                getChatMember(chatId!!)
                 recyclerView?.adapter?.notifyDataSetChanged()
                 if(members != null){
                     for(member in members){
@@ -64,6 +86,17 @@ class ChatInfoActivity : AppCompatActivity() {
                         }
                     }
                 }
+                recyclerView?.adapter?.notifyDataSetChanged()
+                if(!webSocketClient.urlToBitmap.containsKey(chat!!.getChatAvatar())){
+                    // 发起下载图片请求
+                    val bit: Bitmap;
+                    withContext(Dispatchers.IO) {
+                        val result = CookiedFuel.get(chat!!.getChatAvatar()).awaitByteArray();
+                        bit = BitmapFactory.decodeByteArray(result, 0, result.size)
+                        webSocketClient.urlToBitmap[chat!!.getChatAvatar()] = bit
+                    }
+                }
+                chatAvatar!!.setImageBitmap(webSocketClient.urlToBitmap[chat!!.getChatAvatar()])
 
                 runOnUiThread{
                     if(chat != null){
@@ -71,11 +104,8 @@ class ChatInfoActivity : AppCompatActivity() {
                         members.add(User("-1", "-1", "-1", "-1"))
                         recyclerView.adapter?.notifyDataSetChanged()
                         if(!chat!!.getIsGroup()){
-                            val chatNameLayout: LinearLayout = findViewById(R.id.chatNameLayout)
                             chatNameLayout.visibility = View.GONE
-                            val chatAvatarLayout: LinearLayout = findViewById(R.id.chatAvatarLayout)
                             chatAvatarLayout.visibility = View.GONE
-                            val chatLeaveLayout: LinearLayout = findViewById(R.id.chatLeaveLayout)
                             chatLeaveLayout.visibility = View.GONE
                         }
                     }
@@ -83,15 +113,22 @@ class ChatInfoActivity : AppCompatActivity() {
             }
         }
 
+        /*
+        lifecycleScope.launch{
+             // 必须放在IO外面
+        }
+
+         */
+
 
         val back = findViewById<ImageView>(R.id.chatInfoBackward)
         back.setOnClickListener {
             if(chatId != null){
-                Log.d("click chatid: ", chatId)
+                Log.d("click chatid: ", chatId!!)
                 val intent = Intent(this, ChatActivity::class.java)
                 intent.putExtra("chatId", chatId)
                 try {
-                    this.startActivity(intent)
+                    this.startActivityForResult(intent, 100)
                     this.finish()
                 } catch (ActivityNotFoundException: Exception) {
                     Log.d("ImplicitIntents", "Can't handle this!")
@@ -99,18 +136,17 @@ class ChatInfoActivity : AppCompatActivity() {
             }
         }
 
-        val leave = findViewById<LinearLayout>(R.id.chatLeaveLayout)
-        var success: Boolean ? = null
-        leave.setOnClickListener {
+
+        chatLeaveLayout.setOnClickListener {
             lifecycleScope.launch {
-                if(chatId != null && leaveChat(chatId)){
+                if(chatId != null && leaveChat(chatId!!)){
                     activityFinish()
                 }
             }
         }
 
-        val chatName = findViewById<LinearLayout>(R.id.chatNameLayout)
-        chatName.setOnClickListener {
+
+        chatNameLayout.setOnClickListener {
             if(chatId != null){
                 val intent = Intent(this, ChatnameModifyActivity::class.java)
                 intent.putExtra("chatId", chatId)
@@ -122,15 +158,95 @@ class ChatInfoActivity : AppCompatActivity() {
                 }
             }
         }
+
+        chatAvatarLayout.setOnClickListener {
+            val pickIntent : Intent = Intent(Intent.ACTION_PICK,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+            startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
+        }
+
+
     }
 
     override fun onResume() {
         super.onResume()
-        val chatname = intent.getStringExtra("chatName")
-        if(chatname != null){
-            chatName?.text = chatname
-        }
         webSocketClient.context = this
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == CAMERA_REQUEST_CODE) {
+                print("qwq")
+            }
+            else if (requestCode == GALLERY_REQUEST_CODE){
+                try {
+                    //该uri是上一个Activity返回的
+                    val imageUri = data?.getData();
+                    if(imageUri!=null) {
+                        var inputImage: InputStream
+                        chatAvatar?.setImageBitmap(BitmapFactory.decodeStream(contentResolver?.openInputStream(imageUri)))
+
+                        // 向服务器发送请求
+                        MainScope().launch {
+                            val splited = imageUri.lastPathSegment!!.split("/");
+                            withContext(Dispatchers.IO) {
+                                inputImage =
+                                    contentResolver?.openInputStream(imageUri)!!
+                            }
+                            uploadImage(
+                                BlobDataPart(
+                                    inputImage,
+                                    "file",
+                                    splited[splited.size - 1]
+                                )
+                            )
+                            modifyChatAvatar(chatId!!, _uploadInfo.value!!.url)
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace();
+                }
+
+            }else if(requestCode == 100){
+                val reply = data?.getStringExtra("chatName")
+                chatName?.text = reply
+            }
+        }
+    }
+
+    suspend fun uploadImage(file: DataPart) {
+        val fileDataSource = FileDataSource()
+
+        val result: Result<UploadResult>
+
+        withContext(Dispatchers.IO) {
+            result = fileDataSource.uploadFile(file)
+        }
+
+        if (result is Result.Success) {
+            _uploadInfo.value = result.data
+        } else {
+            // TODO：抛出并解析异常
+        }
+    }
+
+    private suspend fun modifyChatAvatar(chatId: String, value: String): Boolean{
+        val chatRequest = ChatRequest()
+        val result: ChatResult<ChatInfo>
+
+        withContext(Dispatchers.IO) {
+            result = chatRequest.chatModify(chatId, "chatAvatar",value)
+        }
+
+        if (result is ChatResult.Success) {
+            Log.d("chat", "success")
+        } else {
+            // TODO：抛出并解析异常
+        }
+
+        return result is ChatResult.Success
     }
 
     private suspend fun activityFinish(){

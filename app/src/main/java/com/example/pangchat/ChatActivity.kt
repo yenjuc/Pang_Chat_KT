@@ -130,7 +130,7 @@ class ChatActivity : AppCompatActivity() {
                     intent.putExtra("chatId", chatId)
                     try {
                         startActivity(intent)
-                        this.finish()
+                        // this.finish()
                     } catch (ActivityNotFoundException: Exception) {
                         Log.d("ImplicitIntents", "Can't handle this!")
                     }
@@ -256,20 +256,6 @@ class ChatActivity : AppCompatActivity() {
         }
         return false
     }
-
-    /*
-    fun mediaClick(){
-        if(mediaPlayer != null){
-            if(mediaPlayer?.isPlaying == true){
-                mediaPlayer?.stop()
-            }else{
-
-            }
-        }
-    }
-
-     */
-
 
     override fun onDestroy() {
         super.onDestroy()
