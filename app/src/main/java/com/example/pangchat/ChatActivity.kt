@@ -105,11 +105,14 @@ class ChatActivity : AppCompatActivity() {
     fun getChatMessage(){
         lifecycleScope.launch {
             if (chatId != null) {
+                data.clear()
                 getChatAndMessage(chatId!!)
                 runOnUiThread {
                     recyclerView?.adapter?.notifyDataSetChanged()
                 }
-
+                if(chat != null && chat?.getMembers()?.contains(webSocketClient.userId) != true ){
+                    finish()
+                }
                 if(messages != null){
                     for(message in messages!!){
                         data.add(message)

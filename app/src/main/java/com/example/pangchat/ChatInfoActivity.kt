@@ -79,9 +79,12 @@ class ChatInfoActivity : AppCompatActivity() {
         chatNameLayout = findViewById(R.id.chatNameLayout)
         chatAvatarLayout = findViewById(R.id.chatAvatarLayout)
         chatLeaveLayout = findViewById(R.id.chatLeaveLayout)
+    }
 
+    fun updateChatInfo(){
         if (chatId != null) {
             lifecycleScope.launch {
+                members.clear()
                 getChatMember(chatId!!)
                 recyclerView?.adapter?.notifyDataSetChanged()
                 if(members != null){
@@ -153,12 +156,12 @@ class ChatInfoActivity : AppCompatActivity() {
             startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
         }
 
-
     }
 
     override fun onResume() {
         super.onResume()
         webSocketClient.context = this
+        updateChatInfo()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -299,8 +302,10 @@ class ChatInfoActivity : AppCompatActivity() {
     suspend fun downloadBitmap(url: String){
         withContext(Dispatchers.IO){
             val result = CookiedFuel.get(url).awaitByteArray();
-            val bit: Bitmap = BitmapFactory.decodeByteArray(result, 0, result.size)
-            webSocketClient.urlToBitmap!!.put(url, bit)
+            if(result != null){
+                val bit: Bitmap = BitmapFactory.decodeByteArray(result, 0, result.size)
+                webSocketClient.urlToBitmap!!.put(url, bit)
+            }
         }
     }
 
