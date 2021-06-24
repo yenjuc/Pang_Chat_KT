@@ -50,7 +50,7 @@ class ChatMemberAdapter(private val activity: ChatInfoActivity, private val data
                 viewHolder.block.setOnClickListener {
                     val intent = Intent(activity, PersonalActivity::class.java)
                     intent.putExtra("userId", user.getUserId())
-                    intent.putExtra("username", user.getUsername())
+                    intent.putExtra("username", user.getNickname())
                     intent.putExtra("avatar", user.getAvatar())
 
                     try {

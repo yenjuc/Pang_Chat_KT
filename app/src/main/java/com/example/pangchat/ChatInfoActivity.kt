@@ -52,6 +52,11 @@ class ChatInfoActivity : AppCompatActivity() {
     var chatName: TextView? = null
     var chatAvatar: ImageView ?= null
 
+    var chatNameLayout: LinearLayout? = null
+    var chatAvatarLayout: LinearLayout? = null
+    var chatLeaveLayout: LinearLayout? = null
+    var recyclerView : RecyclerView? = null
+
     var _uploadInfo = MutableLiveData<UploadResult>()
 
     // 拍照回传码
@@ -66,14 +71,14 @@ class ChatInfoActivity : AppCompatActivity() {
         chatId = intent.getStringExtra("chatId")
         chatName = findViewById<TextView>(R.id.chatName)
         chatAvatar = findViewById(R.id.chatInfoChatAvatar)
-        val recyclerView = findViewById<RecyclerView>(R.id.chatInfoMembersView)
-        recyclerView.adapter = ChatMemberAdapter(this, members, webSocketClient.urlToBitmap)
+        recyclerView = findViewById<RecyclerView>(R.id.chatInfoMembersView)
+        recyclerView?.adapter = ChatMemberAdapter(this, members, webSocketClient.urlToBitmap)
         val gridLayoutManager = GridLayoutManager(this, 5)
-        recyclerView.layoutManager = gridLayoutManager
+        recyclerView?.layoutManager = gridLayoutManager
 
-        val chatNameLayout: LinearLayout = findViewById(R.id.chatNameLayout)
-        val chatAvatarLayout: LinearLayout = findViewById(R.id.chatAvatarLayout)
-        val chatLeaveLayout: LinearLayout = findViewById(R.id.chatLeaveLayout)
+        chatNameLayout = findViewById(R.id.chatNameLayout)
+        chatAvatarLayout = findViewById(R.id.chatAvatarLayout)
+        chatLeaveLayout = findViewById(R.id.chatLeaveLayout)
 
         if (chatId != null) {
             lifecycleScope.launch {
@@ -82,7 +87,7 @@ class ChatInfoActivity : AppCompatActivity() {
                 if(members != null){
                     for(member in members){
                         if(!webSocketClient.urlToBitmap.keys.contains(member?.getAvatar())){
-                            downloadImage(member!!.getAvatar(), recyclerView)
+                            downloadImage(member!!.getAvatar(), recyclerView!!)
                         }
                     }
                 }
@@ -102,24 +107,16 @@ class ChatInfoActivity : AppCompatActivity() {
                     if(chat != null){
                         chatName?.text = chat!!.getChatName()
                         members.add(User("-1", "-1", "-1", "-1"))
-                        recyclerView.adapter?.notifyDataSetChanged()
+                        recyclerView?.adapter?.notifyDataSetChanged()
                         if(!chat!!.getIsGroup()){
-                            chatNameLayout.visibility = View.GONE
-                            chatAvatarLayout.visibility = View.GONE
-                            chatLeaveLayout.visibility = View.GONE
+                            chatNameLayout?.visibility = View.GONE
+                            chatAvatarLayout?.visibility = View.GONE
+                            chatLeaveLayout?.visibility = View.GONE
                         }
                     }
                 }
             }
         }
-
-        /*
-        lifecycleScope.launch{
-             // 必须放在IO外面
-        }
-
-         */
-
 
         val back = findViewById<ImageView>(R.id.chatInfoBackward)
         back.setOnClickListener {
@@ -127,7 +124,7 @@ class ChatInfoActivity : AppCompatActivity() {
         }
 
 
-        chatLeaveLayout.setOnClickListener {
+        chatLeaveLayout?.setOnClickListener {
             lifecycleScope.launch {
                 if(chatId != null && leaveChat(chatId!!)){
                     activityFinish()
@@ -136,7 +133,7 @@ class ChatInfoActivity : AppCompatActivity() {
         }
 
 
-        chatNameLayout.setOnClickListener {
+        chatNameLayout?.setOnClickListener {
             if(chatId != null){
                 val intent = Intent(this, ChatnameModifyActivity::class.java)
                 intent.putExtra("chatId", chatId)
@@ -149,7 +146,7 @@ class ChatInfoActivity : AppCompatActivity() {
             }
         }
 
-        chatAvatarLayout.setOnClickListener {
+        chatAvatarLayout?.setOnClickListener {
             val pickIntent : Intent = Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
