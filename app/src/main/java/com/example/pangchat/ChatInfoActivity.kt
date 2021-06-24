@@ -51,6 +51,8 @@ class ChatInfoActivity : AppCompatActivity() {
 
     var chatName: TextView? = null
     var chatAvatar: ImageView ?= null
+    var chatAvatarUrl: String ?= null
+    var hasChange: Boolean = false
 
     var chatNameLayout: LinearLayout? = null
     var chatAvatarLayout: LinearLayout? = null
@@ -95,16 +97,19 @@ class ChatInfoActivity : AppCompatActivity() {
                     }
                 }
                 recyclerView?.adapter?.notifyDataSetChanged()
-                if(!webSocketClient.urlToBitmap.containsKey(chat!!.getChatAvatar())){
-                    // 发起下载图片请求
-                    val bit: Bitmap;
-                    withContext(Dispatchers.IO) {
-                        val result = CookiedFuel.get(chat!!.getChatAvatar()).awaitByteArray();
-                        bit = BitmapFactory.decodeByteArray(result, 0, result.size)
-                        webSocketClient.urlToBitmap[chat!!.getChatAvatar()] = bit
+                if(!hasChange){
+                    if(!webSocketClient.urlToBitmap.containsKey(chat!!.getChatAvatar())){
+                        // 发起下载图片请求
+                        val bit: Bitmap;
+                        withContext(Dispatchers.IO) {
+                            val result = CookiedFuel.get(chat!!.getChatAvatar()).awaitByteArray();
+                            bit = BitmapFactory.decodeByteArray(result, 0, result.size)
+                            webSocketClient.urlToBitmap[chat!!.getChatAvatar()!!] = bit
+                        }
                     }
+                    chatAvatar!!.setImageBitmap(webSocketClient.urlToBitmap[chat!!.getChatAvatar()])
                 }
-                chatAvatar!!.setImageBitmap(webSocketClient.urlToBitmap[chat!!.getChatAvatar()])
+                hasChange = false
 
                 runOnUiThread{
                     if(chat != null){
@@ -176,6 +181,7 @@ class ChatInfoActivity : AppCompatActivity() {
                     val imageUri = data?.getData();
                     if(imageUri!=null) {
                         var inputImage: InputStream
+                        hasChange = true
                         chatAvatar?.setImageBitmap(BitmapFactory.decodeStream(contentResolver?.openInputStream(imageUri)))
 
                         // 向服务器发送请求
