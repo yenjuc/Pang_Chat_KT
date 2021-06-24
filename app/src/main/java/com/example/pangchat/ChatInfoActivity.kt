@@ -51,6 +51,13 @@ class ChatInfoActivity : AppCompatActivity() {
 
     var chatName: TextView? = null
     var chatAvatar: ImageView ?= null
+    var chatAvatarUrl: String ?= null
+    var hasChange: Boolean = false
+
+    var chatNameLayout: LinearLayout? = null
+    var chatAvatarLayout: LinearLayout? = null
+    var chatLeaveLayout: LinearLayout? = null
+    var recyclerView : RecyclerView? = null
 
     var _uploadInfo = MutableLiveData<UploadResult>()
 
@@ -66,78 +73,66 @@ class ChatInfoActivity : AppCompatActivity() {
         chatId = intent.getStringExtra("chatId")
         chatName = findViewById<TextView>(R.id.chatName)
         chatAvatar = findViewById(R.id.chatInfoChatAvatar)
-        val recyclerView = findViewById<RecyclerView>(R.id.chatInfoMembersView)
-        recyclerView.adapter = ChatMemberAdapter(this, members, webSocketClient.urlToBitmap)
+        recyclerView = findViewById<RecyclerView>(R.id.chatInfoMembersView)
+        recyclerView?.adapter = ChatMemberAdapter(this, members, webSocketClient.urlToBitmap)
         val gridLayoutManager = GridLayoutManager(this, 5)
-        recyclerView.layoutManager = gridLayoutManager
+        recyclerView?.layoutManager = gridLayoutManager
 
-        val chatNameLayout: LinearLayout = findViewById(R.id.chatNameLayout)
-        val chatAvatarLayout: LinearLayout = findViewById(R.id.chatAvatarLayout)
-        val chatLeaveLayout: LinearLayout = findViewById(R.id.chatLeaveLayout)
+        chatNameLayout = findViewById(R.id.chatNameLayout)
+        chatAvatarLayout = findViewById(R.id.chatAvatarLayout)
+        chatLeaveLayout = findViewById(R.id.chatLeaveLayout)
+    }
 
+    fun updateChatInfo(){
         if (chatId != null) {
             lifecycleScope.launch {
+                members.clear()
                 getChatMember(chatId!!)
                 recyclerView?.adapter?.notifyDataSetChanged()
                 if(members != null){
                     for(member in members){
                         if(!webSocketClient.urlToBitmap.keys.contains(member?.getAvatar())){
-                            downloadImage(member!!.getAvatar(), recyclerView)
+                            downloadImage(member!!.getAvatar(), recyclerView!!)
                         }
                     }
                 }
                 recyclerView?.adapter?.notifyDataSetChanged()
-                if(!webSocketClient.urlToBitmap.containsKey(chat!!.getChatAvatar())){
-                    // 发起下载图片请求
-                    val bit: Bitmap;
-                    withContext(Dispatchers.IO) {
-                        val result = CookiedFuel.get(chat!!.getChatAvatar()).awaitByteArray();
-                        bit = BitmapFactory.decodeByteArray(result, 0, result.size)
-                        webSocketClient.urlToBitmap[chat!!.getChatAvatar()] = bit
+                if(!hasChange){
+                    if(!webSocketClient.urlToBitmap.containsKey(chat!!.getChatAvatar())){
+                        // 发起下载图片请求
+                        val bit: Bitmap;
+                        withContext(Dispatchers.IO) {
+                            val result = CookiedFuel.get(chat!!.getChatAvatar()).awaitByteArray();
+                            bit = BitmapFactory.decodeByteArray(result, 0, result.size)
+                            webSocketClient.urlToBitmap[chat!!.getChatAvatar()!!] = bit
+                        }
                     }
+                    chatAvatar!!.setImageBitmap(webSocketClient.urlToBitmap[chat!!.getChatAvatar()])
                 }
-                chatAvatar!!.setImageBitmap(webSocketClient.urlToBitmap[chat!!.getChatAvatar()])
+                hasChange = false
 
                 runOnUiThread{
                     if(chat != null){
                         chatName?.text = chat!!.getChatName()
                         members.add(User("-1", "-1", "-1", "-1"))
-                        recyclerView.adapter?.notifyDataSetChanged()
+                        recyclerView?.adapter?.notifyDataSetChanged()
                         if(!chat!!.getIsGroup()){
-                            chatNameLayout.visibility = View.GONE
-                            chatAvatarLayout.visibility = View.GONE
-                            chatLeaveLayout.visibility = View.GONE
+                            chatNameLayout?.visibility = View.GONE
+                            chatAvatarLayout?.visibility = View.GONE
+                            chatLeaveLayout?.visibility = View.GONE
                         }
                     }
                 }
             }
         }
 
-        /*
-        lifecycleScope.launch{
-             // 必须放在IO外面
-        }
-
-         */
-
-
         val back = findViewById<ImageView>(R.id.chatInfoBackward)
         back.setOnClickListener {
-            if(chatId != null){
-                Log.d("click chatid: ", chatId!!)
-                val intent = Intent(this, ChatActivity::class.java)
-                intent.putExtra("chatId", chatId)
-                try {
-                    this.startActivityForResult(intent, 100)
-                    this.finish()
-                } catch (ActivityNotFoundException: Exception) {
-                    Log.d("ImplicitIntents", "Can't handle this!")
-                }
-            }
+            finish()
         }
 
 
-        chatLeaveLayout.setOnClickListener {
+        chatLeaveLayout?.setOnClickListener {
             lifecycleScope.launch {
                 if(chatId != null && leaveChat(chatId!!)){
                     activityFinish()
@@ -146,7 +141,7 @@ class ChatInfoActivity : AppCompatActivity() {
         }
 
 
-        chatNameLayout.setOnClickListener {
+        chatNameLayout?.setOnClickListener {
             if(chatId != null){
                 val intent = Intent(this, ChatnameModifyActivity::class.java)
                 intent.putExtra("chatId", chatId)
@@ -159,19 +154,19 @@ class ChatInfoActivity : AppCompatActivity() {
             }
         }
 
-        chatAvatarLayout.setOnClickListener {
+        chatAvatarLayout?.setOnClickListener {
             val pickIntent : Intent = Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
             startActivityForResult(pickIntent, GALLERY_REQUEST_CODE);
         }
 
-
     }
 
     override fun onResume() {
         super.onResume()
         webSocketClient.context = this
+        updateChatInfo()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -186,6 +181,7 @@ class ChatInfoActivity : AppCompatActivity() {
                     val imageUri = data?.getData();
                     if(imageUri!=null) {
                         var inputImage: InputStream
+                        hasChange = true
                         chatAvatar?.setImageBitmap(BitmapFactory.decodeStream(contentResolver?.openInputStream(imageUri)))
 
                         // 向服务器发送请求
@@ -312,8 +308,10 @@ class ChatInfoActivity : AppCompatActivity() {
     suspend fun downloadBitmap(url: String){
         withContext(Dispatchers.IO){
             val result = CookiedFuel.get(url).awaitByteArray();
-            val bit: Bitmap = BitmapFactory.decodeByteArray(result, 0, result.size)
-            webSocketClient.urlToBitmap!!.put(url, bit)
+            if(result != null){
+                val bit: Bitmap = BitmapFactory.decodeByteArray(result, 0, result.size)
+                webSocketClient.urlToBitmap!!.put(url, bit)
+            }
         }
     }
 

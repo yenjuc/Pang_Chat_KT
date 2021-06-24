@@ -71,6 +71,8 @@ class ChatActivity : AppCompatActivity() {
 
     private var recyclerView: RecyclerView? = null
 
+    private var chatinfo : ImageView? = null
+
     private var _uploadInfo = MutableLiveData<UploadResult>()
 
     var mRecorder: MediaRecorder? = null
@@ -90,17 +92,26 @@ class ChatActivity : AppCompatActivity() {
 
         chatId = intent.getStringExtra("chatId")
         recyclerView = findViewById<RecyclerView>(R.id.chatRecyclerView)
-        val chatinfo = findViewById<ImageView>(R.id.chatInfo)
+        chatinfo = findViewById(R.id.chatInfo)
         messages = ArrayList()
         recyclerView?.adapter = MessageAdapter(webSocketClient.userId!!, this, data, webSocketClient.urlToBitmap)
         // 取得对应聊天的内容
+        val linearLayoutManager = LinearLayoutManager(this)
+        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
+        recyclerView?.layoutManager = linearLayoutManager
+    }
+
+    fun getChatMessage(){
         lifecycleScope.launch {
             if (chatId != null) {
+                data.clear()
                 getChatAndMessage(chatId!!)
                 runOnUiThread {
                     recyclerView?.adapter?.notifyDataSetChanged()
                 }
-
+                if(chat != null && chat?.getMembers()?.contains(webSocketClient.userId) != true ){
+                    finish()
+                }
                 if(messages != null){
                     for(message in messages!!){
                         data.add(message)
@@ -113,20 +124,15 @@ class ChatActivity : AppCompatActivity() {
                         recyclerView?.scrollToPosition(messages!!.size - 1)
                         val chatname = findViewById<TextView>(R.id.chatName)
                         chatname.text = chat?.getChatName()
-                        if(chat != null && !chat!!.getIsGroup()) chatinfo.visibility = View.INVISIBLE
+                        if(chat != null && !chat!!.getIsGroup()) chatinfo?.visibility = View.INVISIBLE
                     }
                 }
             }
         }
-
-        val linearLayoutManager = LinearLayoutManager(this)
-        linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
-        recyclerView?.layoutManager = linearLayoutManager
-
         val back = findViewById<ImageView>(R.id.chatBackward)
         back.setOnClickListener { this.finish() }
 
-        chatinfo.setOnClickListener {
+        chatinfo?.setOnClickListener {
             if(chat != null){
                 if(chat!!.getIsGroup()){
                     val intent = Intent(this, ChatInfoActivity::class.java)
@@ -289,6 +295,9 @@ class ChatActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         webSocketClient.context = this
+        if(chatId != null){
+            getChatMessage()
+        }
     }
 
     private fun getLocation(): Location?{
