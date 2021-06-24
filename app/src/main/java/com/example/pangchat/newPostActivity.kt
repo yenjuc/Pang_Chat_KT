@@ -174,6 +174,7 @@ class newPostActivity  : AppCompatActivity() {
             for(x in deleteViewList!!){
                 x.visibility = View.GONE
             }
+            uriList?.clear()
             val videoSender = findViewById<ImageView>(R.id.add_video)
             videoSender.setOnClickListener {
                 val pickIntent: Intent = Intent(
