@@ -123,17 +123,7 @@ class ChatInfoActivity : AppCompatActivity() {
 
         val back = findViewById<ImageView>(R.id.chatInfoBackward)
         back.setOnClickListener {
-            if(chatId != null){
-                Log.d("click chatid: ", chatId!!)
-                val intent = Intent(this, ChatActivity::class.java)
-                intent.putExtra("chatId", chatId)
-                try {
-                    this.startActivityForResult(intent, 100)
-                    this.finish()
-                } catch (ActivityNotFoundException: Exception) {
-                    Log.d("ImplicitIntents", "Can't handle this!")
-                }
-            }
+            finish()
         }
 
 

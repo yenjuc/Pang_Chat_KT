@@ -41,7 +41,7 @@ class ChatMemberAdapter(private val activity: ChatInfoActivity, private val data
         val viewHolder = holder as MemberViewHolder
         if (user != null) {
             if (viewHolder.viewType == 0) {
-                viewHolder.username.text = user.getUsername()
+                viewHolder.username.text = user.getNickname()
 
                 if(urlToBitmap.keys.contains(user.getAvatar())){
                     viewHolder.avatar.setImageBitmap(urlToBitmap[user.getAvatar()])

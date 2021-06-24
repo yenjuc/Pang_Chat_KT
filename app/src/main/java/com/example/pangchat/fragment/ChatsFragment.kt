@@ -48,23 +48,6 @@ class ChatsFragment : Fragment() {
         val linearLayoutManager = LinearLayoutManager(this.activity)
         linearLayoutManager.orientation = LinearLayoutManager.VERTICAL
         recyclerView?.layoutManager = linearLayoutManager
-
-        if(data == null) {
-            lifecycleScope.launch {
-                data?.clear()
-                var chats: ArrayList<Chat>? = getUserChats()
-                if(chats != null){
-                    for (chat in chats) {
-                        data?.add(chat)
-                        if(!webSocketClient.urlToBitmap.keys.contains(chat.getChatAvatar())){
-                            downloadBitmap(chat.getChatAvatar())
-                            recyclerView?.adapter?.notifyDataSetChanged()
-                        }
-                    }
-
-                }
-            }
-        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,19 +56,7 @@ class ChatsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch{
-            data?.clear()
-            var chats : ArrayList<Chat>? = getUserChats()
-            if(chats != null){
-                for(chat in chats){
-                    data?.add(chat)
-                    if(!webSocketClient.urlToBitmap.keys.contains(chat.getChatAvatar())){
-                        downloadBitmap(chat.getChatAvatar())
-                    }
-                }
-            }
-            recyclerView?.adapter?.notifyDataSetChanged()
-        }
+        updateChats()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -130,9 +101,18 @@ class ChatsFragment : Fragment() {
         }
     }
 
-    public fun hasMessage(){
+    public fun updateChats(){
         lifecycleScope.launch {
-            getUserChats()
+            data?.clear()
+            var chats : ArrayList<Chat>? = getUserChats()
+            if(chats != null){
+                for(chat in chats){
+                    data?.add(chat)
+                    if(!webSocketClient.urlToBitmap.keys.contains(chat.getChatAvatar())){
+                        downloadBitmap(chat.getChatAvatar())
+                    }
+                }
+            }
             recyclerView?.adapter?.notifyDataSetChanged()
         }
     }

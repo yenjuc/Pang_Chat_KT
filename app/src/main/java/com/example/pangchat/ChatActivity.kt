@@ -97,7 +97,10 @@ class ChatActivity : AppCompatActivity() {
         lifecycleScope.launch {
             if (chatId != null) {
                 getChatAndMessage(chatId!!)
-                recyclerView?.adapter?.notifyDataSetChanged()
+                runOnUiThread {
+                    recyclerView?.adapter?.notifyDataSetChanged()
+                }
+
                 if(messages != null){
                     for(message in messages!!){
                         data.add(message)
@@ -105,9 +108,9 @@ class ChatActivity : AppCompatActivity() {
                             downloadBitmap(message.getAvatar())
                         }
                     }
-                    recyclerView?.adapter?.notifyDataSetChanged()
-                    recyclerView?.scrollToPosition(messages!!.size - 1)
                     runOnUiThread {
+                        recyclerView?.adapter?.notifyDataSetChanged()
+                        recyclerView?.scrollToPosition(messages!!.size - 1)
                         val chatname = findViewById<TextView>(R.id.chatName)
                         chatname.text = chat?.getChatName()
                         if(chat != null && !chat!!.getIsGroup()) chatinfo.visibility = View.INVISIBLE
@@ -142,8 +145,38 @@ class ChatActivity : AppCompatActivity() {
 
         val chatMoreAction = findViewById<LinearLayout>(R.id.chatMoreLayout)
 
+        val chatAction = findViewById<ImageView>(R.id.chatAction)
+        chatAction.setOnClickListener {
+            if(chatInput.text?.isEmpty() == false){
+                Log.d("Debug", "not empty")
+                lifecycleScope.launch {
+                    if (chatId != null) {
+                        sendMessage(chatInput.text.toString(), "text")
+                        runOnUiThread {
+                            recyclerView?.adapter?.notifyDataSetChanged()
+                            recyclerView?.scrollToPosition(data.size - 1)
+                            chatInput.text?.clear()
+                        }
+                    }
+                }
+            }else{
+                if(chatMoreAction.visibility == View.VISIBLE){
+                    chatMoreAction.visibility = View.GONE
+                    runOnUiThread {
+                        recyclerView?.scrollToPosition(data.size - 1)
+                    }
+                }else if(chatMoreAction.visibility == View.GONE) {
+                    chatMoreAction.visibility = View.VISIBLE
+                    runOnUiThread {
+                        recyclerView?.scrollToPosition(data.size - 1)
+                    }
+                }
+            }
+        }
+
         val videoSender = findViewById<ImageView>(R.id.chatVideo)
         videoSender.setOnClickListener{
+            chatMoreAction.visibility = View.GONE
             val pickIntent : Intent = Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "video/*")
@@ -153,6 +186,7 @@ class ChatActivity : AppCompatActivity() {
 
         val imageSender = findViewById<ImageView>(R.id.chatImage)
         imageSender.setOnClickListener{
+            chatMoreAction.visibility = View.GONE
             val pickIntent : Intent = Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             pickIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
@@ -162,35 +196,15 @@ class ChatActivity : AppCompatActivity() {
 
         val audioSender = findViewById<ImageView>(R.id.chatVoice)
         audioSender.setOnClickListener {
+            chatMoreAction.visibility = View.GONE
             val intent = Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION)
             mediaType = "audio"
             startActivityForResult(intent, AUDIO_REQUEST_CODE) //通过startActivityForResult获取音频录制的结果的路径
         }
 
-        val chatAction = findViewById<ImageView>(R.id.chatAction)
-        chatAction.setOnClickListener {
-            if(chatInput.text?.isEmpty() == false){
-                Log.d("Debug", "not empty")
-                lifecycleScope.launch {
-                    if (chatId != null) {
-                        sendMessage(chatInput.text.toString(), "text")
-                        recyclerView?.adapter?.notifyDataSetChanged()
-                        recyclerView?.scrollToPosition(data.size - 1)
-                        chatInput.text?.clear()
-                    }
-                }
-            }else{
-                if(chatMoreAction.visibility == View.VISIBLE){
-                    chatMoreAction.visibility = View.GONE
-                }else if(chatMoreAction.visibility == View.GONE) {
-                    chatMoreAction.visibility = View.VISIBLE
-                }
-            }
-        }
-
         val chatLocation = findViewById<ImageView>(R.id.chatLocation)
         chatLocation.setOnClickListener {
-
+            chatMoreAction.visibility = View.GONE
             val location = getLocation()
             if(location != null){
                 Toast.makeText(this, "发送当前位置", Toast.LENGTH_LONG).show()
@@ -199,6 +213,10 @@ class ChatActivity : AppCompatActivity() {
                         location.latitude.toString() + ";" + location.longitude.toString(),
                         "location"
                     )
+                    runOnUiThread {
+                        recyclerView?.adapter?.notifyDataSetChanged()
+                        recyclerView?.scrollToPosition(data.size - 1)
+                    }
                 }
             }else{
                 Toast.makeText(this, "获取当前地理位置失败！请打开GPS或网络后再试一次。", Toast.LENGTH_LONG).show()
@@ -335,39 +353,6 @@ class ChatActivity : AppCompatActivity() {
         }
     }
 
-    fun startRecord() {
-        val REQUEST_CODE_CONTACT = 101;
-        val permissions : Array<String> = Array(3, { "0" })
-        permissions.set(0, Manifest.permission.RECORD_AUDIO)
-        permissions.set(1, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        permissions.set(2, Manifest.permission.READ_EXTERNAL_STORAGE)
-        //验证是否许可权限
-        for (str : String in permissions) {
-            if (this.checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
-                //申请权限
-                this.requestPermissions(permissions, REQUEST_CODE_CONTACT)
-            }
-        }
-
-        mRecorder = MediaRecorder()
-        mRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC)
-        mRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-        mRecorder!!.setOutputFile(newFileName())
-        mRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-        try {
-            mRecorder!!.prepare()
-        } catch (e: IOException) {
-            // Log.e(LOG_TAG, "prepare() failed")
-        }
-        mRecorder!!.start()
-    }
-
-    fun stopRecord() {
-        mRecorder?.stop()
-        mRecorder?.release()
-        mRecorder = null
-    }
-
     fun newFileName(): String {
         // var mFileName: String? = Environment.getExternalStorageDirectory().absolutePath
         val path: File? = getExternalFilesDir(Environment.DIRECTORY_MUSIC)
@@ -464,16 +449,22 @@ class ChatActivity : AppCompatActivity() {
                 var bit: Bitmap = BitmapFactory.decodeStream(contentResolver?.openInputStream(uri))
                 webSocketClient.urlToBitmap!![_uploadInfo?.value!!.url] = bit
                 sendMessage(_uploadInfo?.value!!.url, "image")
-                recyclerView?.adapter?.notifyDataSetChanged()
-                recyclerView?.scrollToPosition(data.size - 1)
+                runOnUiThread {
+                    recyclerView?.adapter?.notifyDataSetChanged()
+                    recyclerView?.scrollToPosition(data.size - 1)
+                }
             }else if(mediaType.compareTo("video") == 0){
                 sendMessage(_uploadInfo?.value!!.url, "video")
-                recyclerView?.adapter?.notifyDataSetChanged()
-                recyclerView?.scrollToPosition(data.size - 1)
+                runOnUiThread {
+                    recyclerView?.adapter?.notifyDataSetChanged()
+                    recyclerView?.scrollToPosition(data.size - 1)
+                }
             }else{
                 sendMessage(_uploadInfo?.value!!.url, "audio")
-                recyclerView?.adapter?.notifyDataSetChanged()
-                recyclerView?.scrollToPosition(data.size - 1)
+                runOnUiThread {
+                    recyclerView?.adapter?.notifyDataSetChanged()
+                    recyclerView?.scrollToPosition(data.size - 1)
+                }
             }
         } else {
             // TODO：抛出并解析异常
@@ -516,7 +507,9 @@ class ChatActivity : AppCompatActivity() {
         lifecycleScope.launch {
             if(recallMessage(chatId!!, messageId)){
                 data?.get(index)?.setRecalled()
-                recyclerView?.adapter?.notifyDataSetChanged()
+                runOnUiThread {
+                    recyclerView?.adapter?.notifyDataSetChanged()
+                }
             }
         }
     }
@@ -536,7 +529,9 @@ class ChatActivity : AppCompatActivity() {
         lifecycleScope.launch {
             if(deleteMessage(messageId, userId)){
                 data?.get(index)?.addBlocked(userId)
-                recyclerView?.adapter?.notifyDataSetChanged()
+                runOnUiThread {
+                    recyclerView?.adapter?.notifyDataSetChanged()
+                }
             }
         }
     }
@@ -570,8 +565,10 @@ class ChatActivity : AppCompatActivity() {
     public fun addMessageWebSocket(chat: String, message: Message) {
         if(chatId != null && chatId == chat){
             data.add(message)
-            recyclerView?.adapter?.notifyDataSetChanged()
-            recyclerView?.scrollToPosition(data.size - 1)
+            runOnUiThread {
+                recyclerView?.adapter?.notifyDataSetChanged()
+                recyclerView?.scrollToPosition(data.size - 1)
+            }
         }
     }
 
@@ -580,7 +577,9 @@ class ChatActivity : AppCompatActivity() {
             for(index in data.indices){
                 if(data[index]?.getId() == messageId){
                     data[index]?.setRecalled()
-                    recyclerView?.adapter?.notifyDataSetChanged()
+                    runOnUiThread {
+                        recyclerView?.adapter?.notifyDataSetChanged()
+                    }
                 }
             }
         }
